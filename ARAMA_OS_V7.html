@@ -40,6 +40,7 @@ h4{font-size:13px;font-weight:600;color:var(--text2)}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
 /* ─── UTILITIES ─── */
 .flex{display:flex}.gap4{gap:4px}.gap8{gap:8px}.gap12{gap:12px}.gap16{gap:16px}.gap24{gap:24px}
 .col{flex-direction:column}.wrap{flex-wrap:wrap}.ac{align-items:center}.jb{justify-content:space-between}.jc{justify-content:center}.je{justify-content:flex-end}
@@ -55,10 +56,12 @@ h4{font-size:13px;font-weight:600;color:var(--text2)}
 .hidden{display:none!important}
 .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pointer{cursor:pointer}
+
 /* ─── CARD ─── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:20px}
 .card-sm{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+
 /* ─── BADGE ─── */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.03em}
 .badge-green{background:rgba(16,185,129,0.15);color:var(--green2)}
@@ -69,6 +72,7 @@ h4{font-size:13px;font-weight:600;color:var(--text2)}
 .badge-orange{background:rgba(249,115,22,0.15);color:var(--orange2)}
 .badge-teal{background:rgba(20,184,166,0.15);color:var(--teal2)}
 .badge-grey{background:rgba(100,116,139,0.15);color:var(--text3)}
+
 /* ─── BUTTONS ─── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:var(--radius);font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap}
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
@@ -80,11 +84,13 @@ h4{font-size:13px;font-weight:600;color:var(--text2)}
 .btn-xs{padding:3px 8px;font-size:11px}
 .btn-icon{width:34px;height:34px;padding:0;border-radius:8px}
 .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important}
+
 /* ─── TABS ─── */
 .tabs{display:flex;gap:2px;background:var(--bg4);padding:4px;border-radius:var(--radius);margin-bottom:20px;flex-wrap:wrap}
 .tab{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
 .tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,0.4)}
 .tab:not(.active):hover{background:var(--card2);color:var(--text)}
+
 /* ─── TABLE ─── */
 .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
 table{width:100%;border-collapse:collapse}
@@ -92,6 +98,7 @@ th{background:var(--bg4);color:var(--text2);font-size:11px;font-weight:700;text-
 td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,0.02)}
+
 /* ─── MODAL ─── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius2);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow2)}
@@ -100,11 +107,13 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .modal-body{padding:24px}
 .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
 .close-btn{background:var(--card2);border:1px solid var(--border2);color:var(--text2);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}.close-btn:hover{color:var(--red)}
+
 /* ─── FORM ROW ─── */
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .form-group{margin-bottom:16px}
 .form-group:last-child{margin-bottom:0}
 @media(max-width:600px){.form-row{grid-template-columns:1fr}}
+
 /* ─── TOAST ─── */
 #toast-container{position:fixed;bottom:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px}
 .toast{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;min-width:260px;max-width:380px;animation:slideIn .3s ease;box-shadow:var(--shadow)}
@@ -113,6 +122,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .toast-info{background:#1e1b4b;border:1px solid var(--accent);color:var(--accent3)}
 .toast-warn{background:#451a03;border:1px solid var(--orange);color:var(--orange2)}
 @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
 /* ─── STAT CARD ─── */
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:20px;position:relative;overflow:hidden}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
@@ -126,6 +136,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .stat-value{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px}
 .stat-sub{font-size:12px;color:var(--text2)}
 .stat-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:40px;opacity:0.15}
+
 /* ─── SIDEBAR ─── */
 #sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column;transition:transform .3s}
 .sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
@@ -143,6 +154,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
 .user-name{font-size:13px;font-weight:600}
 .user-role{font-size:11px;color:var(--text3)}
+
 /* ─── MAIN CONTENT ─── */
 #main{margin-left:var(--sidebar);min-height:100vh;background:var(--bg)}
 .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
@@ -152,6 +164,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .topbar-right{display:flex;align-items:center;gap:8px}
 .page-content{padding:24px}
 .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+
 /* ─── LOGIN ─── */
 #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 20% 20%,rgba(124,58,237,0.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(245,158,11,0.08) 0%,transparent 60%),var(--bg);padding:20px}
 .login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:40px;width:100%;max-width:440px;box-shadow:var(--shadow2)}
@@ -172,8 +185,10 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .staff-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
 .quick-btn{padding:10px 8px;border-radius:8px;text-align:center;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);transition:all .15s;font-size:12px;font-weight:600;color:var(--text2)}
 .quick-btn:hover{border-color:var(--accent);color:var(--accent3)}
+
 /* ─── KPI STRIP ─── */
 .kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+
 /* ─── POS ─── */
 .pos-layout{display:grid;grid-template-columns:1fr 360px;gap:20px;height:calc(100vh - 140px)}
 @media(max-width:900px){.pos-layout{grid-template-columns:1fr;height:auto}}
@@ -200,26 +215,31 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .pay-btn.selected{border-color:var(--accent);background:rgba(124,58,237,0.15);color:var(--accent3)}
 .total-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
 .total-row.grand{font-size:16px;font-weight:800;padding:10px 0;border-top:2px solid var(--border2);margin-top:8px}
+
 /* ─── TOKEN ─── */
 .token-card{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:var(--radius2);padding:20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
 .token-card::after{content:'āMA';position:absolute;right:-10px;bottom:-10px;font-size:60px;font-weight:900;opacity:0.1}
 .token-code{font-size:20px;font-weight:800;letter-spacing:0.1em;font-family:monospace;margin:8px 0}
 .token-details{font-size:12px;opacity:0.85;line-height:1.8}
+
 /* ─── LOCATION CARD ─── */
 .location-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;cursor:pointer;transition:all .15s}
 .location-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(124,58,237,0.15)}
 .location-code{font-size:10px;font-weight:800;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-bottom:4px}
 .location-name{font-size:14px;font-weight:700;margin-bottom:4px}
 .location-meta{font-size:11px;color:var(--text2);display:flex;gap:8px;flex-wrap:wrap}
+
 /* ─── QUEUE ─── */
 .queue-item{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
 .queue-timer{font-size:20px;font-weight:800;font-family:monospace;color:var(--gold)}
+
 /* ─── HEALTH INDICATOR ─── */
 .health-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
 .health-green{background:var(--green);box-shadow:0 0 6px var(--green)}
 .health-red{background:var(--red);box-shadow:0 0 6px var(--red)}
 .health-gold{background:var(--gold);box-shadow:0 0 6px var(--gold)}
 .health-grey{background:var(--text3)}
+
 /* ─── PROGRESS BAR ─── */
 .progress-bar{background:var(--bg4);border-radius:4px;height:6px;overflow:hidden}
 .progress-fill{height:100%;border-radius:4px;transition:width .4s}
@@ -227,6 +247,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .pf-gold{background:linear-gradient(90deg,var(--gold),var(--gold2))}
 .pf-red{background:linear-gradient(90deg,var(--red),var(--red2))}
 .pf-purple{background:linear-gradient(90deg,var(--accent),var(--accent3))}
+
 /* ─── TOGGLE ─── */
 .toggle{position:relative;width:40px;height:22px;flex-shrink:0}
 .toggle input{opacity:0;width:0;height:0}
@@ -234,35 +255,42 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
 .toggle input:checked+.toggle-slider{background:var(--accent)}
 .toggle input:checked+.toggle-slider::before{transform:translateX(18px)}
+
 /* ─── ACCORDION ─── */
 .accord{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
 .accord-header{padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--card);font-weight:600}
 .accord-header:hover{background:var(--card2)}
 .accord-body{padding:16px;border-top:1px solid var(--border);background:var(--bg2)}
+
 /* ─── SEARCH ─── */
 .search-wrap{position:relative}
 .search-wrap input{padding-left:36px}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px}
+
 /* ─── ALERT ─── */
 .alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px}
 .alert-info{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--blue2)}
 .alert-warn{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--gold2)}
 .alert-error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red2)}
 .alert-success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green2)}
+
 /* ─── CRM STAGES ─── */
 .crm-stage{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
 .stage-new{background:rgba(99,102,241,0.2);color:#818cf8}
 .stage-active{background:rgba(16,185,129,0.2);color:var(--green2)}
 .stage-closed{background:rgba(100,116,139,0.2);color:var(--text3)}
 .stage-hot{background:rgba(239,68,68,0.2);color:var(--red2)}
+
 /* ─── EMPTY STATE ─── */
 .empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
 .empty-state .es-icon{font-size:48px;margin-bottom:16px;opacity:0.5}
 .empty-state p{font-size:14px;margin-bottom:16px}
+
 /* ─── LOYALTY ─── */
 .points-display{background:linear-gradient(135deg,var(--gold),var(--orange));border-radius:var(--radius2);padding:20px;color:#000;text-align:center}
 .points-big{font-size:40px;font-weight:900;line-height:1}
 .points-label{font-size:12px;font-weight:700;opacity:0.8;margin-top:4px}
+
 /* ─── REPORT ─── */
 .report-section{margin-bottom:24px}
 .report-section h3{font-size:14px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
@@ -271,8 +299,10 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .report-cell{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
 .report-cell-label{font-size:11px;color:var(--text3);margin-bottom:4px}
 .report-cell-value{font-size:16px;font-weight:800}
+
 /* ─── COMMISSION ─── */
 .commission-tier{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+
 /* ─── MOBILE RESPONSIVE ─── */
 @media(max-width:768px){
   :root{--sidebar:0px}
@@ -288,6 +318,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 @media(max-width:768px){#menu-toggle{display:flex}}
 .overlay-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99}
 .overlay-bg.show{display:block}
+
 /* ─── ANIMATIONS ─── */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .25s ease}
@@ -295,13 +326,16 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .pulse{animation:pulse 2s infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{animation:spin 1s linear infinite}
+
 /* ─── PRINT ─── */
 @media print{#sidebar,#login-screen,.no-print{display:none!important}#main{margin-left:0}}
 </style>
 </head>
 <body>
+
 <div id="toast-container"></div>
 <div class="overlay-bg" id="overlay-bg" onclick="closeSidebar()"></div>
+
 <!-- ═══════════════════════════════════════════════════ LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-box fade-in">
@@ -340,8 +374,10 @@ tr:hover td{background:rgba(255,255,255,0.02)}
     </div>
   </div>
 </div>
+
 <!-- ═══════════════════════════════════════════════════ MAIN APP (hidden until login) -->
 <div id="app" class="hidden">
+
   <!-- SIDEBAR -->
   <nav id="sidebar">
     <div class="sidebar-logo">
@@ -357,6 +393,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
       </div>
     </div>
   </nav>
+
   <!-- MAIN CONTENT -->
   <div id="main">
     <div class="topbar">
@@ -374,14 +411,19 @@ tr:hover td{background:rgba(255,255,255,0.02)}
     </div>
     <div class="page-content" id="page-content"></div>
   </div>
+
 </div>
+
 <!-- ═══════════════════════════════════════════════════ MODALS CONTAINER -->
 <div id="modals"></div>
+
+
 <script>
 // ═══════════════════════════════════════════════════════════════════
 // ārāma Wellness OS v7 — Complete Operations System
 // Repo: aramaoperations/arama-wellness | tech@arama.asia
 // ═══════════════════════════════════════════════════════════════════
+
 // ─── DATABASE ───────────────────────────────────────────────────────
 const DB = {
   get(k){try{return JSON.parse(localStorage.getItem('arama_'+k))}catch(e){return null}},
@@ -390,6 +432,7 @@ const DB = {
   del(k){localStorage.removeItem('arama_'+k)},
   all(){const out={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('arama_'))out[k.slice(6)]=this.get(k.slice(6))}return out}
 };
+
 // ─── LOCATIONS (33 total) ─────────────────────────────────────────
 const LOCATIONS_DEFAULT = [
   {code:'ST-P1',name:'Surat P1',fullName:'Surat Platform 1',station:'Surat Railway Station P1',city:'Surat',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
@@ -426,6 +469,7 @@ const LOCATIONS_DEFAULT = [
   {code:'PANVEL',name:'Panvel Vendor',fullName:'Panvel Vendor',station:'Panvel',city:'Panvel',state:'Maharashtra',zone:'CR',chairs:2,active:true,isVendor:true,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
   {code:'RAIPUR',name:'Raipur Vendor',fullName:'Raipur Vendor',station:'Raipur',city:'Raipur',state:'Chhattisgarh',zone:'SCR',chairs:2,active:true,isVendor:true,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]}
 ];
+
 const SERVICES_DEFAULT = [
   {id:'CHR15',name:'Chair Massage 15min',duration:15,price:199,category:'chair',icon:'💺',active:true,desc:'15 min full back & neck massage'},
   {id:'CHR30',name:'Chair Massage 30min',duration:30,price:349,category:'chair',icon:'💺',active:true,desc:'30 min premium back massage'},
@@ -440,6 +484,7 @@ const SERVICES_DEFAULT = [
   {id:'PASS10',name:'10-Session Pass',duration:0,price:1499,category:'pass',icon:'🎟️',active:true,desc:'10 x 15min chair sessions'},
   {id:'MONTHLY',name:'Monthly Pass',duration:0,price:2499,category:'pass',icon:'📅',active:true,desc:'Unlimited 15min sessions for 30 days'}
 ];
+
 const ROLES = {
   superadmin:{label:'Super Admin',level:6,color:'#b78bfa'},
   admin:{label:'Admin',level:5,color:'#f59e0b'},
@@ -448,6 +493,7 @@ const ROLES = {
   staff:{label:'Staff',level:2,color:'#94a3b8'},
   vendor:{label:'Vendor',level:1,color:'#f97316'}
 };
+
 const NAV_ITEMS = [
   {id:'dashboard',icon:'📊',label:'Dashboard',minRole:'staff',section:'Operations'},
   {id:'pos',icon:'💳',label:'Point of Sale',minRole:'staff',section:'Operations'},
@@ -462,12 +508,13 @@ const NAV_ITEMS = [
   {id:'esp32',icon:'⚡',label:'ESP32 Console',minRole:'admin',section:'System'},
   {id:'admin-config',icon:'⚙️',label:'Admin Config',minRole:'admin',section:'System'},
 ];
+
 let STATE = {
   user:null, role:null, locationCode:null, page:'dashboard',
   posOrder:[], posService:null, posChair:null, posPayment:null,
-  activeTimers:{}, pendingApprovals:0,
-  dashFrom:null, dashTo:null  // date range filter for dashboard
+  activeTimers:{}, pendingApprovals:0
 };
+
 const DB = {
   get(k){try{return JSON.parse(localStorage.getItem('arama_'+k))}catch(e){return null}},
   set(k,v){localStorage.setItem('arama_'+k,JSON.stringify(v))},
@@ -475,6 +522,7 @@ const DB = {
   del(k){localStorage.removeItem('arama_'+k)},
   all(){const out={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('arama_'))out[k.slice(6)]=this.get(k.slice(6))}return out}
 };
+
 const fmt = {
   currency(n){return '₹'+Number(n||0).toLocaleString('en-IN')},
   num(n){return Number(n||0).toLocaleString('en-IN')},
@@ -486,6 +534,7 @@ const fmt = {
   ago(d){const diff=Date.now()-new Date(d);const m=Math.floor(diff/60000);if(m<1)return 'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';},
   truncate(s,n=30){return s&&s.length>n?s.slice(0,n)+'…':s||''}
 };
+
 function toast(msg,type='info',dur=3000){
   const t=document.createElement('div');
   const icons={success:'✅',error:'❌',info:'ℹ️',warn:'⚠️'};
@@ -494,6 +543,7 @@ function toast(msg,type='info',dur=3000){
   document.getElementById('toast-container').appendChild(t);
   setTimeout(()=>t.remove(),dur);
 }
+
 function modal(html,id='main-modal'){
   let m=document.getElementById(id);if(m)m.remove();
   const el=document.createElement('div');
@@ -509,35 +559,31 @@ function getLocations(){return DB.get('locations')||LOCATIONS_DEFAULT}
 function getLocation(code){return getLocations().find(l=>l.code===code)}
 function getUsers(){return DB.get('users')||[]}
 function getServices(){return DB.get('services')||SERVICES_DEFAULT}
-function getConfig(){return DB.get('config')||{orgName:'ārāma Wellness',email:'tech@arama.asia',phone:'',loyaltyRate:10,loyaltyRedeem:100,loyaltyMinRedeem:499,loyaltyCap:20,loyaltyValidity:365,bonusSignup:50,bonusPass:150,bonusReferral:100,bonusReview:50,bonusVideo:200,taxRate:0,commissionEnabled:true,commissionTiers:[{label:'Bronze',minRev:0,maxRev:9999,pct:5},{label:'Silver',minRev:10000,maxRev:24999,pct:7},{label:'Gold',minRev:25000,maxRev:49999,pct:9},{label:'Platinum',minRev:50000,maxRev:99999,pct:12},{label:'Diamond',minRev:100000,maxRev:999999,pct:15}],shiftHours:8,autoReportTime:'20:00',whatsappEnabled:false,espGlobalApiKey:''}}
+function getConfig(){return DB.get('config')||{orgName:'ārāma Wellness',email:'tech@arama.asia',phone:'',loyaltyRate:10,loyaltyRedeem:100,loyaltyMinRedeem:499,loyaltyCap:20,loyaltyValidity:365,taxRate:0,commissionEnabled:true,commissionTiers:[{label:'Bronze',minRev:0,maxRev:9999,pct:5},{label:'Silver',minRev:10000,maxRev:24999,pct:7},{label:'Gold',minRev:25000,maxRev:49999,pct:9},{label:'Platinum',minRev:50000,maxRev:99999,pct:12},{label:'Diamond',minRev:100000,maxRev:999999,pct:15}],shiftHours:8,autoReportTime:'20:00',whatsappEnabled:false,espGlobalApiKey:''}}
 function roleLevel(r){return ROLES[r]?.level||0}
 function hasRole(minRole){return roleLevel(STATE.role)>=roleLevel(minRole)}
+
 function compressImage(file,cb){
   const reader=new FileReader();
   reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');const MAX=800,scale=Math.min(1,MAX/img.width);canvas.width=img.width*scale;canvas.height=img.height*scale;canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);cb(canvas.toDataURL('image/jpeg',0.82));};img.src=e.target.result;};reader.readAsDataURL(file);
 }
+
 async function activateESP32(location,channel,durationSec,token){
   const esp=location.esp32;
   if(!esp?.ip)return{success:false,reason:'ESP32 not configured'};
   try{const res=await fetch(`http://${esp.ip}:${esp.port||80}/activate`,{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':esp.apiKey||''},body:JSON.stringify({channel,duration:durationSec,token}),signal:AbortSignal.timeout(5000)});return await res.json();}
   catch(e){return{success:false,reason:'ESP32 unreachable'}}
 }
+
 async function deactivateESP32(location,channel){
   const esp=location.esp32;if(!esp?.ip)return{success:false};
   try{const res=await fetch(`http://${esp.ip}:${esp.port||80}/deactivate`,{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':esp.apiKey||''},body:JSON.stringify({channel}),signal:AbortSignal.timeout(5000)});return await res.json();}
   catch(e){return{success:false}}
 }
+
 // ─── AUTH ─────────────────────────────────────────────────────────
 function initDefaultUsers(){
-  const _ex=DB.get('users')||[];
-  const _hasSA=_ex.find(u=>u.username==='superadmin');
-  const _defs=[
-    {id:'u1',username:'superadmin',password:'arama@2024',name:'Super Admin',role:'superadmin',phone:'',email:'tech@arama.asia',locationCode:'ALL',active:true,joined:new Date().toISOString()},
-    {id:'u2',username:'admin',password:'admin123',name:'ārāma Admin',role:'admin',phone:'',email:'tech@arama.asia',locationCode:'ALL',active:true,joined:new Date().toISOString()},
-    {id:'u3',username:'manager',password:'mgr123',name:'Operations Manager',role:'manager',phone:'',email:'',locationCode:'ALL',active:true,joined:new Date().toISOString()}
-  ];
-  if(!_hasSA){DB.set('users',[..._defs.filter(d=>!_ex.find(u=>u.username===d.username)),..._ex]);}
-  if(false){
+  if(getUsers().length===0){
     DB.set('users',[
       {id:'u1',username:'superadmin',password:'arama@2024',name:'Super Admin',role:'superadmin',phone:'',email:'tech@arama.asia',locationCode:'ALL',active:true,joined:new Date().toISOString()},
       {id:'u2',username:'admin',password:'admin123',name:'ārāma Admin',role:'admin',phone:'',email:'tech@arama.asia',locationCode:'ALL',active:true,joined:new Date().toISOString()},
@@ -545,6 +591,7 @@ function initDefaultUsers(){
     ]);
   }
 }
+
 function doLogin(){
   const uname=document.getElementById('login-username').value.trim();
   const pass=document.getElementById('login-password').value;
@@ -557,8 +604,10 @@ function doLogin(){
   DB.set('session',{userId:user.id,role:user.role,locationCode:STATE.locationCode,ts:Date.now()});
   startApp();
 }
+
 function setLoginMode(){}
 function goCustomer(){window.open('customer.html','_blank')}
+
 function doLogout(){
   DB.del('session');STATE.user=null;STATE.role=null;STATE.locationCode=null;
   document.getElementById('app').classList.add('hidden');
@@ -566,6 +615,7 @@ function doLogout(){
   document.getElementById('login-password').value='';
   toast('Signed out','info');
 }
+
 function startApp(){
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
@@ -578,6 +628,7 @@ function startApp(){
   document.getElementById('sidebar-location-label').textContent=loc?loc.name:'All Locations';
   buildSidebar();navigate('dashboard');startClock();checkPendingApprovals();
 }
+
 function buildSidebar(){
   const nav=document.getElementById('sidebar-nav');nav.innerHTML='';
   let currentSection='';let openSection=false;
@@ -594,6 +645,7 @@ function buildSidebar(){
   });
   if(openSection)nav.innerHTML+='</div>';
 }
+
 function navigate(page){
   STATE.page=page;
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
@@ -605,21 +657,26 @@ function navigate(page){
   renderPage(page);
   if(window.innerWidth<=768)closeSidebar();
 }
+
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay-bg').classList.toggle('show')}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('show')}
+
 function startClock(){
   const el=document.getElementById('topbar-clock');
   setInterval(()=>{el.textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
 }
+
 function checkPendingApprovals(){
   STATE.pendingApprovals=(DB.get('pending-staff')||[]).filter(r=>r.status==='pending').length;
 }
+
 function renderPage(page){
   const pc=document.getElementById('page-content');
   const html=getPageHTML(page);
   pc.innerHTML=`<div class="fade-in">${html}</div>`;
   initPageJS(page);
 }
+
 function getPageHTML(page){
   switch(page){
     case 'dashboard': return renderDashboard();
@@ -637,6 +694,7 @@ function getPageHTML(page){
     default: return '<div class="empty-state"><div class="es-icon">🚧</div><p>Coming soon</p></div>';
   }
 }
+
 function initPageJS(page){
   if(page==='pos'){initPOS();}
   if(page==='queue'){initQueue();}
@@ -644,42 +702,15 @@ function initPageJS(page){
   if(page==='locations'){initLocFilter();}
   if(page==='users'){initUsersFilter();}
 }
+
 // ─── DASHBOARD ────────────────────────────────────────────────────
-function setDashRange(preset){
-  const now=new Date();
-  const tod=v=>v.toISOString().slice(0,10);
-  if(preset==='today'){STATE.dashFrom=tod(now);STATE.dashTo=tod(now);}
-  else if(preset==='yesterday'){const y=new Date(now);y.setDate(y.getDate()-1);STATE.dashFrom=tod(y);STATE.dashTo=tod(y);}
-  else if(preset==='week'){const w=new Date(now);w.setDate(w.getDate()-6);STATE.dashFrom=tod(w);STATE.dashTo=tod(now);}
-  else if(preset==='month'){STATE.dashFrom=tod(now).slice(0,7)+'-01';STATE.dashTo=tod(now);}
-  else if(preset==='clear'){STATE.dashFrom=null;STATE.dashTo=null;}
-  navigate('dashboard');
-}
-function applyDashCustomRange(){
-  STATE.dashFrom=document.getElementById('dash-from')?.value||null;
-  STATE.dashTo=document.getElementById('dash-to')?.value||null;
-  navigate('dashboard');
-}
 function renderDashboard(){
   const locs=getLocations();
   const transactions=DB.get('transactions')||[];
   const today=new Date().toDateString();
+  const todayTxn=transactions.filter(t=>new Date(t.ts).toDateString()===today);
   const filterLoc=t=>!STATE.locationCode||t.locationCode===STATE.locationCode;
-  // Date range filtering
-  const fromDate=STATE.dashFrom?new Date(STATE.dashFrom):null;
-  const toDate=STATE.dashTo?new Date(STATE.dashTo+' 23:59:59'):null;
-  const inRange=t=>{
-    const d=new Date(t.ts);
-    if(fromDate&&d<fromDate)return false;
-    if(toDate&&d>toDate)return false;
-    return true;
-  };
-  const rangeLabel=STATE.dashFrom?(STATE.dashFrom===STATE.dashTo?STATE.dashFrom:`${STATE.dashFrom} → ${STATE.dashTo}`):'All time';
-  const rangeFiltered=transactions.filter(t=>filterLoc(t)&&inRange(t));
-  // If no range, fall back to today for KPIs
-  const todayTxn=transactions.filter(t=>new Date(t.ts).toDateString()===today&&filterLoc(t));
-  const displayTxn=STATE.dashFrom?rangeFiltered:todayTxn;
-  const todayFiltered=displayTxn;
+  const todayFiltered=todayTxn.filter(filterLoc);
   const todayRev=todayFiltered.reduce((s,t)=>s+(t.amount||0),0);
   const todaySessions=todayFiltered.filter(t=>t.type==='session').length;
   const todayUPI=todayFiltered.filter(t=>t.paymentMode==='upi').reduce((s,t)=>s+(t.amount||0),0);
@@ -687,46 +718,32 @@ function renderDashboard(){
   const activeSessions=Object.keys(STATE.activeTimers).length;
   const activeLocs=locs.filter(l=>l.active&&!l.isVendor).length;
   const totalChairs=locs.reduce((s,l)=>s+(l.chairs||0),0);
-  const recentTxn=(STATE.dashFrom?rangeFiltered:transactions.filter(filterLoc)).slice(-10).reverse();
-  // Chart: last 7 days or range days
-  const chartDays=STATE.dashFrom&&STATE.dashFrom!==STATE.dashTo?
-    (()=>{const days=[];const d=new Date(STATE.dashFrom);const end=new Date(STATE.dashTo||today);while(d<=end){days.push(new Date(d));d.setDate(d.getDate()+1);}return days.slice(-14);})()):
-    Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return d;}).reverse();
-  const weekRev=chartDays.map(d=>{
+
+  const recentTxn=transactions.filter(filterLoc).slice(-10).reverse();
+
+  const weekRev = Array.from({length:7},(_,i)=>{
+    const d=new Date();d.setDate(d.getDate()-i);
     const ds=d.toDateString();
     const rev=transactions.filter(t=>filterLoc(t)&&new Date(t.ts).toDateString()===ds).reduce((s,t)=>s+(t.amount||0),0);
-    return {day:d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric'}),rev};
-  });
+    return {day:d.toLocaleDateString('en-IN',{weekday:'short'}),rev};
+  }).reverse();
+
   const maxRev=Math.max(...weekRev.map(w=>w.rev),1);
+
   const pendingStaff=(DB.get('pending-staff')||[]).filter(r=>r.status==='pending');
+
   return `
   ${pendingStaff.length>0?`<div class="alert alert-warn mb16">⚠️ <strong>${pendingStaff.length} pending staff registration${pendingStaff.length>1?'s':''}</strong> awaiting approval. <a onclick="navigate('users')" style="cursor:pointer;text-decoration:underline">Review now →</a></div>`:''}
-
-  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:16px;background:var(--card);padding:12px;border-radius:var(--radius);border:1px solid var(--border)">
-    <span style="font-size:12px;color:var(--text2);font-weight:600">📅 Date Range:</span>
-    <button class="btn btn-sm ${!STATE.dashFrom?'btn-primary':'btn-secondary'}" onclick="setDashRange('today')">Today</button>
-    <button class="btn btn-sm btn-secondary" onclick="setDashRange('yesterday')">Yesterday</button>
-    <button class="btn btn-sm btn-secondary" onclick="setDashRange('week')">Last 7 Days</button>
-    <button class="btn btn-sm btn-secondary" onclick="setDashRange('month')">This Month</button>
-    ${STATE.dashFrom?`<button class="btn btn-sm btn-danger" onclick="setDashRange('clear')">✕ Clear</button>`:''}
-    <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
-      <input type="date" id="dash-from" value="${STATE.dashFrom||''}" style="padding:4px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px">
-      <span style="color:var(--text3)">→</span>
-      <input type="date" id="dash-to" value="${STATE.dashTo||''}" style="padding:4px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px">
-      <button class="btn btn-primary btn-sm" onclick="applyDashCustomRange()">Apply</button>
-    </div>
-    ${STATE.dashFrom?`<div style="width:100%;font-size:11px;color:var(--accent2);margin-top:4px">Showing: <strong>${rangeLabel}</strong> · ${displayTxn.length} transactions · ₹${fmt.num(todayRev)} revenue</div>`:''}
-  </div>
-
+  
   <div class="kpi-strip">
     <div class="stat-card purple">
-      <div class="stat-label">${STATE.dashFrom?'Period Revenue':'Today\'s Revenue'}</div>
+      <div class="stat-label">Today's Revenue</div>
       <div class="stat-value text-accent">${fmt.currency(todayRev)}</div>
       <div class="stat-sub">UPI: ${fmt.currency(todayUPI)} · Cash: ${fmt.currency(todayCash)}</div>
       <div class="stat-icon">💰</div>
     </div>
     <div class="stat-card green">
-      <div class="stat-label">${STATE.dashFrom?'Sessions in Period':'Sessions Today'}</div>
+      <div class="stat-label">Sessions Today</div>
       <div class="stat-value text-green">${todaySessions}</div>
       <div class="stat-sub">${activeSessions} active right now</div>
       <div class="stat-icon">💺</div>
@@ -744,6 +761,7 @@ function renderDashboard(){
       <div class="stat-icon">📊</div>
     </div>
   </div>
+
   <div class="grid2">
     <div class="card">
       <div class="card-header"><h3>📈 7-Day Revenue</h3></div>
@@ -757,6 +775,7 @@ function renderDashboard(){
         </div>`).join('')}
       </div>
     </div>
+
     <div class="card">
       <div class="card-header"><h3>🏢 Network Status</h3><button class="btn btn-secondary btn-sm" onclick="navigate('locations')">All Locations</button></div>
       <div style="max-height:200px;overflow-y:auto">
@@ -775,6 +794,7 @@ function renderDashboard(){
       </div>
     </div>
   </div>
+
   <div class="card mt16">
     <div class="card-header">
       <h3>🕐 Recent Transactions</h3>
@@ -798,6 +818,7 @@ function renderDashboard(){
     </div>`:`<div class="empty-state"><div class="es-icon">📊</div><p>No transactions today. Start your first POS session!</p></div>`}
   </div>`;
 }
+
 // ─── POS ──────────────────────────────────────────────────────────
 function renderPOS(){
   const loc=STATE.locationCode?getLocation(STATE.locationCode):null;
@@ -821,6 +842,7 @@ function renderPOS(){
           <div class="tab" onclick="filterServices('pass',this)">🎟️ Passes</div>
           <div class="tab" onclick="filterServices('custom',this)">➕ Custom</div>
         </div>
+
         <div class="service-grid" id="service-grid">
           ${services.filter(s=>s.category==='chair').concat(passes).map(s=>`
           <div class="service-card" onclick="selectService('${s.id}')" id="svc-${s.id}">
@@ -831,6 +853,7 @@ function renderPOS(){
           </div>`).join('')}
         </div>
       </div>
+
       ${loc?`
       <div class="card mb16">
         <div class="card-header"><h3>🪑 Select Chair / Equipment</h3></div>
@@ -846,6 +869,7 @@ function renderPOS(){
         </div>
         <input type="hidden" id="pos-chair-selected" value="">
       </div>`:''}
+
       <div class="card">
         <div class="card-header"><h3>👤 Customer (Optional)</h3></div>
         <div class="form-row">
@@ -861,6 +885,7 @@ function renderPOS(){
         <div id="customer-loyalty-info"></div>
       </div>
     </div>
+
     <div class="pos-right">
       <div class="order-summary">
         <h3 class="mb16">🧾 Order Summary</h3>
@@ -870,6 +895,7 @@ function renderPOS(){
             <p style="font-size:12px">Select a service to begin</p>
           </div>
         </div>
+
         <div id="pos-totals" class="hidden">
           <div id="discount-row" class="hidden">
             <div class="flex ac jb">
@@ -878,12 +904,14 @@ function renderPOS(){
             </div>
             <input type="text" id="pos-discount-input" placeholder="Amount or loyalty pts" class="mt4">
           </div>
+
           <div style="border-top:1px solid var(--border);margin:12px 0;padding-top:12px">
             <div class="total-row"><span class="text2">Subtotal</span><span id="pos-subtotal">₹0</span></div>
             <div class="total-row" id="tax-row" style="display:none"><span class="text2">Tax</span><span id="pos-tax">₹0</span></div>
             <div class="total-row" id="discount-display" style="display:none"><span class="text-green">Discount</span><span id="pos-discount-val" class="text-green">-₹0</span></div>
             <div class="total-row grand"><span>TOTAL</span><span id="pos-total" class="text-accent">₹0</span></div>
           </div>
+
           <div style="margin-bottom:12px">
             <label>Payment Method</label>
             <div class="payment-method-grid">
@@ -895,10 +923,12 @@ function renderPOS(){
               <div class="pay-btn" onclick="selectPayment('pass',this)" id="pay-pass">🎟️<br>Pass</div>
             </div>
           </div>
+
           <div id="remarks-section">
             <label>Remarks (optional)</label>
             <textarea id="pos-remarks" rows="2" placeholder="Any notes..."></textarea>
           </div>
+
           <button class="btn btn-success w100 mt12" style="padding:14px;font-size:15px;font-weight:800" onclick="completeSale()">
             ✅ Complete Sale & Generate Token
           </button>
@@ -908,9 +938,11 @@ function renderPOS(){
     </div>
   </div>`;
 }
+
 function initPOS(){
   filterServices('chair',document.querySelector('.tab.active'));
 }
+
 function filterServices(category,el){
   document.querySelectorAll('#pos-service-tabs .tab').forEach(t=>t.classList.remove('active'));
   if(el)el.classList.add('active');
@@ -943,6 +975,7 @@ function filterServices(category,el){
     <div class="s-dur">${s.duration?fmt.duration(s.duration):'Multi-use'}</div>
   </div>`).join('');
 }
+
 function addCustomService(){
   const name=document.getElementById('custom-svc-name')?.value||'Custom';
   const price=parseInt(document.getElementById('custom-svc-price')?.value)||0;
@@ -950,6 +983,7 @@ function addCustomService(){
   STATE.posOrder.push({id:'custom_'+uid(),name,duration:0,price,category:'custom',icon:'🔧'});
   updateOrderSummary();
 }
+
 function selectService(id){
   const svc=getServices().find(s=>s.id===id);
   if(!svc)return;
@@ -958,6 +992,7 @@ function selectService(id){
   else{STATE.posOrder.push({...svc});toast('Added: '+svc.name,'success');}
   updateOrderSummary();
 }
+
 function updateOrderSummary(){
   const items=document.getElementById('order-items');
   const totals=document.getElementById('pos-totals');
@@ -979,12 +1014,15 @@ function updateOrderSummary(){
   document.getElementById('pos-subtotal').textContent=fmt.currency(subtotal);
   document.getElementById('pos-total').textContent=fmt.currency(subtotal);
 }
+
 function selectPayment(mode,el){
   document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));
   if(el)el.classList.add('selected');
   STATE.posPayment=mode;
 }
+
 function applyDiscount(){toast('Discount applied','success')}
+
 async function completeSale(){
   if(!STATE.posOrder.length){toast('Add at least one service','error');return}
   if(!STATE.posPayment){toast('Select payment method','error');return}
@@ -1009,6 +1047,7 @@ async function completeSale(){
     duration:firstSvc.duration||0,type:'session'
   };
   DB.push('transactions',txn);
+
   // Loyalty points
   if(phone){
     const cfg=getConfig();
@@ -1018,6 +1057,7 @@ async function completeSale(){
     loyalty.history.push({ts:txn.ts,pts,reason:'Purchase',txnId:txn.id});
     DB.set('loyalty_'+phone,loyalty);
   }
+
   // ESP32
   let espResult={success:false,reason:'Not triggered'};
   if(firstSvc.duration>0&&loc.esp32?.ip){
@@ -1030,12 +1070,14 @@ async function completeSale(){
       toast(`ESP32: ${espResult.reason} — Token issued but chair not auto-started`,'warn',5000);
     }
   }
+
   // Show receipt
   showReceipt(txn,espResult);
   STATE.posOrder=[];STATE.posPayment=null;
   updateOrderSummary();
   document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));
 }
+
 function showReceipt(txn,espResult){
   modal(`<div class="modal">
     <div class="modal-header"><h3>✅ Sale Complete!</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
@@ -1070,6 +1112,7 @@ function showReceipt(txn,espResult){
           <div style="font-size:13px;font-weight:700">${fmt.time(txn.ts)}</div>
         </div>
       </div>
+
       ${txn.customerPhone?`<div class="alert alert-success mt12">⭐ Loyalty points earned: +${Math.floor(txn.amount/100*getConfig().loyaltyRate)} pts</div>`:''}
     </div>
     <div class="modal-footer">
@@ -1078,7 +1121,9 @@ function showReceipt(txn,espResult){
     </div>
   </div>`);
 }
+
 function clearPOS(){STATE.posOrder=[];STATE.posPayment=null;updateOrderSummary();document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));}
+
 function lookupCustomer(){
   const phone=document.getElementById('pos-phone')?.value;
   if(!phone||phone.length<10)return;
@@ -1092,6 +1137,7 @@ function lookupCustomer(){
     el.innerHTML=`<div class="alert alert-success">🆕 New customer — will earn loyalty points on purchase</div>`;
   }
 }
+
 // ─── QUEUE ────────────────────────────────────────────────────────
 function renderQueue(){
   return `
@@ -1103,10 +1149,12 @@ function renderQueue(){
     <div class="empty-state"><div class="es-icon">⏱️</div><p>No active sessions right now</p></div>
   </div>`;
 }
+
 function initQueue(){
   renderQueueItems();
   setInterval(renderQueueItems,5000);
 }
+
 function renderQueueItems(){
   const el=document.getElementById('queue-container');
   if(!el)return;
@@ -1135,18 +1183,21 @@ function renderQueueItems(){
     </div>`;
   }).join('');
 }
+
 function refreshQueue(){renderQueueItems();toast('Queue refreshed','info')}
 function endSession(key){
   delete STATE.activeTimers[key];
   renderQueueItems();
   toast('Session ended','success');
 }
+
 // ─── DAILY REPORT ─────────────────────────────────────────────────
 function renderDailyReport(){
   const loc=STATE.locationCode?getLocation(STATE.locationCode):null;
   const today=new Date().toISOString().slice(0,10);
   const report=DB.get(`report_${loc?.code||'ALL'}_${today}`)||{};
   const locs=loc?[loc]:getLocations().filter(l=>l.active&&!l.isVendor);
+
   return `
   <div class="page-header">
     <h1>📋 Daily Report</h1>
@@ -1160,10 +1211,12 @@ function renderDailyReport(){
       <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
     </div>
   </div>
+
   <div id="report-body">
   ${renderReportBody(loc,today,report)}
   </div>`;
 }
+
 function renderReportBody(loc,date,report){
   const txns=(DB.get('transactions')||[]).filter(t=>{
     const tDate=t.ts?.slice(0,10);
@@ -1174,6 +1227,7 @@ function renderReportBody(loc,date,report){
   const upiRev=txns.filter(t=>t.paymentMode==='upi').reduce((s,t)=>s+(t.amount||0),0);
   const cashRev=txns.filter(t=>t.paymentMode==='cash').reduce((s,t)=>s+(t.amount||0),0);
   const sessions=txns.filter(t=>t.type==='session').length;
+
   return `
   <div class="report-section">
     <h3>📊 Revenue Summary</h3>
@@ -1186,6 +1240,7 @@ function renderReportBody(loc,date,report){
       <div class="report-cell"><div class="report-cell-label">Other</div><div class="report-cell-value">${fmt.currency(totalRev-upiRev-cashRev)}</div></div>
     </div>
   </div>
+
   <div class="report-section">
     <h3>🪑 Equipment Status</h3>
     <div class="report-grid">
@@ -1203,6 +1258,7 @@ function renderReportBody(loc,date,report){
       </div>
     </div>
   </div>
+
   <div class="report-section">
     <h3>💡 Utilities</h3>
     <div class="report-grid">
@@ -1220,6 +1276,7 @@ function renderReportBody(loc,date,report){
       </div>
     </div>
   </div>
+
   <div class="report-section">
     <h3>👥 Staff & Attendance</h3>
     <div class="form-row">
@@ -1233,6 +1290,7 @@ function renderReportBody(loc,date,report){
       </div>
     </div>
   </div>
+
   <div class="report-section">
     <h3>🧹 Housekeeping</h3>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
@@ -1243,6 +1301,7 @@ function renderReportBody(loc,date,report){
       </label>`).join('')}
     </div>
   </div>
+
   <div class="report-section">
     <h3>📦 Inventory Check</h3>
     <div class="report-grid">
@@ -1257,6 +1316,7 @@ function renderReportBody(loc,date,report){
       </div>`).join('')}
     </div>
   </div>
+
   <div class="report-section">
     <h3>⚠️ Incidents & Remarks</h3>
     <div class="form-group">
@@ -1268,6 +1328,7 @@ function renderReportBody(loc,date,report){
       <textarea class="report-input" data-field="remarks" placeholder="General remarks, suggestions, or notes to management" rows="3">${report.remarks||''}</textarea>
     </div>
   </div>
+
   <div class="report-section">
     <h3>💰 Cash Reconciliation</h3>
     <div class="report-grid">
@@ -1288,6 +1349,7 @@ function renderReportBody(loc,date,report){
     </div>
   </div>`;
 }
+
 function saveReport(){
   const loc=document.getElementById('report-loc-select')?.value||STATE.locationCode||'ALL';
   const date=document.getElementById('report-date')?.value||new Date().toISOString().slice(0,10);
@@ -1299,7 +1361,9 @@ function saveReport(){
   DB.set(`report_${loc}_${date}`,report);
   toast('Report saved!','success');
 }
+
 function reloadReport(){navigate('daily-report')}
+
 // ─── DATA HISTORY ─────────────────────────────────────────────────
 function renderDataHistory(){
   return `
@@ -1318,14 +1382,17 @@ function renderDataHistory(){
   </div>
   <div id="history-content"></div>`;
 }
+
 function initDataHistoryTabs(){
   showHistoryTab('transactions',document.querySelector('#history-tabs .tab'));
 }
+
 function showHistoryTab(tab,el){
   document.querySelectorAll('#history-tabs .tab').forEach(t=>t.classList.remove('active'));
   if(el)el.classList.add('active');
   const el2=document.getElementById('history-content');
   if(!el2)return;
+
   if(tab==='transactions'){
     const txns=(DB.get('transactions')||[]).filter(t=>!STATE.locationCode||t.locationCode===STATE.locationCode).slice().reverse();
     const filterLoc=STATE.locationCode?`Location: ${getLocation(STATE.locationCode)?.name}`:'All Locations';
@@ -1378,6 +1445,7 @@ function showHistoryTab(tab,el){
     </div>`;
   }
 }
+
 function renderTxnTable(txns){
   if(!txns.length)return '<div class="empty-state"><div class="es-icon">💳</div><p>No transactions found</p></div>';
   return `<table><thead><tr><th>Date/Time</th><th>Location</th><th>Service</th><th>Customer</th><th>Amount</th><th>Mode</th><th>Token</th><th>Staff</th></tr></thead>
@@ -1392,6 +1460,7 @@ function renderTxnTable(txns){
     <td>${fmt.truncate(t.staffName||'—',16)}</td>
   </tr>`).join('')}</tbody></table>`;
 }
+
 function filterTxns(q){
   const mode=document.getElementById('txn-mode-filter')?.value||'';
   const txns=(DB.get('transactions')||[]).filter(t=>{
@@ -1403,6 +1472,7 @@ function filterTxns(q){
   const wrap=document.getElementById('txn-table-wrap');
   if(wrap)wrap.innerHTML=renderTxnTable(txns);
 }
+
 function renderPhonePeTable(data){
   if(!data.length)return '';
   return `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Type</th><th>Status</th></tr></thead>
@@ -1414,6 +1484,7 @@ function renderPhonePeTable(data){
     <td>${d.status||'—'}</td>
   </tr>`).join('')}</tbody></table></div>`;
 }
+
 function renderB2BTable(data){
   return `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Company</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
   <tbody>${data.slice().reverse().slice(0,100).map(d=>`<tr>
@@ -1424,6 +1495,7 @@ function renderB2BTable(data){
     <td><button class="btn btn-secondary btn-xs" onclick="editB2B('${d.id}')">Edit</button></td>
   </tr>`).join('')}</tbody></table>`;
 }
+
 function addB2BTxn(){
   modal(`<div class="modal">
     <div class="modal-header"><h3>➕ Add B2B Transaction</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
@@ -1444,10 +1516,12 @@ function addB2BTxn(){
     </div>
   </div>`);
 }
+
 function saveB2BTxn(){
   const txn={id:uid(),company:document.getElementById('b2b-company')?.value,contact:document.getElementById('b2b-contact')?.value,amount:parseInt(document.getElementById('b2b-amount')?.value)||0,date:document.getElementById('b2b-date')?.value,notes:document.getElementById('b2b-notes')?.value,status:'Active',ts:new Date().toISOString()};
   DB.push('b2b-transactions',txn);closeModal();showHistoryTab('b2b',null);toast('B2B transaction saved','success');
 }
+
 function exportData(){
   const data=DB.all();
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
@@ -1455,6 +1529,7 @@ function exportData(){
   const a=document.createElement('a');a.href=url;a.download=`arama-export-${new Date().toISOString().slice(0,10)}.json`;a.click();
   toast('Data exported!','success');
 }
+
 function importData(e){
   const file=e.target.files?.[0];if(!file)return;
   const reader=new FileReader();
@@ -1466,6 +1541,7 @@ function importData(e){
     }catch(err){toast('Invalid JSON file','error')}
   };reader.readAsText(file);
 }
+
 function importPhonePe(e){
   const file=e.target.files?.[0];if(!file)return;
   const reader=new FileReader();
@@ -1488,6 +1564,7 @@ function importPhonePe(e){
     }catch(err){toast('Import failed: '+err.message,'error')}
   };reader.readAsText(file);
 }
+
 // ─── LOCATIONS ────────────────────────────────────────────────────
 function renderLocations(){
   const locs=getLocations();
@@ -1505,13 +1582,16 @@ function renderLocations(){
       ${hasRole('admin')?`<button class="btn btn-primary" onclick="addLocation()">+ Add Location</button>`:''}
     </div>
   </div>
+
   <div id="loc-grid" class="grid3">
     ${locs.map(l=>renderLocationCard(l)).join('')}
   </div>`;
 }
+
 function initLocFilter(){
   // no-op, filtering is on-demand
 }
+
 function renderLocationCard(l){
   const txns=DB.get('transactions')||[];
   const today=new Date().toDateString();
@@ -1534,6 +1614,7 @@ function renderLocationCard(l){
     ${l.meterBalance>0&&l.meterBalance<500?`<div class="flex ac gap4 mt8"><span class="health-dot health-red"></span><span class="small text-red">Low meter: ₹${l.meterBalance}</span></div>`:''}
   </div>`;
 }
+
 function filterLocations(q){
   const zone=document.getElementById('loc-zone-filter')?.value||'';
   const locs=getLocations().filter(l=>{
@@ -1544,12 +1625,14 @@ function filterLocations(q){
   const grid=document.getElementById('loc-grid');
   if(grid)grid.innerHTML=locs.map(l=>renderLocationCard(l)).join('');
 }
+
 function openLocation(code){
   const l=getLocation(code);if(!l)return;
   const txns=(DB.get('transactions')||[]).filter(t=>t.locationCode===code);
   const totalRev=txns.reduce((s,t)=>s+(t.amount||0),0);
   const thisMonth=new Date().toISOString().slice(0,7);
   const monthRev=txns.filter(t=>t.ts?.startsWith(thisMonth)).reduce((s,t)=>s+(t.amount||0),0);
+
   modal(`<div class="modal modal-lg">
     <div class="modal-header">
       <div>
@@ -1567,6 +1650,7 @@ function openLocation(code){
         <div class="report-cell"><div class="report-cell-label">This Month</div><div class="report-cell-value text-blue">${fmt.currency(monthRev)}</div></div>
         <div class="report-cell"><div class="report-cell-label">Chairs</div><div class="report-cell-value">${l.chairs}</div></div>
       </div>
+
       <div class="tabs">
         <div class="tab active" onclick="showLocTab('details','${code}',this)">Details</div>
         <div class="tab" onclick="showLocTab('utilities','${code}',this)">Utilities</div>
@@ -1582,6 +1666,7 @@ function openLocation(code){
     </div>
   </div>`);
 }
+
 function showLocTab(tab,code,el){
   document.querySelectorAll('#loc-tab-body').forEach(()=>{});
   document.querySelectorAll('.modal .tab').forEach(t=>t.classList.remove('active'));
@@ -1589,6 +1674,7 @@ function showLocTab(tab,code,el){
   const l=getLocation(code);
   document.getElementById('loc-tab-body').innerHTML=renderLocTab(tab,l);
 }
+
 function renderLocTab(tab,l){
   if(tab==='details') return `
     <div class="form-row">
@@ -1627,6 +1713,7 @@ function renderLocTab(tab,l){
         Vendor Location
       </label>
     </div>`;
+
   if(tab==='utilities') return `
     <div class="form-row">
       <div class="form-group"><label>Electricity Meter Balance (₹)</label><input type="number" id="lf-meterBalance" value="${l.meterBalance||0}"></div>
@@ -1638,6 +1725,7 @@ function renderLocTab(tab,l){
     </div>
     <div class="form-group"><label>Last Internet Recharge Date</label><input type="date" id="lf-internetLastRecharged" value="${l.internetLastRecharged?.slice(0,10)||''}"></div>
     ${l.meterBalance<500&&l.meterBalance>0?'<div class="alert alert-error">⚠️ Low meter balance! Please recharge soon.</div>':''}`;
+
   if(tab==='inventory') return `
     <div class="form-row">
       <div class="form-group"><label>Massage Chairs</label><input type="number" id="lf-inv-chairs" value="${l.inventory?.chairs||0}"></div>
@@ -1657,6 +1745,7 @@ function renderLocTab(tab,l){
       <label class="toggle"><input type="checkbox" id="lf-inv-cleaningKit" ${l.inventory?.cleaningKit?'checked':''}><span class="toggle-slider"></span></label>
     </div>
     <div class="form-group"><label>Other Items</label><input type="text" id="lf-inv-other" value="${(l.inventory?.otherItems||[]).join(', ')}" placeholder="Comma-separated list"></div>`;
+
   if(tab==='esp32') return `
     <div class="alert alert-info mb16">📡 ESP32 WiFi 4-Channel Relay Module controls chairs via local WiFi. Enter the module's local IP address.</div>
     <div class="form-row">
@@ -1673,6 +1762,7 @@ function renderLocTab(tab,l){
       </div>`).join('')}
     </div>
     <button class="btn btn-secondary btn-sm mt8" onclick="testESP32('${l.code}')">🔌 Test Connection</button>`;
+
   if(tab==='remarks') return `
     <div class="form-group"><label>Staff Remarks (visible to admin)</label>
       <textarea id="lf-remarks" rows="5" placeholder="Any issues, observations, or notes about this location...">${l.remarks||''}</textarea>
@@ -1680,13 +1770,16 @@ function renderLocTab(tab,l){
     <div class="form-group"><label>Admin Notes (internal)</label>
       <textarea id="lf-adminNotes" rows="4" placeholder="Admin-only notes...">${l.adminNotes||''}</textarea>
     </div>`;
+
   return '';
 }
+
 function saveLocationFromModal(code){
   const locs=getLocations();
   const idx=locs.findIndex(l=>l.code===code);
   if(idx<0)return;
   const l={...locs[idx]};
+
   // Details
   if(document.getElementById('lf-name'))l.name=document.getElementById('lf-name').value;
   if(document.getElementById('lf-fullName'))l.fullName=document.getElementById('lf-fullName').value;
@@ -1700,12 +1793,14 @@ function saveLocationFromModal(code){
   if(document.getElementById('lf-vendorName'))l.vendorName=document.getElementById('lf-vendorName').value;
   if(document.getElementById('lf-active'))l.active=document.getElementById('lf-active').checked;
   if(document.getElementById('lf-isVendor'))l.isVendor=document.getElementById('lf-isVendor').checked;
+
   // Utilities
   if(document.getElementById('lf-meterBalance'))l.meterBalance=parseFloat(document.getElementById('lf-meterBalance').value)||0;
   if(document.getElementById('lf-meterLastUpdated'))l.meterLastUpdated=document.getElementById('lf-meterLastUpdated').value;
   if(document.getElementById('lf-internetProvider'))l.internetProvider=document.getElementById('lf-internetProvider').value;
   if(document.getElementById('lf-internetBalance'))l.internetBalance=document.getElementById('lf-internetBalance').value;
   if(document.getElementById('lf-internetLastRecharged'))l.internetLastRecharged=document.getElementById('lf-internetLastRecharged').value;
+
   // Inventory
   if(document.getElementById('lf-inv-chairs'))l.inventory={...l.inventory,
     chairs:parseInt(document.getElementById('lf-inv-chairs')?.value)||0,
@@ -1717,6 +1812,7 @@ function saveLocationFromModal(code){
     cleaningKit:document.getElementById('lf-inv-cleaningKit')?.checked||false,
     otherItems:(document.getElementById('lf-inv-other')?.value||'').split(',').map(s=>s.trim()).filter(Boolean)
   };
+
   // ESP32
   if(document.getElementById('lf-esp-ip'))l.esp32={...l.esp32,
     ip:document.getElementById('lf-esp-ip').value,
@@ -1729,11 +1825,14 @@ function saveLocationFromModal(code){
       4:{equipmentCode:document.getElementById('lf-esp-ch4-eq')?.value||'',label:document.getElementById('lf-esp-ch4-label')?.value||''}
     }
   };
+
   // Remarks
   if(document.getElementById('lf-remarks'))l.remarks=document.getElementById('lf-remarks').value;
   if(document.getElementById('lf-adminNotes'))l.adminNotes=document.getElementById('lf-adminNotes').value;
+
   locs[idx]=l;DB.set('locations',locs);closeModal();navigate('locations');toast('Location saved!','success');
 }
+
 async function testESP32(code){
   const l=getLocation(code);
   const ip=document.getElementById('lf-esp-ip')?.value||l.esp32?.ip;
@@ -1745,21 +1844,25 @@ async function testESP32(code){
     toast('ESP32 connected! Status: '+JSON.stringify(data),'success',5000);
   }catch(e){toast('ESP32 unreachable: '+e.message,'error',5000)}
 }
+
 function addLocation(){
   const newLoc={...LOCATIONS_DEFAULT[0],code:'NEW-'+uid().slice(0,4).toUpperCase(),name:'New Location',fullName:'New Location',station:'',city:'',active:false,phonepeTotal:0};
   const locs=getLocations();locs.push(newLoc);DB.set('locations',locs);
   openLocation(newLoc.code);toast('New location created — fill in the details','info');
 }
+
 // ─── USERS & ROLES ────────────────────────────────────────────────
 function renderUsers(){
   const users=getUsers();
   const pending=DB.get('pending-staff')||[];
   const pendingPending=pending.filter(r=>r.status==='pending');
+
   return `
   <div class="page-header">
     <h1>👥 Users & Roles</h1>
     <button class="btn btn-primary" onclick="addUser()">+ Add User</button>
   </div>
+
   ${pendingPending.length>0?`
   <div class="card mb16">
     <div class="card-header">
@@ -1783,6 +1886,7 @@ function renderUsers(){
       </table>
     </div>
   </div>`:''}
+
   <div class="card">
     <div class="flex ac jb mb12">
       <h3>All Users (${users.length})</h3>
@@ -1804,6 +1908,7 @@ function renderUsers(){
     </div>
   </div>`;
 }
+
 function renderUserRows(users){
   return users.map(u=>`<tr>
     <td>
@@ -1820,7 +1925,9 @@ function renderUserRows(users){
     </td>
   </tr>`).join('');
 }
+
 function initUsersFilter(){}
+
 function filterUsersList(q){
   const role=document.getElementById('user-role-filter')?.value||'';
   const users=getUsers().filter(u=>{
@@ -1831,6 +1938,7 @@ function filterUsersList(q){
   const tbody=document.getElementById('users-tbody');
   if(tbody)tbody.innerHTML=renderUserRows(users);
 }
+
 function addUser(){
   modal(`<div class="modal">
     <div class="modal-header"><h3>➕ Add User</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
@@ -1864,6 +1972,7 @@ function addUser(){
     </div>
   </div>`);
 }
+
 function saveNewUser(){
   const name=document.getElementById('nu-name').value;
   const username=document.getElementById('nu-username').value;
@@ -1874,6 +1983,7 @@ function saveNewUser(){
   const newUser={id:uid(),name,username,password,phone:document.getElementById('nu-phone').value,email:document.getElementById('nu-email').value,role:document.getElementById('nu-role').value,locationCode:document.getElementById('nu-location').value,active:true,joined:new Date().toISOString()};
   users.push(newUser);DB.set('users',users);closeModal();navigate('users');toast('User created! Credentials: '+username+'/'+password,'success',6000);
 }
+
 function editUser(id){
   const user=getUsers().find(u=>u.id===id);if(!user)return;
   modal(`<div class="modal">
@@ -1907,6 +2017,7 @@ function editUser(id){
     </div>
   </div>`);
 }
+
 function updateUser(id){
   const users=getUsers();
   const idx=users.findIndex(u=>u.id===id);if(idx<0)return;
@@ -1920,12 +2031,14 @@ function updateUser(id){
   };
   DB.set('users',users);closeModal();navigate('users');toast('User updated!','success');
 }
+
 function toggleUserActive(id){
   const users=getUsers();
   const idx=users.findIndex(u=>u.id===id);if(idx<0)return;
   users[idx].active=!users[idx].active;
   DB.set('users',users);navigate('users');toast(`User ${users[idx].active?'activated':'deactivated'}`,'success');
 }
+
 function approveStaff(id){
   const pending=DB.get('pending-staff')||[];
   const r=pending.find(p=>p.id===id);if(!r)return;
@@ -1937,12 +2050,14 @@ function approveStaff(id){
   toast(`${r.name} approved! Login: ${newUser.username} / ${newUser.password}`,'success',8000);
   STATE.pendingApprovals--;navigate('users');
 }
+
 function rejectStaff(id){
   const pending=DB.get('pending-staff')||[];
   const idx=pending.findIndex(p=>p.id===id);if(idx<0)return;
   pending[idx].status='rejected';DB.set('pending-staff',pending);
   STATE.pendingApprovals--;navigate('users');toast('Registration rejected','info');
 }
+
 // ─── HRMS ─────────────────────────────────────────────────────────
 function renderHRMS(){
   const users=getUsers().filter(u=>u.role==='staff'||u.role==='supervisor');
@@ -1955,6 +2070,7 @@ function renderHRMS(){
       <button class="btn btn-secondary" onclick="hrmsTab('compliance',this)">✅ Compliance</button>
     </div>
   </div>
+
   <div class="grid2 mb16">
     <div class="stat-card green">
       <div class="stat-label">Staff Count</div>
@@ -1967,6 +2083,7 @@ function renderHRMS(){
       <div class="stat-sub">of ${getLocations().filter(l=>l.active).length} active locations</div>
     </div>
   </div>
+
   <div class="card">
     <div class="card-header"><h3>👤 Staff Directory</h3></div>
     <div class="table-wrap">
@@ -1985,6 +2102,7 @@ function renderHRMS(){
       </table>
     </div>
   </div>
+
   <div class="card mt16">
     <div class="card-header"><h3>📊 Performance by Location</h3></div>
     <div class="table-wrap">
@@ -2003,7 +2121,9 @@ function renderHRMS(){
     </div>
   </div>`;
 }
+
 function hrmsTab(tab,el){}
+
 function viewStaffProfile(id){
   const u=getUsers().find(x=>x.id===id);if(!u)return;
   const txns=(DB.get('transactions')||[]).filter(t=>t.staffId===id);
@@ -2035,8 +2155,10 @@ function viewStaffProfile(id){
     <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal()">Close</button></div>
   </div>`);
 }
+
 // ─── CRM ──────────────────────────────────────────────────────────
 const CRM_STAGES = ['New Lead','First Call Attempted','Call Back Requested','Connected','Qualified','Needs Assessment','Proposal Sent','Follow-Up','Negotiation','Decision Pending','Verbal Commitment','Agreement Signed','Onboarding','Active','Upsell Opportunity','Closed Lost'];
+
 function renderCRM(){
   const leads=DB.get('crm-leads')||[];
   return `
@@ -2044,6 +2166,7 @@ function renderCRM(){
     <h1>🤝 CRM / Leads</h1>
     <button class="btn btn-primary" onclick="addLead()">+ Add Lead</button>
   </div>
+
   <div class="grid4 mb16">
     ${['New Lead','Connected','Active','Closed Lost'].map(stage=>`
     <div class="stat-card ${stage==='Active'?'green':stage==='Closed Lost'?'orange':'blue'}">
@@ -2051,6 +2174,7 @@ function renderCRM(){
       <div class="stat-value">${leads.filter(l=>l.stage===stage).length}</div>
     </div>`).join('')}
   </div>
+
   <div class="card">
     <div class="flex ac jb mb12">
       <h3>All Leads (${leads.length})</h3>
@@ -2067,6 +2191,7 @@ function renderCRM(){
     </div>
   </div>`;
 }
+
 function renderLeadTable(leads){
   if(!leads.length)return '<div class="empty-state"><div class="es-icon">🤝</div><p>No leads yet. Add your first B2B lead!</p></div>';
   return `<table><thead><tr><th>Company</th><th>Contact</th><th>Stage</th><th>Value (₹)</th><th>Last Contact</th><th>Actions</th></tr></thead>
@@ -2079,6 +2204,7 @@ function renderLeadTable(leads){
     <td><button class="btn btn-secondary btn-xs" onclick="editLead('${l.id}')">✏️ Edit</button></td>
   </tr>`).join('')}</tbody></table>`;
 }
+
 function filterLeads(q){
   const stage=document.getElementById('crm-stage-filter')?.value||'';
   const leads=(DB.get('crm-leads')||[]).filter(l=>{
@@ -2088,6 +2214,7 @@ function filterLeads(q){
   });
   const el=document.getElementById('crm-table');if(el)el.innerHTML=renderLeadTable(leads);
 }
+
 function addLead(){
   modal(`<div class="modal">
     <div class="modal-header"><h3>➕ Add Lead</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
@@ -2114,10 +2241,12 @@ function addLead(){
     </div>
   </div>`);
 }
+
 function saveLead(){
   const lead={id:uid(),company:document.getElementById('nl-company').value,industry:document.getElementById('nl-industry').value,contactName:document.getElementById('nl-contact').value,phone:document.getElementById('nl-phone').value,value:parseInt(document.getElementById('nl-value').value)||0,stage:document.getElementById('nl-stage').value,notes:document.getElementById('nl-notes').value,ts:new Date().toISOString(),lastContact:new Date().toISOString(),createdBy:STATE.user.id};
   DB.push('crm-leads',lead);closeModal();navigate('crm');toast('Lead added!','success');
 }
+
 function editLead(id){
   const lead=(DB.get('crm-leads')||[]).find(l=>l.id===id);if(!lead)return;
   modal(`<div class="modal">
@@ -2143,16 +2272,19 @@ function editLead(id){
     </div>
   </div>`);
 }
+
 function updateLead(id){
   const leads=DB.get('crm-leads')||[];
   const idx=leads.findIndex(l=>l.id===id);if(idx<0)return;
   leads[idx]={...leads[idx],company:document.getElementById('el-company').value,contactName:document.getElementById('el-contact').value,phone:document.getElementById('el-phone').value,value:parseInt(document.getElementById('el-value').value)||0,stage:document.getElementById('el-stage').value,notes:document.getElementById('el-notes').value,lastContact:new Date().toISOString()};
   DB.set('crm-leads',leads);closeModal();navigate('crm');toast('Lead updated!','success');
 }
+
 function deleteLead(id){
   const leads=(DB.get('crm-leads')||[]).filter(l=>l.id!==id);
   DB.set('crm-leads',leads);closeModal();navigate('crm');toast('Lead deleted','info');
 }
+
 // ─── LOYALTY ──────────────────────────────────────────────────────
 function renderLoyalty(){
   return `
@@ -2160,6 +2292,7 @@ function renderLoyalty(){
     <h1>⭐ Loyalty Program</h1>
     <button class="btn btn-primary" onclick="lookupLoyaltyCustomer()">🔍 Look Up Customer</button>
   </div>
+
   <div class="grid3 mb16">
     <div class="stat-card gold">
       <div class="stat-label">Total Members</div>
@@ -2175,10 +2308,12 @@ function renderLoyalty(){
       <div class="stat-value text-green">—</div>
     </div>
   </div>
+
   <div class="card mb16">
     <div class="card-header"><h3>⭐ Loyalty Rules</h3>${hasRole('admin')?`<button class="btn btn-secondary btn-sm" onclick="navigate('admin-config')">Edit Rules</button>`:''}</div>
     ${renderLoyaltyRules()}
   </div>
+
   <div class="card">
     <div class="card-header">
       <h3>👥 Top Members</h3>
@@ -2189,6 +2324,7 @@ function renderLoyalty(){
     </div>
   </div>`;
 }
+
 function getLoyaltyMembers(){
   const members=[];
   for(let i=0;i<localStorage.length;i++){
@@ -2199,6 +2335,7 @@ function getLoyaltyMembers(){
   }
   return members;
 }
+
 function renderLoyaltyRules(){
   const cfg=getConfig();
   return `<div class="grid3">
@@ -2210,6 +2347,7 @@ function renderLoyaltyRules(){
     <div class="report-cell"><div class="report-cell-label">Sign-up Bonus</div><div class="report-cell-value">50 pts</div></div>
   </div>`;
 }
+
 function renderLoyaltyTable(members){
   if(!members.length)return '<div class="empty-state"><div class="es-icon">⭐</div><p>No loyalty members yet</p></div>';
   return `<table><thead><tr><th>Phone</th><th>Name</th><th>Points</th><th>Value</th><th>Transactions</th><th>Action</th></tr></thead>
@@ -2222,10 +2360,12 @@ function renderLoyaltyTable(members){
     <td><button class="btn btn-secondary btn-xs" onclick="viewLoyaltyMember('${m.phone}')">View</button></td>
   </tr>`).join('')}</tbody></table>`;
 }
+
 function searchLoyalty(q){
   const members=getLoyaltyMembers().filter(m=>!q||m.phone.includes(q)||(m.name||'').toLowerCase().includes(q.toLowerCase())).sort((a,b)=>b.points-a.points).slice(0,50);
   const el=document.getElementById('loyalty-list');if(el)el.innerHTML=renderLoyaltyTable(members);
 }
+
 function lookupLoyaltyCustomer(){
   modal(`<div class="modal" style="max-width:400px">
     <div class="modal-header"><h3>🔍 Look Up Customer</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
@@ -2236,6 +2376,7 @@ function lookupLoyaltyCustomer(){
     </div>
   </div>`);
 }
+
 function doLoyaltyLookup(){
   const phone=document.getElementById('lc-phone')?.value;
   if(!phone||phone.length<10){toast('Enter 10-digit phone','error');return}
@@ -2253,6 +2394,7 @@ function doLoyaltyLookup(){
     <button class="btn btn-primary" onclick="adjustLoyaltyPoints('${phone}')">Apply</button>
   </div></div>`:''}`;
 }
+
 function adjustLoyaltyPoints(phone){
   const adj=parseInt(document.getElementById('lc-adjust')?.value)||0;if(!adj)return;
   const m=DB.get('loyalty_'+phone)||{phone,points:0,history:[]};
@@ -2261,6 +2403,7 @@ function adjustLoyaltyPoints(phone){
   DB.set('loyalty_'+phone,m);
   doLoyaltyLookup();toast(`Points ${adj>0?'added':'deducted'}: ${Math.abs(adj)} pts`,'success');
 }
+
 function viewLoyaltyMember(phone){
   const m=DB.get('loyalty_'+phone);if(!m)return;
   modal(`<div class="modal">
@@ -2278,6 +2421,7 @@ function viewLoyaltyMember(phone){
     <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal()">Close</button></div>
   </div>`);
 }
+
 // ─── ESP32 CONSOLE ────────────────────────────────────────────────
 function renderESP32Console(){
   const locs=getLocations().filter(l=>l.esp32?.ip);
@@ -2286,9 +2430,11 @@ function renderESP32Console(){
     <h1>⚡ ESP32 Console</h1>
     <span class="badge badge-purple">Admin Only</span>
   </div>
+
   <div class="alert alert-info mb16">
     📡 <strong>ESP32 WiFi 4-Channel Relay Module</strong> controls chairs via local WiFi. Each location needs its own ESP32 with a static IP on the kiosk WiFi network. Chairs are activated on token generation via HTTP POST.
   </div>
+
   <div class="grid2 mb16">
     <div class="stat-card green">
       <div class="stat-label">Configured ESP32s</div>
@@ -2300,6 +2446,7 @@ function renderESP32Console(){
       <div class="stat-value text-accent">${Object.keys(STATE.activeTimers).length}</div>
     </div>
   </div>
+
   <div class="card mb16">
     <div class="card-header"><h3>🔌 Manual Relay Control</h3></div>
     <div class="form-row">
@@ -2330,6 +2477,7 @@ function renderESP32Console(){
     </div>
     <div id="esp-result" class="mt12"></div>
   </div>
+
   <div class="card">
     <div class="card-header"><h3>📋 ESP32 Location Summary</h3></div>
     <div class="table-wrap">
@@ -2347,6 +2495,7 @@ function renderESP32Console(){
     </div>
   </div>`;
 }
+
 function loadESPChannels(){
   const code=document.getElementById('esp-loc-select')?.value;
   if(!code)return;
@@ -2359,6 +2508,7 @@ function loadESPChannels(){
   }).join('');
   document.getElementById('esp-token').value=generateToken(l.code,(l.esp32?.channels?.[1]?.equipmentCode||'1A'));
 }
+
 async function manualESP32Activate(){
   const code=document.getElementById('esp-loc-select')?.value;
   if(!code){toast('Select a location','error');return}
@@ -2370,6 +2520,7 @@ async function manualESP32Activate(){
   const el=document.getElementById('esp-result');
   if(el)el.innerHTML=`<div class="alert ${result.success?'alert-success':'alert-error'}">${result.success?'✅ Channel activated!':'❌ '+result.reason}</div>`;
 }
+
 async function manualESP32Deactivate(){
   const code=document.getElementById('esp-loc-select')?.value;
   if(!code){toast('Select a location','error');return}
@@ -2379,6 +2530,7 @@ async function manualESP32Deactivate(){
   const el=document.getElementById('esp-result');
   if(el)el.innerHTML=`<div class="alert ${result.success?'alert-success':'alert-error'}">${result.success?'✅ Channel deactivated!':'❌ Failed to deactivate'}</div>`;
 }
+
 async function testESP32Status(){
   const code=document.getElementById('esp-loc-select')?.value;
   if(!code){toast('Select a location','error');return}
@@ -2394,6 +2546,7 @@ async function testESP32Status(){
     if(el)el.innerHTML=`<div class="alert alert-error">❌ ESP32 unreachable: ${e.message}</div>`;
   }
 }
+
 // ─── ADMIN CONFIG ─────────────────────────────────────────────────
 function renderAdminConfig(){
   const cfg=getConfig();
@@ -2402,6 +2555,7 @@ function renderAdminConfig(){
     <h1>⚙️ Admin Configuration</h1>
     <button class="btn btn-success" onclick="saveAdminConfig()">💾 Save All Settings</button>
   </div>
+
   <div class="tabs" id="config-tabs">
     <div class="tab active" onclick="showConfigTab('general',this)">General</div>
     <div class="tab" onclick="showConfigTab('loyalty',this)">Loyalty</div>
@@ -2414,11 +2568,13 @@ function renderAdminConfig(){
     ${renderConfigTab('general',cfg)}
   </div>`;
 }
+
 function showConfigTab(tab,el){
   document.querySelectorAll('#config-tabs .tab').forEach(t=>t.classList.remove('active'));
   if(el)el.classList.add('active');
   document.getElementById('config-body').innerHTML=renderConfigTab(tab,getConfig());
 }
+
 function renderConfigTab(tab,cfg){
   if(tab==='general') return `
     <div class="card">
@@ -2433,6 +2589,7 @@ function renderConfigTab(tab,cfg){
       </div>
       <div class="form-group"><label>Auto Report Time</label><input type="time" id="cfg-reportTime" value="${cfg.autoReportTime||'20:00'}"></div>
     </div>`;
+
   if(tab==='loyalty') return `
     <div class="card">
       <div class="card-header"><h3>⭐ Loyalty Rules</h3></div>
@@ -2449,19 +2606,8 @@ function renderConfigTab(tab,cfg){
         <strong>Earning Examples:</strong> Chair 15min (₹199) → ${Math.floor(199/100*(cfg.loyaltyRate||10))} pts · Chair 30min (₹349) → ${Math.floor(349/100*(cfg.loyaltyRate||10))} pts<br>
         <strong>Redemption:</strong> ${cfg.loyaltyRedeem||100} pts = ₹1 · To redeem ₹${cfg.loyaltyMinRedeem||499} need ${(cfg.loyaltyMinRedeem||499)*(cfg.loyaltyRedeem||100)} pts
       </div>
-    </div>
-    <div class="card mt12">
-      <div class="card-header"><h3>🎁 Bonus Points (one-time events)</h3></div>
-      <div class="form-row">
-        <div class="form-group"><label>Signup Bonus</label><input type="number" id="cfg-bonusSignup" value="${cfg.bonusSignup||50}" min="0"></div>
-        <div class="form-group"><label>Pass Purchase Bonus</label><input type="number" id="cfg-bonusPass" value="${cfg.bonusPass||150}" min="0"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Referral Bonus</label><input type="number" id="cfg-bonusReferral" value="${cfg.bonusReferral||100}" min="0"></div>
-        <div class="form-group"><label>Review Bonus</label><input type="number" id="cfg-bonusReview" value="${cfg.bonusReview||50}" min="0"></div>
-      </div>
-      <div class="form-group"><label>Video Testimonial Bonus</label><input type="number" id="cfg-bonusVideo" value="${cfg.bonusVideo||200}" min="0"></div>
     </div>`;
+
   if(tab==='commission') return `
     <div class="card">
       <div class="card-header">
@@ -2487,28 +2633,8 @@ function renderConfigTab(tab,cfg){
       </div>
       <button class="btn btn-secondary btn-sm mt12" onclick="addTier()">+ Add Tier</button>
     </div>`;
+
   if(tab==='services') return `
-    <div class="card mb12">
-      <div class="card-header"><h3>⚡ Bulk Actions</h3><span class="text2" style="font-size:12px">Select items below then apply</span></div>
-      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
-        <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer">
-          <input type="checkbox" id="bulk-select-all" onchange="bulkSelectAll(this.checked)" style="width:16px;height:16px"> Select All
-        </label>
-        <div style="display:flex;align-items:center;gap:6px;margin-left:16px">
-          <label style="font-size:12px;color:var(--text2)">% Discount:</label>
-          <input type="number" id="bulk-discount-pct" placeholder="e.g. 10" min="0" max="90" style="width:80px;padding:4px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
-          <button class="btn btn-primary btn-sm" onclick="applyBulkDiscount('services')">Apply to Services</button>
-          <button class="btn btn-secondary btn-sm" onclick="applyBulkDiscount('passes')">Apply to Passes</button>
-          <button class="btn btn-secondary btn-sm" onclick="applyBulkDiscount('all')">Apply to ALL</button>
-        </div>
-        <div style="display:flex;gap:6px;margin-left:auto">
-          <button class="btn btn-success btn-sm" onclick="bulkToggleActive(true)">✓ Activate Selected</button>
-          <button class="btn btn-danger btn-sm" onclick="bulkToggleActive(false)">✕ Deactivate Selected</button>
-          <button class="btn btn-secondary btn-sm" onclick="resetBulkDiscount()">↩ Reset Prices</button>
-        </div>
-      </div>
-      <div id="bulk-status" style="font-size:12px;color:var(--green2);margin-top:8px;display:none"></div>
-    </div>
     <div class="card">
       <div class="card-header">
         <h3>💆 Services</h3>
@@ -2516,13 +2642,14 @@ function renderConfigTab(tab,cfg){
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th style="width:32px"><input type="checkbox" onchange="bulkSelectAll(this.checked)" style="width:14px;height:14px"></th><th>Icon</th><th>Name</th><th>Duration</th><th>Price</th><th>Category</th><th>Active</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Icon</th><th>Name</th><th>Duration</th><th>Price</th><th>Category</th><th>Active</th><th>Actions</th></tr></thead>
           <tbody id="services-table-body">
             ${renderServicesRows()}
           </tbody>
         </table>
       </div>
     </div>`;
+
   if(tab==='system') return `
     <div class="card">
       <div class="card-header"><h3>🔧 System</h3></div>
@@ -2536,6 +2663,7 @@ function renderConfigTab(tab,cfg){
       <div class="form-group"><label>Tax Rate (%)</label><input type="number" id="cfg-taxRate" value="${cfg.taxRate||0}" min="0" max="30"></div>
       <div class="alert alert-warn mt16">⚠️ System settings affect all locations. Changes take effect immediately.</div>
     </div>`;
+
   if(tab==='backup') return `
     <div class="card mb16">
       <div class="card-header"><h3>📊 Export to Google Sheets / CSV</h3></div>
@@ -2583,6 +2711,7 @@ function renderConfigTab(tab,cfg){
         <div class="small text2" style="line-height:1.7">1. Click any Download CSV button above<br>2. Open <strong>sheets.google.com</strong> → New Spreadsheet<br>3. Click <strong>File → Import</strong> → Upload the downloaded CSV<br>4. Select <em>"Replace spreadsheet"</em> → Import Data<br>Your data is now live in Google Sheets with full filter, sort, and chart support.</div>
       </div>
     </div>
+
     <div class="card mb16">
       <div class="card-header"><h3>🔗 Google Sheets Auto-Sync (via Apps Script)</h3></div>
       <p class="text2 small mb12">For real-time sync, set up a Google Apps Script webhook. Paste your Apps Script Web App URL below — data will be pushed on demand.</p>
@@ -2605,6 +2734,7 @@ function renderConfigTab(tab,cfg){
         <strong style="color:var(--blue)">📘 Setup Guide:</strong> In Google Sheets → Extensions → Apps Script → paste the doPost script → Deploy as Web App (Anyone access) → copy the URL here. Contact tech@arama.asia for the ready-made Apps Script template.
       </div>
     </div>
+
     <div class="card mb16">
       <div class="card-header"><h3>💾 Full JSON Backup & Restore</h3></div>
       <div class="grid2">
@@ -2620,20 +2750,22 @@ function renderConfigTab(tab,cfg){
         </div>
       </div>
     </div>
+
     <div class="card">
       <h4 class="mb8 text-red">⚠️ Danger Zone</h4>
       <button class="btn btn-danger" onclick="confirmResetData()">🗑️ Reset All Data</button>
       <p class="small text2 mt4">This will delete all transactions, users, and settings. Cannot be undone.</p>
     </div>`;
+
   return '';
 }
+
 function renderServicesRows(){
   return getServices().map(s=>`<tr id="svc-row-${s.id}">
-    <td style="width:32px"><input type="checkbox" class="bulk-cb" data-id="${s.id}" data-type="service" style="width:14px;height:14px"></td>
     <td>${s.icon}</td>
-    <td>${s.name}${s._discounted?`<span class="badge badge-green" style="margin-left:4px;font-size:10px">-${s._discPct}%</span>`:''}</td>
+    <td>${s.name}</td>
     <td>${s.duration?fmt.duration(s.duration):'Pass'}</td>
-    <td class="text-gold bold">${fmt.currency(s.price)}${s._origPrice?`<span style="font-size:10px;color:var(--text3);text-decoration:line-through;margin-left:4px">${fmt.currency(s._origPrice)}</span>`:''}</td>
+    <td class="text-gold bold">${fmt.currency(s.price)}</td>
     <td><span class="badge badge-purple">${s.category}</span></td>
     <td><label class="toggle"><input type="checkbox" ${s.active?'checked':''} onchange="toggleService('${s.id}',this.checked)"><span class="toggle-slider"></span></label></td>
     <td class="flex gap4">
@@ -2642,69 +2774,12 @@ function renderServicesRows(){
     </td>
   </tr>`).join('');
 }
-function bulkSelectAll(checked){
-  document.querySelectorAll('.bulk-cb').forEach(cb=>cb.checked=checked);
-}
-function getSelectedIds(){
-  return [...document.querySelectorAll('.bulk-cb:checked')].map(cb=>cb.dataset.id);
-}
-function applyBulkDiscount(scope){
-  const pct=parseFloat(document.getElementById('bulk-discount-pct')?.value);
-  if(!pct||pct<=0||pct>=100){toast('Enter a valid discount % (1-99)','error');return;}
-  const selectedIds=getSelectedIds();
-  let changed=0;
-  // Apply to services
-  if(scope==='services'||scope==='all'){
-    const svcs=getServices();
-    svcs.forEach(s=>{
-      if(scope==='all'||selectedIds.includes(s.id)){
-        s._origPrice=s._origPrice||s.price;
-        s.price=Math.round(s._origPrice*(1-pct/100));
-        s._discounted=true;s._discPct=pct;changed++;
-      }
-    });
-    DB.set('services',svcs);
-  }
-  // Apply to passes
-  if(scope==='passes'||scope==='all'){
-    const passes=DB.get('passes')||[];
-    passes.forEach(p=>{
-      p._origPrice=p._origPrice||p.price;
-      p.price=Math.round(p._origPrice*(1-pct/100));
-      p._discounted=true;p._discPct=pct;changed++;
-    });
-    DB.set('passes',passes);
-  }
-  const st=document.getElementById('bulk-status');
-  if(st){st.textContent=`✓ ${pct}% discount applied to ${changed} items`;st.style.display='block';}
-  toast(`${pct}% discount applied to ${changed} items`,'success');
-  document.getElementById('services-table-body').innerHTML=renderServicesRows();
-}
-function bulkToggleActive(active){
-  const selectedIds=getSelectedIds();
-  if(!selectedIds.length){toast('Select at least one item','error');return;}
-  const svcs=getServices();
-  let changed=0;
-  svcs.forEach(s=>{if(selectedIds.includes(s.id)){s.active=active;changed++;}});
-  DB.set('services',svcs);
-  toast(`${changed} services ${active?'activated':'deactivated'}`,'success');
-  document.getElementById('services-table-body').innerHTML=renderServicesRows();
-}
-function resetBulkDiscount(){
-  // Reset all discounts back to original price
-  const svcs=getServices();
-  svcs.forEach(s=>{if(s._origPrice){s.price=s._origPrice;delete s._origPrice;delete s._discounted;delete s._discPct;}});
-  DB.set('services',svcs);
-  const passes=DB.get('passes')||[];
-  passes.forEach(p=>{if(p._origPrice){p.price=p._origPrice;delete p._origPrice;delete p._discounted;delete p._discPct;}});
-  DB.set('passes',passes);
-  toast('All discounts reset to original prices','success');
-  showConfigTab('services',null);
-}
+
 function toggleService(id,checked){
   const svcs=getServices();const idx=svcs.findIndex(s=>s.id===id);
   if(idx>=0){svcs[idx].active=checked;DB.set('services',svcs);}
 }
+
 function addService(){
   modal(`<div class="modal">
     <div class="modal-header"><h3>➕ Add Service</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
@@ -2730,6 +2805,7 @@ function addService(){
     </div>
   </div>`);
 }
+
 function saveNewService(){
   const name=document.getElementById('ns-name').value;
   const price=parseInt(document.getElementById('ns-price').value)||0;
@@ -2738,6 +2814,7 @@ function saveNewService(){
   const svcs=getServices();svcs.push(svc);DB.set('services',svcs);
   closeModal();showConfigTab('services',null);navigate('admin-config');toast('Service added!','success');
 }
+
 function editService(id){
   const svc=getServices().find(s=>s.id===id);if(!svc)return;
   modal(`<div class="modal">
@@ -2764,14 +2841,17 @@ function editService(id){
     </div>
   </div>`);
 }
+
 function updateService(id){
   const svcs=getServices();const idx=svcs.findIndex(s=>s.id===id);if(idx<0)return;
   svcs[idx]={...svcs[idx],name:document.getElementById('es-name').value,icon:document.getElementById('es-icon').value,price:parseInt(document.getElementById('es-price').value)||svcs[idx].price,duration:parseInt(document.getElementById('es-duration').value)||0,category:document.getElementById('es-category').value,desc:document.getElementById('es-desc').value};
   DB.set('services',svcs);closeModal();navigate('admin-config');toast('Service updated!','success');
 }
+
 function deleteService(id){
   const svcs=getServices().filter(s=>s.id!==id);DB.set('services',svcs);navigate('admin-config');toast('Service deleted','info');
 }
+
 function saveAdminConfig(){
   const cfg=getConfig();
   if(document.getElementById('cfg-orgName'))cfg.orgName=document.getElementById('cfg-orgName').value;
@@ -2784,11 +2864,6 @@ function saveAdminConfig(){
   if(document.getElementById('cfg-loyaltyMinRedeem'))cfg.loyaltyMinRedeem=parseInt(document.getElementById('cfg-loyaltyMinRedeem').value)||499;
   if(document.getElementById('cfg-loyaltyCap'))cfg.loyaltyCap=parseInt(document.getElementById('cfg-loyaltyCap').value)||20;
   if(document.getElementById('cfg-loyaltyValidity'))cfg.loyaltyValidity=parseInt(document.getElementById('cfg-loyaltyValidity').value)||365;
-  if(document.getElementById('cfg-bonusSignup'))cfg.bonusSignup=parseInt(document.getElementById('cfg-bonusSignup').value)||50;
-  if(document.getElementById('cfg-bonusPass'))cfg.bonusPass=parseInt(document.getElementById('cfg-bonusPass').value)||150;
-  if(document.getElementById('cfg-bonusReferral'))cfg.bonusReferral=parseInt(document.getElementById('cfg-bonusReferral').value)||100;
-  if(document.getElementById('cfg-bonusReview'))cfg.bonusReview=parseInt(document.getElementById('cfg-bonusReview').value)||50;
-  if(document.getElementById('cfg-bonusVideo'))cfg.bonusVideo=parseInt(document.getElementById('cfg-bonusVideo').value)||200;
   if(document.getElementById('cfg-commEnabled'))cfg.commissionEnabled=document.getElementById('cfg-commEnabled').checked;
   if(document.getElementById('cfg-whatsapp'))cfg.whatsappEnabled=document.getElementById('cfg-whatsapp').checked;
   if(document.getElementById('cfg-espKey'))cfg.espGlobalApiKey=document.getElementById('cfg-espKey').value;
@@ -2801,42 +2876,29 @@ function saveAdminConfig(){
   if(tiers.length>0)cfg.commissionTiers=tiers;
   DB.set('config',cfg);toast('Config saved!','success');
 }
+
 function addTier(){
   const cfg=getConfig();
   cfg.commissionTiers.push({label:'New Tier',minRev:0,maxRev:9999,pct:5});
   DB.set('config',cfg);showConfigTab('commission',null);navigate('admin-config');
 }
+
 function removeTier(i){
   const cfg=getConfig();cfg.commissionTiers.splice(i,1);DB.set('config',cfg);showConfigTab('commission',null);navigate('admin-config');
 }
+
 function confirmResetData(){
   if(prompt('Type RESET to confirm data wipe:')!=='RESET'){toast('Reset cancelled','info');return}
   const keys=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('arama_'))keys.push(k);}
   keys.forEach(k=>localStorage.removeItem(k));
   toast('All data cleared. Reloading...','warn');setTimeout(()=>location.reload(),2000);
 }
+
 function viewReport(loc,date){closeModal();navigate('daily-report');}
-// ─── EXCEL SEED DATA ──────────────────────────────────────────────
-function seedExcelData(){
-  if(DB.get('excel-seeded'))return; // run only once
-  const _d={"reports":[{"id":"DR-ST-P1-2026-05-13","locationCode":"ST-P1","date":"2026-05-13","ts":"2026-05-13T00:00:00","sessions":29,"cashRevenue":1040,"upiRevenue":3370,"totalRevenue":4410,"staffExpense":700,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":700,"notes":"","source":"excel_import"},{"id":"DR-ST-P1-2026-05-14","locationCode":"ST-P1","date":"2026-05-14","ts":"2026-05-14T00:00:00","sessions":44,"cashRevenue":4140,"upiRevenue":2550,"totalRevenue":6690,"staffExpense":1800,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":1800,"notes":"","source":"excel_import"},{"id":"DR-ST-P1-2026-05-15","locationCode":"ST-P1","date":"2026-05-15","ts":"2026-05-15T00:00:00","sessions":35,"cashRevenue":2470,"upiRevenue":2660,"totalRevenue":5130,"staffExpense":1800,"mealExpense":0,"operationalExpense":400,"qrDeposit":0,"miscExpense":1800,"notes":"400 fan","source":"excel_import"},{"id":"DR-ST-P1-2026-05-16","locationCode":"ST-P1","date":"2026-05-16","ts":"2026-05-16T00:00:00","sessions":41,"cashRevenue":2260,"upiRevenue":4080,"totalRevenue":6340,"staffExpense":1800,"mealExpense":100,"operationalExpense":0,"qrDeposit":0,"miscExpense":1900,"notes":"","source":"excel_import"},{"id":"DR-ST-P1-2026-05-17","locationCode":"ST-P1","date":"2026-05-17","ts":"2026-05-17T00:00:00","sessions":26,"cashRevenue":2240,"upiRevenue":1050,"totalRevenue":3290,"staffExpense":1800,"mealExpense":0,"operationalExpense":0,"qrDeposit":800,"miscExpense":1800,"notes":"","source":"excel_import"},{"id":"DR-ST-P1-2026-05-18","locationCode":"ST-P1","date":"2026-05-18","ts":"2026-05-18T00:00:00","sessions":43,"cashRevenue":3000,"upiRevenue":3380,"totalRevenue":6380,"staffExpense":1800,"mealExpense":0,"operationalExpense":0,"qrDeposit":500,"miscExpense":2300,"notes":"","source":"excel_import"},{"id":"DR-ST-P1-2026-05-19","locationCode":"ST-P1","date":"2026-05-19","ts":"2026-05-19T00:00:00","sessions":23,"cashRevenue":1440,"upiRevenue":2020,"totalRevenue":3460,"staffExpense":0,"mealExpense":0,"operationalExpense":270,"qrDeposit":0,"miscExpense":0,"notes":"270 parcel","source":"excel_import"},{"id":"DR-ST-P1-2026-05-20","locationCode":"ST-P1","date":"2026-05-20","ts":"2026-05-20T00:00:00","sessions":32,"cashRevenue":1440,"upiRevenue":2880,"totalRevenue":4320,"staffExpense":1200,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":1200,"notes":"","source":"excel_import"},{"id":"DR-ST-P1-2026-05-21","locationCode":"ST-P1","date":"2026-05-21","ts":"2026-05-21T00:00:00","sessions":29,"cashRevenue":1210,"upiRevenue":3260,"totalRevenue":4470,"staffExpense":1100,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":1100,"notes":"","source":"excel_import"},{"id":"DR-ST-P1-2026-05-22","locationCode":"ST-P1","date":"2026-05-22","ts":"2026-05-22T00:00:00","sessions":24,"cashRevenue":1210,"upiRevenue":2400,"totalRevenue":3610,"staffExpense":0,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":0,"notes":"","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-13","locationCode":"VP-VIP","date":"2026-05-13","ts":"2026-05-13T00:00:00","sessions":9,"cashRevenue":530,"upiRevenue":440,"totalRevenue":970,"staffExpense":800,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":800,"notes":"","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-14","locationCode":"VP-VIP","date":"2026-05-14","ts":"2026-05-14T00:00:00","sessions":12,"cashRevenue":350,"upiRevenue":2530,"totalRevenue":2880,"staffExpense":1000,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":1000,"notes":"","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-15","locationCode":"VP-VIP","date":"2026-05-15","ts":"2026-05-15T00:00:00","sessions":9,"cashRevenue":840,"upiRevenue":840,"totalRevenue":1680,"staffExpense":0,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":0,"notes":"","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-16","locationCode":"VP-VIP","date":"2026-05-16","ts":"2026-05-16T00:00:00","sessions":16,"cashRevenue":1060,"upiRevenue":1540,"totalRevenue":2600,"staffExpense":0,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":0,"notes":"","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-17","locationCode":"VP-VIP","date":"2026-05-17","ts":"2026-05-17T00:00:00","sessions":21,"cashRevenue":230,"upiRevenue":2580,"totalRevenue":2810,"staffExpense":0,"mealExpense":0,"operationalExpense":1000,"qrDeposit":0,"miscExpense":0,"notes":"1000 room","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-18","locationCode":"VP-VIP","date":"2026-05-18","ts":"2026-05-18T00:00:00","sessions":6,"cashRevenue":670,"upiRevenue":290,"totalRevenue":960,"staffExpense":500,"mealExpense":0,"operationalExpense":400,"qrDeposit":0,"miscExpense":500,"notes":"400 ac","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-19","locationCode":"VP-VIP","date":"2026-05-19","ts":"2026-05-19T00:00:00","sessions":25,"cashRevenue":1470,"upiRevenue":2520,"totalRevenue":3990,"staffExpense":1000,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":1000,"notes":"","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-20","locationCode":"VP-VIP","date":"2026-05-20","ts":"2026-05-20T00:00:00","sessions":12,"cashRevenue":500,"upiRevenue":1360,"totalRevenue":1860,"staffExpense":500,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":500,"notes":"","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-21","locationCode":"VP-VIP","date":"2026-05-21","ts":"2026-05-21T00:00:00","sessions":25,"cashRevenue":2360,"upiRevenue":1470,"totalRevenue":3830,"staffExpense":500,"mealExpense":0,"operationalExpense":0,"qrDeposit":0,"miscExpense":0,"notes":"","source":"excel_import"},{"id":"DR-VP-VIP-2026-05-22","locationCode":"VP-VIP","date":"2026-05-22","ts":"2026-05-22T00:00:00","sessions":11,"cashRevenue":810,"upiRevenue":1300,"totalRevenue":2110,"staffExpense":500,"mealExpense":0,"operationalExpense":500,"qrDeposit":0,"miscExpense":500,"notes":"500 metre","source":"excel_import"}],"transactions":[{"id":"TXN-ST-P1-2026-05-13-CASH","locationCode":"ST-P1","ts":"2026-05-13T10:00:00","amount":1040,"paymentMode":"cash","type":"session","sessions":29,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-13-UPI","locationCode":"ST-P1","ts":"2026-05-13T10:00:00","amount":3370,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-ST-P1-2026-05-14-CASH","locationCode":"ST-P1","ts":"2026-05-14T10:00:00","amount":4140,"paymentMode":"cash","type":"session","sessions":44,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-14-UPI","locationCode":"ST-P1","ts":"2026-05-14T10:00:00","amount":2550,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-ST-P1-2026-05-15-CASH","locationCode":"ST-P1","ts":"2026-05-15T10:00:00","amount":2470,"paymentMode":"cash","type":"session","sessions":35,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-15-UPI","locationCode":"ST-P1","ts":"2026-05-15T10:00:00","amount":2660,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-ST-P1-2026-05-16-CASH","locationCode":"ST-P1","ts":"2026-05-16T10:00:00","amount":2260,"paymentMode":"cash","type":"session","sessions":41,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-16-UPI","locationCode":"ST-P1","ts":"2026-05-16T10:00:00","amount":4080,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-ST-P1-2026-05-17-CASH","locationCode":"ST-P1","ts":"2026-05-17T10:00:00","amount":2240,"paymentMode":"cash","type":"session","sessions":26,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-17-UPI","locationCode":"ST-P1","ts":"2026-05-17T10:00:00","amount":1050,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-ST-P1-2026-05-18-CASH","locationCode":"ST-P1","ts":"2026-05-18T10:00:00","amount":3000,"paymentMode":"cash","type":"session","sessions":43,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-18-UPI","locationCode":"ST-P1","ts":"2026-05-18T10:00:00","amount":3380,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-ST-P1-2026-05-19-CASH","locationCode":"ST-P1","ts":"2026-05-19T10:00:00","amount":1440,"paymentMode":"cash","type":"session","sessions":23,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-19-UPI","locationCode":"ST-P1","ts":"2026-05-19T10:00:00","amount":2020,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-ST-P1-2026-05-20-CASH","locationCode":"ST-P1","ts":"2026-05-20T10:00:00","amount":1440,"paymentMode":"cash","type":"session","sessions":32,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-20-UPI","locationCode":"ST-P1","ts":"2026-05-20T10:00:00","amount":2880,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-ST-P1-2026-05-21-CASH","locationCode":"ST-P1","ts":"2026-05-21T10:00:00","amount":1210,"paymentMode":"cash","type":"session","sessions":29,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-21-UPI","locationCode":"ST-P1","ts":"2026-05-21T10:00:00","amount":3260,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-ST-P1-2026-05-22-CASH","locationCode":"ST-P1","ts":"2026-05-22T10:00:00","amount":1210,"paymentMode":"cash","type":"session","sessions":24,"note":"Excel import"},{"id":"TXN-ST-P1-2026-05-22-UPI","locationCode":"ST-P1","ts":"2026-05-22T10:00:00","amount":2400,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-13-CASH","locationCode":"VP-VIP","ts":"2026-05-13T10:00:00","amount":530,"paymentMode":"cash","type":"session","sessions":9,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-13-UPI","locationCode":"VP-VIP","ts":"2026-05-13T10:00:00","amount":440,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-14-CASH","locationCode":"VP-VIP","ts":"2026-05-14T10:00:00","amount":350,"paymentMode":"cash","type":"session","sessions":12,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-14-UPI","locationCode":"VP-VIP","ts":"2026-05-14T10:00:00","amount":2530,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-15-CASH","locationCode":"VP-VIP","ts":"2026-05-15T10:00:00","amount":840,"paymentMode":"cash","type":"session","sessions":9,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-15-UPI","locationCode":"VP-VIP","ts":"2026-05-15T10:00:00","amount":840,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-16-CASH","locationCode":"VP-VIP","ts":"2026-05-16T10:00:00","amount":1060,"paymentMode":"cash","type":"session","sessions":16,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-16-UPI","locationCode":"VP-VIP","ts":"2026-05-16T10:00:00","amount":1540,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-17-CASH","locationCode":"VP-VIP","ts":"2026-05-17T10:00:00","amount":230,"paymentMode":"cash","type":"session","sessions":21,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-17-UPI","locationCode":"VP-VIP","ts":"2026-05-17T10:00:00","amount":2580,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-18-CASH","locationCode":"VP-VIP","ts":"2026-05-18T10:00:00","amount":670,"paymentMode":"cash","type":"session","sessions":6,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-18-UPI","locationCode":"VP-VIP","ts":"2026-05-18T10:00:00","amount":290,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-19-CASH","locationCode":"VP-VIP","ts":"2026-05-19T10:00:00","amount":1470,"paymentMode":"cash","type":"session","sessions":25,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-19-UPI","locationCode":"VP-VIP","ts":"2026-05-19T10:00:00","amount":2520,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-20-CASH","locationCode":"VP-VIP","ts":"2026-05-20T10:00:00","amount":500,"paymentMode":"cash","type":"session","sessions":12,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-20-UPI","locationCode":"VP-VIP","ts":"2026-05-20T10:00:00","amount":1360,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-21-CASH","locationCode":"VP-VIP","ts":"2026-05-21T10:00:00","amount":2360,"paymentMode":"cash","type":"session","sessions":25,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-21-UPI","locationCode":"VP-VIP","ts":"2026-05-21T10:00:00","amount":1470,"paymentMode":"upi","type":"session","note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-22-CASH","locationCode":"VP-VIP","ts":"2026-05-22T10:00:00","amount":810,"paymentMode":"cash","type":"session","sessions":11,"note":"Excel import"},{"id":"TXN-VP-VIP-2026-05-22-UPI","locationCode":"VP-VIP","ts":"2026-05-22T10:00:00","amount":1300,"paymentMode":"upi","type":"session","note":"Excel import"}]};
-  // Merge reports (don't overwrite existing)
-  const existingRpts=DB.get('daily-reports')||[];
-  const existingIds=new Set(existingRpts.map(r=>r.id));
-  const newRpts=_d.reports.filter(r=>!existingIds.has(r.id));
-  DB.set('daily-reports',[...existingRpts,...newRpts]);
-  // Merge transactions
-  const existingTxns=DB.get('transactions')||[];
-  const existingTxnIds=new Set(existingTxns.map(t=>t.id));
-  const newTxns=_d.transactions.filter(t=>!existingTxnIds.has(t.id));
-  DB.set('transactions',[...existingTxns,...newTxns]);
-  DB.set('excel-seeded',true);
-  console.log(`✓ Seeded ${newRpts.length} daily reports + ${newTxns.length} transactions from Excel`);
-}
+
 // ─── INIT ─────────────────────────────────────────────────────────
 function init(){
   initDefaultUsers();
-  seedExcelData();
   // Populate login location select
   const sel=document.getElementById('login-location');
   if(sel){
@@ -2863,11 +2925,14 @@ function init(){
     }
   }
 }
+
 function quickLogin(username,password){
   document.getElementById('login-username').value=username;
   document.getElementById('login-password').value=password;
   doLogin();
 }
+
+
 // ─── PATCH: editB2B ──────────────────────────────────────────────
 function editB2B(id){
   const data=DB.get('b2b-transactions')||[];
@@ -2897,6 +2962,7 @@ function editB2B(id){
     </div>
   </div>`);
 }
+
 function updateB2B(id){
   const data=DB.get('b2b-transactions')||[];
   const idx=data.findIndex(x=>x.id===id);if(idx<0)return;
@@ -2911,10 +2977,12 @@ function updateB2B(id){
   };
   DB.set('b2b-transactions',data);closeModal();showHistoryTab('b2b',null);toast('B2B transaction updated!','success');
 }
+
 function deleteB2B(id){
   const data=(DB.get('b2b-transactions')||[]).filter(x=>x.id!==id);
   DB.set('b2b-transactions',data);closeModal();showHistoryTab('b2b',null);toast('Deleted','info');
 }
+
 // ─── PATCH: viewReport (inline) ───────────────────────────────────
 function viewReport(loc,date){
   const report=DB.get(`report_${loc}_${date}`)||{};
@@ -2968,6 +3036,7 @@ function viewReport(loc,date){
     <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal()">Close</button></div>
   </div>`);
 }
+
 // ─── PATCH: HRMS tabs (Attendance + Payroll) ─────────────────────
 function hrmsTab(tab,el){
   document.querySelectorAll('.page-header .btn').forEach(b=>b.classList.remove('btn-primary'));
@@ -3033,6 +3102,7 @@ function hrmsTab(tab,el){
     </div>`;
   }
 }
+
 function markAttendance(){
   const users=getUsers().filter(u=>u.active&&(u.role==='staff'||u.role==='supervisor'));
   modal(`<div class="modal">
@@ -3056,6 +3126,7 @@ function markAttendance(){
     </div>
   </div>`);
 }
+
 function saveAttendance(){
   const staffVal=document.getElementById('att-staff')?.value.split('|');
   const type=document.getElementById('att-type')?.value;
@@ -3072,6 +3143,7 @@ function saveAttendance(){
   }
   DB.set('attendance',records);closeModal();hrmsTab('attendance',null);toast('Attendance saved!','success');
 }
+
 function exportPayroll(){
   const users=getUsers().filter(u=>u.role==='staff'||u.role==='supervisor');
   const cfg=getConfig();const thisMonth=new Date().toISOString().slice(0,7);
@@ -3088,9 +3160,8 @@ function exportPayroll(){
   const a=document.createElement('a');a.href=url;a.download=`payroll-${thisMonth}.csv`;a.click();
   toast('Payroll exported!','success');
 }
+
 // Expose globals
-window.setDashRange=setDashRange;window.applyDashCustomRange=applyDashCustomRange;
-window.bulkSelectAll=bulkSelectAll;window.applyBulkDiscount=applyBulkDiscount;window.bulkToggleActive=bulkToggleActive;window.resetBulkDiscount=resetBulkDiscount;
 window.navigate=navigate;window.doLogin=doLogin;window.doLogout=doLogout;
 window.openLocation=openLocation;window.editLocation=editLocation;
 window.saveLocationFromModal=saveLocationFromModal;window.showLocTab=showLocTab;
@@ -3105,6 +3176,7 @@ function exportCSV(type){
   let rows=[];let filename='arama_'+type+'_'+new Date().toISOString().slice(0,10)+'.csv';
   const esc=v=>{const s=String(v==null?'':v);return s.includes(',')||s.includes('"')||s.includes('\n')?'"'+s.replace(/"/g,'""')+'"':s;};
   const row=arr=>arr.map(esc).join(',')+'\n';
+
   if(type==='transactions'){
     const txns=DB.get('transactions')||[];
     rows.push(row(['ID','Date','Time','Location','Service','Duration','Amount','PaymentMode','Staff','Token','LoyaltyPts','Notes']));
@@ -3155,6 +3227,7 @@ function exportCSV(type){
       rows.push(row([u.id||'',u.name||'',u.username||'',u.role||'',u.roleLevel||'',u.location||'',u.phone||'',u.email||'',u.active===false?'Inactive':'Active',u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN'):'']));
     });
   }
+
   if(rows.length<=1){showToast('No data found to export for: '+type,'warning');return;}
   const csv=rows.join('');
   const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}); // BOM for Excel
@@ -3163,11 +3236,13 @@ function exportCSV(type){
   URL.revokeObjectURL(url);
   showToast('Exported '+String(rows.length-1)+' rows to '+filename,'success');
 }
+
 function saveWebhookUrl(){
   const url=document.getElementById('sheets-webhook-url')?.value?.trim();
   if(url){DB.set('sheets-webhook-url',url);showToast('Webhook URL saved','success');}
   else{showToast('Enter a valid URL first','error');}
 }
+
 async function pushToSheets(type){
   const url=DB.get('sheets-webhook-url');
   if(!url){showToast('Save your Apps Script webhook URL first in the Backup tab','error');return;}
@@ -3186,6 +3261,7 @@ async function pushToSheets(type){
     else{showToast('Sheets push failed: HTTP '+res.status,'error');}
   }catch(e){showToast('Could not reach the Apps Script URL. Check the URL and redeploy.','error');}
 }
+
 window.exportCSV=exportCSV;window.saveWebhookUrl=saveWebhookUrl;window.pushToSheets=pushToSheets;
 window.showHistoryTab=showHistoryTab;window.exportData=exportData;
 window.importData=importData;window.importPhonePe=importPhonePe;
@@ -3216,7 +3292,9 @@ window.editB2B=editB2B;window.updateB2B=updateB2B;window.deleteB2B=deleteB2B;
 window.viewReport=viewReport;
 window.hrmsTab=hrmsTab;window.markAttendance=markAttendance;window.saveAttendance=saveAttendance;window.exportPayroll=exportPayroll;window.toggleSidebar=toggleSidebar;
 window.closeSidebar=closeSidebar;
+
 function editLocation(code){openLocation(code);}
+
 init();
 </script>
 </body>

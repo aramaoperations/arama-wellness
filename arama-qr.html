@@ -32,6 +32,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .toast-info{background:#1e1b4b;border:1px solid var(--accent);color:var(--accent3)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .3s ease}
+
 .qr-preview-wrap{background:#fff;border-radius:var(--radius2);padding:20px;display:flex;align-items:center;justify-content:center;min-height:240px;position:relative}
 .qr-card-preview{background:#fff;border-radius:16px;padding:24px 20px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15);max-width:280px;margin:0 auto}
 .qr-loc-name{font-size:13px;font-weight:800;color:#1a1a2e;margin-bottom:4px}
@@ -40,17 +41,22 @@ button{cursor:pointer;border:none;font-family:inherit}
 .qr-logo-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);overflow:hidden}
 .qr-footer{margin-top:12px;font-size:9px;color:#94a3b8;letter-spacing:.05em}
 .qr-brand{font-size:16px;font-weight:900;color:#7c3aed;margin-bottom:2px}
+
 .logo-drop{border:2px dashed var(--border2);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .15s}
 .logo-drop:hover{border-color:var(--accent);background:rgba(124,58,237,.05)}
 .logo-drop.has-logo{border-color:var(--green);background:rgba(16,185,129,.05)}
+
 .qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:16px}
 .mini-qr-card{background:#fff;border-radius:10px;padding:12px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.1);cursor:pointer;transition:all .15s}
 .mini-qr-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.15)}
 </style>
 </head>
 <body>
+
 <div id="toast-container"></div>
+
 <div style="max-width:1000px;margin:0 auto;padding:24px">
+
   <!-- HEADER -->
   <div style="margin-bottom:28px">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
@@ -64,16 +70,20 @@ button{cursor:pointer;border:none;font-family:inherit}
       </div>
     </div>
   </div>
+
   <div class="grid2">
+
     <!-- LEFT: SETTINGS -->
     <div>
       <div class="card mb16">
         <h3 style="margin-bottom:16px;font-size:15px">⚙️ QR Settings</h3>
+
         <div class="form-group">
           <label>Customer Portal URL</label>
           <input type="text" id="qr-url" value="https://aramaoperations.github.io/arama-wellness/customer.html" placeholder="https://your-site.com/customer.html">
           <div style="font-size:11px;color:var(--text3);margin-top:4px">Change after GitHub Pages deploy</div>
         </div>
+
         <div class="form-group">
           <label>Generate For</label>
           <select id="qr-location" onchange="updatePreview()">
@@ -116,6 +126,7 @@ button{cursor:pointer;border:none;font-family:inherit}
             </optgroup>
           </select>
         </div>
+
         <div class="form-group">
           <label>QR Size</label>
           <select id="qr-size" onchange="updatePreview()">
@@ -125,6 +136,7 @@ button{cursor:pointer;border:none;font-family:inherit}
             <option value="500">XL (500px — poster)</option>
           </select>
         </div>
+
         <div class="form-group">
           <label>QR Colour Theme</label>
           <select id="qr-theme" onchange="updatePreview()">
@@ -133,10 +145,12 @@ button{cursor:pointer;border:none;font-family:inherit}
             <option value="gold">Gold (#f59e0b)</option>
           </select>
         </div>
+
         <div class="form-group">
           <label>CTA Text on Card</label>
           <input type="text" id="qr-cta" value="Scan to View Services, Passes & Loyalty Points" oninput="updatePreview()">
         </div>
+
         <div class="form-group">
           <label>Show Hindi Tagline</label>
           <select id="qr-hindi" onchange="updatePreview()">
@@ -145,6 +159,7 @@ button{cursor:pointer;border:none;font-family:inherit}
           </select>
         </div>
       </div>
+
       <!-- LOGO UPLOAD -->
       <div class="card">
         <h3 style="margin-bottom:12px;font-size:15px">🖼️ Logo (Centre of QR)</h3>
@@ -158,6 +173,7 @@ button{cursor:pointer;border:none;font-family:inherit}
           <img id="logo-preview-img" style="display:none;max-height:80px;max-width:180px;border-radius:8px">
         </div>
         <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="handleLogoUpload(this)">
+
         <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-secondary btn-sm" onclick="setLogoSize(40)">Small logo</button>
           <button class="btn btn-secondary btn-sm" onclick="setLogoSize(52)">Medium logo</button>
@@ -167,10 +183,12 @@ button{cursor:pointer;border:none;font-family:inherit}
         <div style="font-size:11px;color:var(--text3);margin-top:8px">⚡ Uses Error Correction Level H — QR remains scannable even with 30% centre covered</div>
       </div>
     </div>
+
     <!-- RIGHT: PREVIEW -->
     <div>
       <div class="card" style="position:sticky;top:20px">
         <h3 style="margin-bottom:16px;font-size:15px">👁️ Preview</h3>
+
         <div class="qr-preview-wrap" id="qr-preview-wrap">
           <div class="qr-card-preview" id="qr-card-preview">
             <div class="qr-brand">ārāma</div>
@@ -186,6 +204,7 @@ button{cursor:pointer;border:none;font-family:inherit}
             <div class="qr-footer" style="margin-top:2px">arama.asia · Wellness Kiosks</div>
           </div>
         </div>
+
         <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
           <button class="btn btn-primary" style="flex:1" onclick="generateQR()">🔄 Generate</button>
           <button class="btn btn-gold" style="flex:1" onclick="downloadQR()">📥 Download PNG</button>
@@ -193,7 +212,9 @@ button{cursor:pointer;border:none;font-family:inherit}
         <button class="btn btn-secondary w100 mt8" style="width:100%" onclick="generateAllLocations()">📋 Preview All 33 Locations</button>
       </div>
     </div>
+
   </div>
+
   <!-- ALL LOCATIONS GRID -->
   <div id="all-locations-section" style="display:none;margin-top:32px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
@@ -202,11 +223,14 @@ button{cursor:pointer;border:none;font-family:inherit}
     </div>
     <div class="qr-grid" id="all-qr-grid"></div>
   </div>
+
 </div>
+
 <script>
 let logoData = null;
 let logoSize = 52;
 let currentQR = null;
+
 const LOCATIONS = [
   {code:'ALL',name:'All Locations'},
   {code:'ST-P1',name:'Surat P1'},{code:'ST-CL',name:'Surat Cloakroom'},
@@ -225,11 +249,13 @@ const LOCATIONS = [
   {code:'NLP-EAST',name:'Nallasopara East'},{code:'NLP-WEST',name:'Nallasopara West'},
   {code:'MIR-STN',name:'Mira Road Station'},{code:'EKN-AC',name:'Ekta Nagar AC Hall'}
 ];
+
 const COLOURS = {
   dark: {dark:'#1a1a2e', light:'#ffffff'},
   purple: {dark:'#7c3aed', light:'#ffffff'},
   gold: {dark:'#b45309', light:'#fffbeb'}
 };
+
 function toast(msg,type='info'){
   const t=document.createElement('div');
   t.className=`toast toast-${type}`;
@@ -238,15 +264,18 @@ function toast(msg,type='info'){
   document.getElementById('toast-container').appendChild(t);
   setTimeout(()=>t.remove(),3500);
 }
+
 function getURL(){
   const base=document.getElementById('qr-url').value.trim();
   const loc=document.getElementById('qr-location').value;
   return loc==='ALL'?base:base+'?loc='+loc;
 }
+
 function getLocName(){
   const loc=document.getElementById('qr-location').value;
   return LOCATIONS.find(l=>l.code===loc)?.name||'All Locations';
 }
+
 function generateQR(containerId='qr-render', url=null, size=null, colourKey=null){
   const el=document.getElementById(containerId);
   if(!el)return;
@@ -270,6 +299,7 @@ function generateQR(containerId='qr-render', url=null, size=null, colourKey=null
     toast('QR generated!','success');
   }catch(e){toast('Error: '+e.message,'error')}
 }
+
 function updateLogoOverlay(size){
   const overlay=document.getElementById('qr-logo-overlay');
   if(!overlay)return;
@@ -282,9 +312,11 @@ function updateLogoOverlay(size){
     overlay.style.display='none';
   }
 }
+
 function updatePreview(){
   generateQR();
 }
+
 function handleLogoUpload(input){
   const file=input.files?.[0];if(!file)return;
   const reader=new FileReader();
@@ -298,6 +330,7 @@ function handleLogoUpload(input){
     toast('Logo uploaded!','success');
   };reader.readAsDataURL(file);
 }
+
 function handleLogoDrop(e){
   e.preventDefault();
   const file=e.dataTransfer.files?.[0];if(!file)return;
@@ -305,7 +338,9 @@ function handleLogoDrop(e){
   const dt=new DataTransfer();dt.items.add(file);inp.files=dt.files;
   handleLogoUpload(inp);
 }
+
 function setLogoSize(size){logoSize=size;updateLogoOverlay();toast('Logo size updated','info')}
+
 function clearLogo(){
   logoData=null;
   document.getElementById('logo-preview-text').style.display='block';
@@ -314,6 +349,7 @@ function clearLogo(){
   document.getElementById('qr-logo-overlay').style.display='none';
   toast('Logo removed','info');
 }
+
 async function downloadQR(){
   const wrap=document.getElementById('qr-card-preview');
   if(!wrap){toast('Generate a QR first','error');return}
@@ -323,6 +359,7 @@ async function downloadQR(){
   link.href=canvas.toDataURL('image/png');link.click();
   toast('Downloaded!','success');
 }
+
 async function cardToCanvas(cardEl){
   const qrImg=cardEl.querySelector('img')||cardEl.querySelector('canvas');
   const locName=getLocName();
@@ -371,12 +408,14 @@ async function cardToCanvas(cardEl){
   }
   return canvas;
 }
+
 function roundRect(ctx,x,y,w,h,r){
   ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
   ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
   ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
   ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
 }
+
 function generateAllLocations(){
   const section=document.getElementById('all-locations-section');
   const grid=document.getElementById('all-qr-grid');
@@ -403,6 +442,7 @@ function generateAllLocations(){
   section.scrollIntoView({behavior:'smooth'});
   toast('All 33 QR codes generated!','success');
 }
+
 async function downloadMiniQR(code,name){
   const container=document.getElementById('mini-qr-'+code);
   if(!container)return;
@@ -433,6 +473,7 @@ async function downloadMiniQR(code,name){
   const link=document.createElement('a');
   link.download=`arama-qr-${code}.png`;link.href=canvas.toDataURL('image/png');link.click();
 }
+
 async function downloadAllQRs(){
   const locs=LOCATIONS.filter(l=>l.code!=='ALL');
   if(!document.getElementById('mini-qr-'+locs[0].code)){
@@ -445,6 +486,7 @@ async function downloadAllQRs(){
   }
   toast('All downloaded!','success');
 }
+
 // INIT: generate default QR on load
 window.addEventListener('load',()=>{
   generateQR();
