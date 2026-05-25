@@ -2665,25 +2665,96 @@ function renderConfigTab(tab,cfg){
     </div>`;
 
   if(tab==='backup') return `
-    <div class="card">
-      <div class="card-header"><h3>💾 Data Backup & Restore</h3></div>
+    <div class="card mb16">
+      <div class="card-header"><h3>📊 Export to Google Sheets / CSV</h3></div>
+      <p class="text2 small mb16">Download any data module as a CSV file — open directly in Google Sheets, Excel, or any spreadsheet app. Each export is timestamped and ready to use.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+          <div style="font-size:22px;margin-bottom:6px">💳</div>
+          <div style="font-weight:700;margin-bottom:4px">Transactions</div>
+          <div class="small text2 mb12">All POS transactions with amount, location, staff, payment mode</div>
+          <button class="btn btn-primary w100" onclick="exportCSV('transactions')">📥 Download CSV</button>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+          <div style="font-size:22px;margin-bottom:6px">📱</div>
+          <div style="font-weight:700;margin-bottom:4px">PhonePe Records</div>
+          <div class="small text2 mb12">PhonePe payment log with store ID, amount, date, status</div>
+          <button class="btn btn-primary w100" onclick="exportCSV('phonepe')">📥 Download CSV</button>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+          <div style="font-size:22px;margin-bottom:6px">🤝</div>
+          <div style="font-weight:700;margin-bottom:4px">B2B / CRM Leads</div>
+          <div class="small text2 mb12">All CRM leads with company, contact, stage, notes</div>
+          <button class="btn btn-primary w100" onclick="exportCSV('crm')">📥 Download CSV</button>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+          <div style="font-size:22px;margin-bottom:6px">⭐</div>
+          <div style="font-weight:700;margin-bottom:4px">Loyalty Members</div>
+          <div class="small text2 mb12">All loyalty accounts with phone, name, points, history</div>
+          <button class="btn btn-primary w100" onclick="exportCSV('loyalty')">📥 Download CSV</button>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+          <div style="font-size:22px;margin-bottom:6px">📋</div>
+          <div style="font-weight:700;margin-bottom:4px">Daily Reports</div>
+          <div class="small text2 mb12">All saved daily reports with revenue, attendance, incidents</div>
+          <button class="btn btn-primary w100" onclick="exportCSV('daily-reports')">📥 Download CSV</button>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+          <div style="font-size:22px;margin-bottom:6px">👥</div>
+          <div style="font-weight:700;margin-bottom:4px">Staff / Users</div>
+          <div class="small text2 mb12">All staff members with role, location, status (no passwords)</div>
+          <button class="btn btn-primary w100" onclick="exportCSV('users')">📥 Download CSV</button>
+        </div>
+      </div>
+      <div style="margin-top:16px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:var(--radius);padding:14px">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--green)">📗 How to open in Google Sheets</div>
+        <div class="small text2" style="line-height:1.7">1. Click any Download CSV button above<br>2. Open <strong>sheets.google.com</strong> → New Spreadsheet<br>3. Click <strong>File → Import</strong> → Upload the downloaded CSV<br>4. Select <em>"Replace spreadsheet"</em> → Import Data<br>Your data is now live in Google Sheets with full filter, sort, and chart support.</div>
+      </div>
+    </div>
+
+    <div class="card mb16">
+      <div class="card-header"><h3>🔗 Google Sheets Auto-Sync (via Apps Script)</h3></div>
+      <p class="text2 small mb12">For real-time sync, set up a Google Apps Script webhook. Paste your Apps Script Web App URL below — data will be pushed on demand.</p>
+      <div class="form-row">
+        <div class="form-group" style="flex:2">
+          <label>Apps Script Web App URL</label>
+          <input type="url" id="sheets-webhook-url" placeholder="https://script.google.com/macros/s/..." value="${DB.get('sheets-webhook-url')||''}">
+        </div>
+        <div class="form-group" style="flex:1;display:flex;align-items:flex-end">
+          <button class="btn btn-secondary w100" onclick="saveWebhookUrl()">💾 Save URL</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:8px">
+        <button class="btn btn-secondary btn-sm" onclick="pushToSheets('transactions')">↗ Push Transactions</button>
+        <button class="btn btn-secondary btn-sm" onclick="pushToSheets('crm')">↗ Push CRM Leads</button>
+        <button class="btn btn-secondary btn-sm" onclick="pushToSheets('loyalty')">↗ Push Loyalty</button>
+        <button class="btn btn-secondary btn-sm" onclick="pushToSheets('daily-reports')">↗ Push Reports</button>
+      </div>
+      <div style="margin-top:14px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:var(--radius);padding:12px;font-size:12px;color:var(--text2);line-height:1.7">
+        <strong style="color:var(--blue)">📘 Setup Guide:</strong> In Google Sheets → Extensions → Apps Script → paste the doPost script → Deploy as Web App (Anyone access) → copy the URL here. Contact tech@arama.asia for the ready-made Apps Script template.
+      </div>
+    </div>
+
+    <div class="card mb16">
+      <div class="card-header"><h3>💾 Full JSON Backup & Restore</h3></div>
       <div class="grid2">
         <div>
-          <h4 class="mb8">Export Data</h4>
-          <p class="text2 small mb12">Download all ārāma OS data as a JSON file for backup or transfer.</p>
-          <button class="btn btn-primary w100" onclick="exportData()">📤 Export All Data</button>
+          <h4 class="mb8">Export All Data</h4>
+          <p class="text2 small mb12">Complete backup of all ārāma OS data as a JSON file. Use for migration or full restore.</p>
+          <button class="btn btn-primary w100" onclick="exportData()">📤 Export JSON</button>
         </div>
         <div>
-          <h4 class="mb8">Import Data</h4>
-          <p class="text2 small mb12">Restore from a previously exported JSON file.</p>
-          <label class="btn btn-secondary w100" style="cursor:pointer">📥 Import Data<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+          <h4 class="mb8">Import / Restore</h4>
+          <p class="text2 small mb12">Restore from a previously exported JSON file. Overwrites current data.</p>
+          <label class="btn btn-secondary w100" style="cursor:pointer">📥 Import JSON<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
         </div>
       </div>
-      <div class="mt16">
-        <h4 class="mb8 text-red">⚠️ Danger Zone</h4>
-        <button class="btn btn-danger" onclick="confirmResetData()">🗑️ Reset All Data</button>
-        <p class="small text2 mt4">This will delete all transactions, users, and settings. Cannot be undone.</p>
-      </div>
+    </div>
+
+    <div class="card">
+      <h4 class="mb8 text-red">⚠️ Danger Zone</h4>
+      <button class="btn btn-danger" onclick="confirmResetData()">🗑️ Reset All Data</button>
+      <p class="small text2 mt4">This will delete all transactions, users, and settings. Cannot be undone.</p>
     </div>`;
 
   return '';
@@ -3100,6 +3171,98 @@ window.selectService=selectService;window.completeSale=completeSale;
 window.clearPOS=clearPOS;window.lookupCustomer=lookupCustomer;
 window.selectPayment=selectPayment;window.applyDiscount=applyDiscount;
 window.addCustomService=addCustomService;window.filterTxns=filterTxns;
+// ── CSV / SHEETS EXPORT ────────────────────────────────────────────
+function exportCSV(type){
+  let rows=[];let filename='arama_'+type+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  const esc=v=>{const s=String(v==null?'':v);return s.includes(',')||s.includes('"')||s.includes('\n')?'"'+s.replace(/"/g,'""')+'"':s;};
+  const row=arr=>arr.map(esc).join(',')+'\n';
+
+  if(type==='transactions'){
+    const txns=DB.get('transactions')||[];
+    rows.push(row(['ID','Date','Time','Location','Service','Duration','Amount','PaymentMode','Staff','Token','LoyaltyPts','Notes']));
+    txns.forEach(t=>{
+      const d=new Date(t.ts||t.date||Date.now());
+      rows.push(row([t.id||'',d.toLocaleDateString('en-IN'),d.toLocaleTimeString('en-IN'),t.location||'',t.service||'',t.duration||'',t.amount||0,t.paymentMode||'',t.staff||'',t.token||'',t.loyaltyPoints||0,t.notes||'']));
+    });
+  } else if(type==='phonepe'){
+    const pp=DB.get('phonepe-records')||[];
+    rows.push(row(['ID','Date','StoreID','Amount','Status','Reference','Location']));
+    pp.forEach(p=>{
+      const d=new Date(p.ts||p.date||Date.now());
+      rows.push(row([p.id||'',d.toLocaleDateString('en-IN'),p.storeId||p.store||'',p.amount||0,p.status||'',p.ref||p.reference||'',p.location||'']));
+    });
+  } else if(type==='crm'){
+    const leads=DB.get('crm-leads')||[];
+    rows.push(row(['ID','Company','ContactName','Phone','Email','Stage','Industry','Value','Source','Notes','LastContact','Created']));
+    leads.forEach(l=>{
+      rows.push(row([l.id||'',l.company||'',l.contactName||l.name||'',l.phone||'',l.email||'',l.stage||'',l.industry||'',l.value||0,l.source||'',l.notes||'',l.lastContact?new Date(l.lastContact).toLocaleDateString('en-IN'):'',l.ts?new Date(l.ts).toLocaleDateString('en-IN'):'']));
+    });
+  } else if(type==='loyalty'){
+    // Scan all loyalty keys
+    const members=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.startsWith('arama_loyalty_')){
+        const phone=k.replace('arama_loyalty_','');
+        try{const m=JSON.parse(localStorage.getItem(k));if(m)members.push({phone,...m});}catch(e){}
+      }
+    }
+    rows.push(row(['Phone','Name','Points','TotalSpend','Visits','JoinDate','LastVisit']));
+    members.forEach(m=>{
+      const hist=m.history||[];
+      const lastV=hist.length?new Date(hist[hist.length-1].ts||hist[hist.length-1].date).toLocaleDateString('en-IN'):'';
+      rows.push(row([m.phone||'',m.name||'',m.points||0,m.totalSpend||0,hist.length,m.joinDate?new Date(m.joinDate).toLocaleDateString('en-IN'):'',lastV]));
+    });
+  } else if(type==='daily-reports'){
+    const rpts=DB.get('daily-reports')||[];
+    rows.push(row(['Date','Location','ShiftType','TotalRevenue','ChairRevenue','LegRevenue','GunRevenue','ComboRevenue','PhonePeAmount','CashAmount','ChairSessions','TotalSessions','MeterReading','StaffPresent','Incidents','Notes','SubmittedBy','SubmittedAt']));
+    rpts.forEach(r=>{
+      rows.push(row([r.date||'',r.location||'',r.shiftType||'',r.totalRevenue||0,r.chairRevenue||0,r.legRevenue||0,r.gunRevenue||0,r.comboRevenue||0,r.phonePeAmount||0,r.cashAmount||0,r.chairSessions||0,r.totalSessions||0,r.meterReading||'',r.staffPresent||'',r.incidents||'',r.notes||'',r.submittedBy||'',r.submittedAt?new Date(r.submittedAt).toLocaleString('en-IN'):'']));
+    });
+  } else if(type==='users'){
+    const users=DB.get('users')||[];
+    rows.push(row(['ID','Name','Username','Role','RoleLevel','Location','Phone','Email','Status','JoinDate']));
+    users.forEach(u=>{
+      if(u.username==='superadmin')return; // skip superadmin for security
+      rows.push(row([u.id||'',u.name||'',u.username||'',u.role||'',u.roleLevel||'',u.location||'',u.phone||'',u.email||'',u.active===false?'Inactive':'Active',u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN'):'']));
+    });
+  }
+
+  if(rows.length<=1){showToast('No data found to export for: '+type,'warning');return;}
+  const csv=rows.join('');
+  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}); // BOM for Excel
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+  showToast('Exported '+String(rows.length-1)+' rows to '+filename,'success');
+}
+
+function saveWebhookUrl(){
+  const url=document.getElementById('sheets-webhook-url')?.value?.trim();
+  if(url){DB.set('sheets-webhook-url',url);showToast('Webhook URL saved','success');}
+  else{showToast('Enter a valid URL first','error');}
+}
+
+async function pushToSheets(type){
+  const url=DB.get('sheets-webhook-url');
+  if(!url){showToast('Save your Apps Script webhook URL first in the Backup tab','error');return;}
+  let data=[];
+  if(type==='transactions')data=DB.get('transactions')||[];
+  else if(type==='crm')data=DB.get('crm-leads')||[];
+  else if(type==='daily-reports')data=DB.get('daily-reports')||[];
+  else if(type==='loyalty'){
+    for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('arama_loyalty_')){try{const m=JSON.parse(localStorage.getItem(k));if(m)data.push({phone:k.replace('arama_loyalty_',''),...m});}catch(e){}}}
+  }
+  if(!data.length){showToast('No data to push for: '+type,'warning');return;}
+  showToast('Pushing to Google Sheets…','info');
+  try{
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type,data,ts:new Date().toISOString()}),signal:AbortSignal.timeout(10000)});
+    if(res.ok){showToast('Pushed '+data.length+' records to Sheets ✓','success');}
+    else{showToast('Sheets push failed: HTTP '+res.status,'error');}
+  }catch(e){showToast('Could not reach the Apps Script URL. Check the URL and redeploy.','error');}
+}
+
+window.exportCSV=exportCSV;window.saveWebhookUrl=saveWebhookUrl;window.pushToSheets=pushToSheets;
 window.showHistoryTab=showHistoryTab;window.exportData=exportData;
 window.importData=importData;window.importPhonePe=importPhonePe;
 window.addB2BTxn=addB2BTxn;window.saveB2BTxn=saveB2BTxn;
