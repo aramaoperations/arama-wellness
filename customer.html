@@ -36,7 +36,6 @@ select option{background:var(--bg2)}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 .hidden{display:none!important}
-
 /* ── LAYOUT ── */
 .container{max-width:720px;margin:0 auto;padding:0 16px}
 .container-wide{max-width:1100px;margin:0 auto;padding:0 16px}
@@ -44,7 +43,6 @@ select option{background:var(--bg2)}
 .section-title{font-size:22px;font-weight:800;margin-bottom:6px}
 .section-sub{font-size:14px;color:var(--text2);margin-bottom:22px;line-height:1.6}
 .divider{height:1px;background:var(--border);margin:28px 0}
-
 /* ── FLEX/GRID ── */
 .flex{display:flex}.ac{align-items:center}.jb{justify-content:space-between}.jc{justify-content:center}.wrap{flex-wrap:wrap}.gap8{gap:8px}.gap12{gap:12px}.gap16{gap:16px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -55,7 +53,6 @@ select option{background:var(--bg2)}
 .bold{font-weight:700}.semi{font-weight:600}
 .text2{color:var(--text2)}.text3{color:var(--text3)}.text-gold{color:var(--gold)}.text-green{color:var(--green)}.text-accent{color:var(--accent3)}
 .small{font-size:13px}.xs{font-size:12px}
-
 /* ── CARDS ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:20px}
 .badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
@@ -64,7 +61,6 @@ select option{background:var(--bg2)}
 .badge-purple{background:rgba(124,58,237,.15);color:var(--accent3)}
 .badge-blue{background:rgba(59,130,246,.15);color:var(--blue2)}
 .badge-red{background:rgba(239,68,68,.15);color:#f87171}
-
 /* ── BUTTONS — all min 48px for tap targets ── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:var(--radius);font-size:15px;font-weight:700;transition:all .15s;white-space:nowrap;cursor:pointer;border:none;min-height:48px;-webkit-tap-highlight-color:transparent;letter-spacing:.01em}
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:active{background:var(--accent2);transform:scale(.97)}
@@ -74,7 +70,6 @@ select option{background:var(--bg2)}
 .btn-whatsapp{background:#25D366;color:#fff;font-weight:700}.btn-whatsapp:active{background:#20bd5a}
 .btn-lg{padding:16px 28px;font-size:17px;border-radius:14px;min-height:56px}
 .btn-sm{padding:10px 16px;font-size:13px;min-height:40px}
-
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
@@ -82,14 +77,12 @@ select option{background:var(--bg2)}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .fade-up{animation:fadeUp .35s ease both}
 .float{animation:float 3s ease-in-out infinite}
-
 /* ── TOAST ── */
 #toast-container{position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom) + 12px);left:16px;right:16px;z-index:400;display:flex;flex-direction:column;gap:8px;align-items:center}
 .toast{padding:14px 20px;border-radius:var(--radius);font-size:14px;font-weight:600;width:100%;max-width:400px;animation:fadeUp .3s ease;box-shadow:0 8px 24px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px}
 .toast-success{background:#065f46;border:1px solid var(--green);color:#a7f3d0}
 .toast-error{background:#7f1d1d;border:1px solid var(--red);color:#fca5a5}
 .toast-info{background:#1e1b4b;border:1px solid var(--accent);color:var(--accent3)}
-
 /* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
 @media(min-width:600px){.modal-overlay{align-items:center}}
@@ -101,11 +94,9 @@ select option{background:var(--bg2)}
 .modal-body{padding:18px 20px}
 .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px}
 .close-btn{background:var(--card2);border:1px solid var(--border2);color:var(--text2);min-width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0}
-
 /* ── NOTIFICATION BAR ── */
 .notif-bar{background:linear-gradient(90deg,#6d28d9,var(--accent),#6d28d9);background-size:200%;animation:shimmer 4s linear infinite;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;color:#fff;line-height:1.4}
 .notif-bar a{color:#fff;text-decoration:underline;cursor:pointer}
-
 /* ── HEADER (desktop only, hidden on mobile) ── */
 header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06)}
 .brand{font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -116,12 +107,10 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .nav-link.active{color:var(--accent3)}
 .header-pts-badge{background:linear-gradient(135deg,var(--gold),#f97316);color:#000;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:800;cursor:pointer;display:none;min-height:40px;align-items:center}
 @media(max-width:680px){header{display:none}} /* hide header on mobile — use bottom nav */
-
 /* ── MOBILE TOP BAR ── */
 .mobile-topbar{display:none;background:rgba(26,26,46,.96);padding:12px 16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06)}
 @media(max-width:680px){.mobile-topbar{display:flex}}
 .mobile-pts{background:linear-gradient(135deg,var(--gold),#f97316);color:#000;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:800;cursor:pointer;display:none;min-height:36px;align-items:center}
-
 /* ── BOTTOM NAV (mobile) ── */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(15,15,26,.97);border-top:1px solid var(--border);padding-bottom:var(--safe-bottom);backdrop-filter:blur(16px)}
 @media(max-width:680px){.bottom-nav{display:flex}}
@@ -131,12 +120,10 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .bnav-icon{font-size:22px;line-height:1}
 .bnav-label{font-size:10px;font-weight:600;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52px;text-align:center}
 .bnav-item.active .bnav-label{color:var(--accent3)}
-
 /* ── STICKY FIND CTA (mobile) ── */
 .sticky-find-cta{display:none;position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom) + 12px);right:16px;z-index:190}
 @media(max-width:680px){.sticky-find-cta.visible{display:block}}
 .sticky-find-btn{background:linear-gradient(135deg,var(--accent),#6d28d9);color:#fff;border:none;border-radius:50px;padding:14px 20px;font-size:14px;font-weight:700;box-shadow:0 4px 20px rgba(124,58,237,.5);display:flex;align-items:center;gap:8px;cursor:pointer;min-height:52px;animation:pulse 2.5s infinite}
-
 /* ── HERO ── */
 .hero{text-align:center;padding:40px 16px 32px;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.28) 0%,transparent 65%);position:relative}
 .hero-emoji{font-size:64px;margin-bottom:16px;display:block}
@@ -150,7 +137,6 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .hero-stat:last-child{border-right:none}
 .hero-stat .val{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block}
 .hero-stat .lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;display:block}
-
 /* ── SERVICE CARDS ── */
 .svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px}
 @media(max-width:400px){.svc-grid{grid-template-columns:1fr 1fr}}
@@ -166,20 +152,17 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .svc-price{font-size:20px;font-weight:900;color:var(--gold)}
 .svc-dur{font-size:11px;color:var(--text3)}
 .svc-cta{margin-top:10px;width:100%;padding:10px;font-size:13px;min-height:40px}
-
 /* ── CATEGORY TABS ── */
 .cat-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:18px;scrollbar-width:none}
 .cat-tabs::-webkit-scrollbar{display:none}
 .cat-tab{padding:10px 18px;border-radius:50px;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer;border:2px solid var(--border2);background:transparent;color:var(--text2);flex-shrink:0;min-height:42px;-webkit-tap-highlight-color:transparent}
 .cat-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-
 /* ── HOW IT WORKS ── */
 .hiw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px;margin:20px 0}
 .hiw-step{text-align:center;padding:20px 12px}
 .hiw-num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;margin:0 auto 12px;color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.4)}
 .hiw-step h4{font-size:14px;font-weight:700;margin-bottom:6px}
 .hiw-step p{font-size:12px;color:var(--text2);line-height:1.5}
-
 /* ── TESTIMONIALS ── */
 .testi-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
 .testi-scroll::-webkit-scrollbar{display:none}
@@ -189,7 +172,6 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .testi-author{display:flex;align-items:center;gap:10px}
 .testi-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
 .stars{color:var(--gold);font-size:12px;margin-bottom:6px}
-
 /* ── PASS CARDS ── */
 .pass-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
 .pass-scroll::-webkit-scrollbar{display:none}
@@ -208,7 +190,6 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .pass-feature{display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 0;color:var(--text2)}
 .pass-feature .ck{color:var(--green2);font-size:14px;flex-shrink:0}
 .pass-cta{width:100%;margin-top:auto;padding-top:16px}
-
 /* ── LOCATION ── */
 .loc-search-box{background:var(--card2);border:1px solid var(--border2);border-radius:var(--radius2);padding:14px 16px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .loc-search-box input{flex:1;background:transparent;border:none;font-size:16px;color:var(--text);padding:0}
@@ -233,7 +214,6 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .loc-item-city{font-size:13px;color:var(--text2);margin-top:1px}
 .loc-item-station{font-size:12px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .loc-item-arrow{color:var(--text3);font-size:18px;flex-shrink:0}
-
 /* ── LOYALTY ── */
 .loyalty-hero{background:linear-gradient(140deg,#1c0a4a,#2a1060);border:1px solid rgba(124,58,237,.4);border-radius:var(--radius2);padding:28px 20px;text-align:center;margin-bottom:22px}
 .pts-display{font-size:56px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
@@ -241,7 +221,6 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .earn-table th{background:var(--bg4);color:var(--text2);font-size:11px;font-weight:700;text-transform:uppercase;padding:10px 14px;text-align:left;letter-spacing:.05em}
 .earn-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:14px}
 .earn-table tr:last-child td{border-bottom:none}
-
 /* ── B2B HERO ── */
 .b2b-hero{border-radius:var(--radius2);overflow:hidden;margin-bottom:28px;position:relative;background:linear-gradient(140deg,#0a1628,#0d2640,#0a2818);padding:28px 20px}
 .b2b-hero::after{content:'';position:absolute;right:0;top:0;bottom:0;width:40%;background:url('https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&q=80&fit=crop') center/cover no-repeat;opacity:.2}
@@ -277,7 +256,6 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .form-group label{display:block;margin-bottom:6px;color:var(--text2);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:480px){.form-row{grid-template-columns:1fr}}
-
 /* ── TECH ── */
 .tech-list{display:flex;flex-direction:column;gap:12px}
 .tech-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:18px;display:flex;gap:16px;align-items:flex-start}
@@ -291,7 +269,6 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .equip-info{position:absolute;bottom:0;left:0;right:0;padding:14px;z-index:1}
 .equip-name{font-size:14px;font-weight:800;margin-bottom:2px}
 .equip-desc{font-size:11px;color:rgba(255,255,255,.75)}
-
 /* ── FAQ ── */
 .faq-list{display:flex;flex-direction:column;gap:8px}
 .faq-item{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
@@ -301,11 +278,9 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .faq-q.open .faq-icon{transform:rotate(45deg)}
 .faq-a{display:none;padding:0 18px 16px;font-size:14px;color:var(--text2);line-height:1.65;border-top:1px solid var(--border)}
 .faq-a.show{display:block}
-
 /* ── INFO BOX ── */
 .info-box{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);border-radius:var(--radius);padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.6}
 .success-box{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:var(--radius2);padding:28px 20px;text-align:center}
-
 /* ── FOOTER ── */
 footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16px 20px;margin-top:40px}
 .footer-brand{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -316,14 +291,11 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
 </style>
 </head>
 <body>
-
 <div id="toast-container"></div>
-
 <!-- NOTIFICATION BAR -->
 <div class="notif-bar">
   🎉 <strong>Monthly Unlimited Pass @ ₹2,499</strong> — All 33 kiosks, unlimited sessions. <a onclick="showTab('passes')">See Passes →</a>
 </div>
-
 <!-- DESKTOP HEADER -->
 <header>
   <div>
@@ -343,7 +315,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     <button class="btn btn-gold btn-sm" onclick="openLoyaltyTab()">My Points</button>
   </div>
 </header>
-
 <!-- MOBILE TOP BAR -->
 <div class="mobile-topbar">
   <div>
@@ -355,12 +326,10 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     <button class="btn btn-gold btn-sm" onclick="openLoyaltyTab()">⭐ Points</button>
   </div>
 </div>
-
 <!-- STICKY FIND CTA (mobile, only on hero/services) -->
 <div class="sticky-find-cta" id="sticky-cta">
   <button class="sticky-find-btn" onclick="showTab('locations')">📍 Find Nearest Kiosk</button>
 </div>
-
 <!-- ════════════════════════════════
      HERO
 ════════════════════════════════ -->
@@ -381,12 +350,10 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     </div>
   </div>
 </div>
-
 <!-- ════════════════════════════════
      PAGES
 ════════════════════════════════ -->
 <div id="pages">
-
 <!-- SERVICES -->
 <div id="tab-services" class="hidden fade-up">
   <div class="container section">
@@ -418,7 +385,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     </div>
   </div>
 </div>
-
 <!-- PASSES -->
 <div id="tab-passes" class="hidden fade-up">
   <div class="container section">
@@ -444,7 +410,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     </div>
   </div>
 </div>
-
 <!-- FIND US -->
 <div id="tab-locations" class="hidden fade-up">
   <div class="container section">
@@ -464,7 +429,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     <div class="loc-list" id="loc-grid"></div>
   </div>
 </div>
-
 <!-- LOYALTY -->
 <div id="tab-loyalty" class="hidden fade-up">
   <div class="container section">
@@ -505,7 +469,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     </div>
   </div>
 </div>
-
 <!-- TECHNOLOGY -->
 <div id="tab-technology" class="hidden fade-up">
   <div class="container section">
@@ -526,7 +489,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     </div>
   </div>
 </div>
-
 <!-- B2B -->
 <div id="tab-b2b" class="hidden fade-up">
   <div class="container section">
@@ -546,7 +508,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
         </div>
       </div>
     </div>
-
     <!-- PARTNERS -->
     <div class="section-title" style="font-size:19px">🤝 Who We Work With</div>
     <div class="partner-grid mt16 mb24">
@@ -557,7 +518,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
       <div class="partner-card"><div class="partner-icon">🚉</div><div class="partner-name">Railway / Transport</div><div class="partner-desc">Station partnerships</div></div>
       <div class="partner-card"><div class="partner-icon">🎪</div><div class="partner-name">Events</div><div class="partner-desc">Conferences & expos</div></div>
     </div>
-
     <!-- WHAT WE OFFER -->
     <div class="section-title" style="font-size:19px">💡 What We Offer</div>
     <div class="offer-list mt16">
@@ -568,7 +528,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
       <div class="offer-item" style="border-left-color:var(--blue)"><div class="offer-icon">🤝</div><div><div class="offer-title">Revenue Sharing</div><div class="offer-desc">Venue partners earn a % of every session. Turn unused space into passive income.</div></div></div>
       <div class="offer-item" style="border-left-color:var(--accent3)"><div class="offer-icon">👤</div><div><div class="offer-title">Dedicated Account Manager</div><div class="offer-desc">Single point of contact for billing, scheduling, and issue resolution.</div></div></div>
     </div>
-
     <!-- PRICING TIERS -->
     <div class="divider"></div>
     <div class="section-title" style="font-size:19px">📦 Pricing Tiers</div>
@@ -611,7 +570,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
         <button class="btn btn-primary w100 mt12" onclick="document.getElementById('b2b-form-top').scrollIntoView({behavior:'smooth'})">Contact Sales</button>
       </div>
     </div>
-
     <!-- QUOTE FORM -->
     <div class="divider"></div>
     <div id="b2b-form-top">
@@ -678,9 +636,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     </div>
   </div>
 </div>
-
 </div><!-- /pages -->
-
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -697,7 +653,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     <div class="footer-copy">© 2024 ārāma Robotic Technologies · tech@arama.asia · Sessions are token-verified and hardware-timed.</div>
   </div>
 </footer>
-
 <!-- BOTTOM NAV (mobile) -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
@@ -708,16 +663,13 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
     <div class="bnav-item" id="bn-b2b" onclick="showTab('b2b')"><div class="bnav-icon">🤝</div><div class="bnav-label">B2B</div></div>
   </div>
 </nav>
-
 <div id="modals"></div>
-
 <script>
 // ── DB ─────────────────────────────────────────────────────
 const DB={
   get(k){try{return JSON.parse(localStorage.getItem('arama_'+k))}catch(e){return null}},
   set(k,v){localStorage.setItem('arama_'+k,JSON.stringify(v))}
 };
-
 // ── DATA ────────────────────────────────────────────────────
 const SVCS=[
   {id:'CHR15',name:'Chair Massage',duration:15,price:199,category:'chair',icon:'💺',active:true,desc:'15 min full back & neck massage. Quick refresher between trains.',img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=220&fit=crop&q=80'},
@@ -770,13 +722,11 @@ const LOCS=[
   {code:'KLY-P1',name:'Kalyan P1',station:'Kalyan Railway Station P1',city:'Kalyan',state:'Maharashtra',zone:'CR',chairs:2},
   {code:'THN-P3',name:'Thane P3',station:'Thane Railway Station P3',city:'Thane',state:'Maharashtra',zone:'CR',chairs:2},
 ];
-
 // ── UTILS ───────────────────────────────────────────────────
 const fc=n=>'₹'+Number(n||0).toLocaleString('en-IN');
 const fd=m=>m>=60?Math.floor(m/60)+'h'+(m%60?' '+m%60+'m':''):m+'min';
 const CAT_CLS={chair:'badge-purple',leg:'badge-green',gun:'badge-red',combo:'badge-gold'};
 const CAT_LBL={chair:'Chair',leg:'Leg',gun:'Gun',combo:'Combo'};
-
 function toast(msg,type='info'){
   const t=document.createElement('div');t.className='toast toast-'+type;
   const ic={success:'✅',error:'❌',info:'ℹ️'};
@@ -791,12 +741,10 @@ function openModal(html){
   document.getElementById('modals').appendChild(el);
 }
 function closeModal(){const m=document.getElementById('cust-modal');if(m)m.remove();}
-
 // ── NAV ─────────────────────────────────────────────────────
 let currentZone='';
 const TABS=['services','passes','locations','loyalty','technology','b2b'];
 const BN_IDS={services:'bn-services',passes:'bn-passes',locations:'bn-locations',loyalty:'bn-loyalty',b2b:'bn-b2b'};
-
 function showTab(tab, navEl){
   // hide all
   TABS.forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.classList.add('hidden');});
@@ -820,7 +768,6 @@ function showTab(tab, navEl){
   if(tab==='locations')renderLocations();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
 // ── SERVICES ────────────────────────────────────────────────
 function getSvcs(){return (DB.get('services')||SVCS).filter(s=>s.active&&s.category!=='pass');}
 function renderSvcs(cat){
@@ -877,7 +824,6 @@ function showSvcModal(id){
     </div>
   </div>`);
 }
-
 // ── PASSES ──────────────────────────────────────────────────
 function renderPasses(){
   const grid=document.getElementById('passes-grid');if(!grid)return;
@@ -920,7 +866,6 @@ function toggleFaq(el){
   el.classList.toggle('open');
   el.nextElementSibling.classList.toggle('show');
 }
-
 // ── LOCATIONS ───────────────────────────────────────────────
 function getLocs(){const s=DB.get('locations');return s&&s.length?s.filter(l=>l.active!==false&&!l.isVendor):LOCS;}
 function setZone(z,el){
@@ -978,7 +923,6 @@ function showLocModal(code){
     </div>
   </div>`);
 }
-
 // ── LOYALTY ─────────────────────────────────────────────────
 function checkLoyalty(){
   const phone=(document.getElementById('loyalty-phone')?.value||'').trim();
@@ -1013,7 +957,6 @@ function openLoyaltyTab(){
   showTab('loyalty');
   setTimeout(()=>{const el=document.getElementById('loyalty-phone');if(el)el.focus();},300);
 }
-
 // ── B2B ─────────────────────────────────────────────────────
 function submitB2B(){
   const co=document.getElementById('b2b-company')?.value?.trim();
@@ -1037,7 +980,6 @@ function resetB2B(){
   document.getElementById('b2b-form-wrap').classList.remove('hidden');
   document.getElementById('b2b-success').classList.add('hidden');
 }
-
 // ── INIT ─────────────────────────────────────────────────────
 function init(){
   showTab('services');
