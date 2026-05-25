@@ -1,0 +1,3138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1a2e">
+<title>ārāma Wellness OS v7</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f1a;--bg2:#1a1a2e;--bg3:#16213e;--bg4:#0d1117;
+  --card:#1e1e30;--card2:#252540;
+  --accent:#7c3aed;--accent2:#9d5cf6;--accent3:#b78bfa;
+  --gold:#f59e0b;--gold2:#fbbf24;
+  --green:#10b981;--green2:#34d399;
+  --red:#ef4444;--red2:#f87171;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --orange:#f97316;--orange2:#fb923c;
+  --teal:#14b8a6;--teal2:#2dd4bf;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --border:#2d2d4a;--border2:#3d3d5c;
+  --sidebar:220px;
+  --radius:10px;--radius2:16px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --shadow2:0 8px 40px rgba(0,0,0,0.6);
+}
+html,body{height:100%;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+a{color:var(--accent3);text-decoration:none}
+button{cursor:pointer;border:none;outline:none;font-family:inherit}
+input,select,textarea{font-family:inherit;outline:none;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:var(--radius);padding:8px 12px;width:100%;font-size:14px}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,58,237,0.2)}
+select option{background:var(--bg2)}
+textarea{resize:vertical;min-height:80px}
+label{display:block;margin-bottom:4px;color:var(--text2);font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase}
+h1{font-size:22px;font-weight:700;color:var(--text)}
+h2{font-size:18px;font-weight:600;color:var(--text)}
+h3{font-size:15px;font-weight:600;color:var(--text)}
+h4{font-size:13px;font-weight:600;color:var(--text2)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ─── UTILITIES ─── */
+.flex{display:flex}.gap4{gap:4px}.gap8{gap:8px}.gap12{gap:12px}.gap16{gap:16px}.gap24{gap:24px}
+.col{flex-direction:column}.wrap{flex-wrap:wrap}.ac{align-items:center}.jb{justify-content:space-between}.jc{justify-content:center}.je{justify-content:flex-end}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:768px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.w100{width:100%}.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+.mb4{margin-bottom:4px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+.p8{padding:8px}.p12{padding:12px}.p16{padding:16px}.p24{padding:24px}
+.bold{font-weight:700}.semi{font-weight:600}.small{font-size:12px}.xs{font-size:11px}
+.text-accent{color:var(--accent3)}.text-gold{color:var(--gold)}.text-green{color:var(--green)}.text-red{color:var(--red)}.text-blue{color:var(--blue2)}.text-teal{color:var(--teal)}.text-orange{color:var(--orange)}.text2{color:var(--text2)}.text3{color:var(--text3)}
+.hidden{display:none!important}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pointer{cursor:pointer}
+
+/* ─── CARD ─── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:20px}
+.card-sm{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+
+/* ─── BADGE ─── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.03em}
+.badge-green{background:rgba(16,185,129,0.15);color:var(--green2)}
+.badge-red{background:rgba(239,68,68,0.15);color:var(--red2)}
+.badge-gold{background:rgba(245,158,11,0.15);color:var(--gold2)}
+.badge-blue{background:rgba(59,130,246,0.15);color:var(--blue2)}
+.badge-purple{background:rgba(124,58,237,0.15);color:var(--accent3)}
+.badge-orange{background:rgba(249,115,22,0.15);color:var(--orange2)}
+.badge-teal{background:rgba(20,184,166,0.15);color:var(--teal2)}
+.badge-grey{background:rgba(100,116,139,0.15);color:var(--text3)}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:var(--radius);font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2)}.btn-secondary:hover{border-color:var(--accent);color:var(--accent3)}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{background:var(--green2);transform:translateY(-1px)}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:var(--red2)}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:var(--gold2)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11px}
+.btn-icon{width:34px;height:34px;padding:0;border-radius:8px}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important}
+
+/* ─── TABS ─── */
+.tabs{display:flex;gap:2px;background:var(--bg4);padding:4px;border-radius:var(--radius);margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,0.4)}
+.tab:not(.active):hover{background:var(--card2);color:var(--text)}
+
+/* ─── TABLE ─── */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+th{background:var(--bg4);color:var(--text2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* ─── MODAL ─── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius2);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow2)}
+.modal-lg{max-width:820px}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.close-btn{background:var(--card2);border:1px solid var(--border2);color:var(--text2);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}.close-btn:hover{color:var(--red)}
+
+/* ─── FORM ROW ─── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group{margin-bottom:16px}
+.form-group:last-child{margin-bottom:0}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+
+/* ─── TOAST ─── */
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;min-width:260px;max-width:380px;animation:slideIn .3s ease;box-shadow:var(--shadow)}
+.toast-success{background:#064e3b;border:1px solid var(--green);color:var(--green2)}
+.toast-error{background:#450a0a;border:1px solid var(--red);color:var(--red2)}
+.toast-info{background:#1e1b4b;border:1px solid var(--accent);color:var(--accent3)}
+.toast-warn{background:#451a03;border:1px solid var(--orange);color:var(--orange2)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ─── STAT CARD ─── */
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card.purple::before{background:linear-gradient(90deg,var(--accent),var(--accent3))}
+.stat-card.green::before{background:linear-gradient(90deg,var(--green),var(--green2))}
+.stat-card.gold::before{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.stat-card.blue::before{background:linear-gradient(90deg,var(--blue),var(--blue2))}
+.stat-card.teal::before{background:linear-gradient(90deg,var(--teal),var(--teal2))}
+.stat-card.orange::before{background:linear-gradient(90deg,var(--orange),var(--orange2))}
+.stat-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px}
+.stat-value{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px}
+.stat-sub{font-size:12px;color:var(--text2)}
+.stat-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:40px;opacity:0.15}
+
+/* ─── SIDEBAR ─── */
+#sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column;transition:transform .3s}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.logo-mark{font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:10px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 8px}
+.nav-section{margin-bottom:8px}
+.nav-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;padding:8px 12px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:1px}
+.nav-item:hover{background:var(--card2);color:var(--text)}
+.nav-item.active{background:var(--accent);color:#fff;font-weight:600}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.nav-item .badge-nav{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700}
+.sidebar-user{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:13px;font-weight:600}
+.user-role{font-size:11px;color:var(--text3)}
+
+/* ─── MAIN CONTENT ─── */
+#main{margin-left:var(--sidebar);min-height:100vh;background:var(--bg)}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:16px;font-weight:700}
+.topbar-sub{font-size:12px;color:var(--text2)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.page-content{padding:24px}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+
+/* ─── LOGIN ─── */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 20% 20%,rgba(124,58,237,0.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(245,158,11,0.08) 0%,transparent 60%),var(--bg);padding:20px}
+.login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:40px;width:100%;max-width:440px;box-shadow:var(--shadow2)}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-logo .brand{font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-logo .tagline{font-size:12px;color:var(--text3);margin-top:4px;letter-spacing:0.1em;text-transform:uppercase}
+.login-logo .version{font-size:11px;color:var(--text3);margin-top:2px}
+.login-title{font-size:20px;font-weight:700;margin-bottom:24px;text-align:center}
+.login-form .form-group{margin-bottom:18px}
+.login-btn{width:100%;padding:13px;font-size:15px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:var(--radius);border:none;cursor:pointer;transition:all .2s;margin-top:8px}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,0.4)}
+.login-footer{text-align:center;margin-top:24px;font-size:12px;color:var(--text3)}
+.login-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text3);font-size:12px}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.login-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--bg4);padding:4px;border-radius:10px;margin-bottom:24px}
+.login-tab{padding:9px;text-align:center;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s}
+.login-tab.active{background:var(--accent);color:#fff}
+.staff-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.quick-btn{padding:10px 8px;border-radius:8px;text-align:center;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);transition:all .15s;font-size:12px;font-weight:600;color:var(--text2)}
+.quick-btn:hover{border-color:var(--accent);color:var(--accent3)}
+
+/* ─── KPI STRIP ─── */
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+
+/* ─── POS ─── */
+.pos-layout{display:grid;grid-template-columns:1fr 360px;gap:20px;height:calc(100vh - 140px)}
+@media(max-width:900px){.pos-layout{grid-template-columns:1fr;height:auto}}
+.pos-left{overflow-y:auto}
+.pos-right{overflow-y:auto}
+.service-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.service-card{background:var(--card2);border:2px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all .15s;text-align:center;position:relative}
+.service-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.service-card.selected{border-color:var(--accent);background:rgba(124,58,237,0.1)}
+.service-card .s-icon{font-size:28px;margin-bottom:8px}
+.service-card .s-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.service-card .s-price{font-size:15px;font-weight:800;color:var(--gold)}
+.service-card .s-dur{font-size:11px;color:var(--text3)}
+.order-summary{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius2);padding:20px;height:fit-content;position:sticky;top:80px}
+.order-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.chair-select{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.chair-btn{padding:10px;background:var(--bg3);border:2px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:all .15s;font-size:12px;font-weight:600}
+.chair-btn:hover{border-color:var(--accent)}
+.chair-btn.active{border-color:var(--green);background:rgba(16,185,129,0.1);color:var(--green)}
+.chair-btn.occupied{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red);cursor:not-allowed}
+.payment-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.pay-btn{padding:10px 6px;background:var(--bg3);border:2px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:all .15s;font-size:11px;font-weight:600;color:var(--text2)}
+.pay-btn:hover{border-color:var(--accent);color:var(--accent3)}
+.pay-btn.selected{border-color:var(--accent);background:rgba(124,58,237,0.15);color:var(--accent3)}
+.total-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.total-row.grand{font-size:16px;font-weight:800;padding:10px 0;border-top:2px solid var(--border2);margin-top:8px}
+
+/* ─── TOKEN ─── */
+.token-card{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:var(--radius2);padding:20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
+.token-card::after{content:'āMA';position:absolute;right:-10px;bottom:-10px;font-size:60px;font-weight:900;opacity:0.1}
+.token-code{font-size:20px;font-weight:800;letter-spacing:0.1em;font-family:monospace;margin:8px 0}
+.token-details{font-size:12px;opacity:0.85;line-height:1.8}
+
+/* ─── LOCATION CARD ─── */
+.location-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;cursor:pointer;transition:all .15s}
+.location-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(124,58,237,0.15)}
+.location-code{font-size:10px;font-weight:800;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-bottom:4px}
+.location-name{font-size:14px;font-weight:700;margin-bottom:4px}
+.location-meta{font-size:11px;color:var(--text2);display:flex;gap:8px;flex-wrap:wrap}
+
+/* ─── QUEUE ─── */
+.queue-item{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.queue-timer{font-size:20px;font-weight:800;font-family:monospace;color:var(--gold)}
+
+/* ─── HEALTH INDICATOR ─── */
+.health-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.health-green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.health-red{background:var(--red);box-shadow:0 0 6px var(--red)}
+.health-gold{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.health-grey{background:var(--text3)}
+
+/* ─── PROGRESS BAR ─── */
+.progress-bar{background:var(--bg4);border-radius:4px;height:6px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;transition:width .4s}
+.pf-green{background:linear-gradient(90deg,var(--green),var(--green2))}
+.pf-gold{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.pf-red{background:linear-gradient(90deg,var(--red),var(--red2))}
+.pf-purple{background:linear-gradient(90deg,var(--accent),var(--accent3))}
+
+/* ─── TOGGLE ─── */
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:11px;transition:.3s;cursor:pointer}
+.toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px)}
+
+/* ─── ACCORDION ─── */
+.accord{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
+.accord-header{padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--card);font-weight:600}
+.accord-header:hover{background:var(--card2)}
+.accord-body{padding:16px;border-top:1px solid var(--border);background:var(--bg2)}
+
+/* ─── SEARCH ─── */
+.search-wrap{position:relative}
+.search-wrap input{padding-left:36px}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px}
+
+/* ─── ALERT ─── */
+.alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px}
+.alert-info{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--blue2)}
+.alert-warn{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--gold2)}
+.alert-error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red2)}
+.alert-success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green2)}
+
+/* ─── CRM STAGES ─── */
+.crm-stage{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
+.stage-new{background:rgba(99,102,241,0.2);color:#818cf8}
+.stage-active{background:rgba(16,185,129,0.2);color:var(--green2)}
+.stage-closed{background:rgba(100,116,139,0.2);color:var(--text3)}
+.stage-hot{background:rgba(239,68,68,0.2);color:var(--red2)}
+
+/* ─── EMPTY STATE ─── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state .es-icon{font-size:48px;margin-bottom:16px;opacity:0.5}
+.empty-state p{font-size:14px;margin-bottom:16px}
+
+/* ─── LOYALTY ─── */
+.points-display{background:linear-gradient(135deg,var(--gold),var(--orange));border-radius:var(--radius2);padding:20px;color:#000;text-align:center}
+.points-big{font-size:40px;font-weight:900;line-height:1}
+.points-label{font-size:12px;font-weight:700;opacity:0.8;margin-top:4px}
+
+/* ─── REPORT ─── */
+.report-section{margin-bottom:24px}
+.report-section h3{font-size:14px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.report-section h3::after{content:'';flex:1;height:1px;background:var(--border)}
+.report-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.report-cell{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.report-cell-label{font-size:11px;color:var(--text3);margin-bottom:4px}
+.report-cell-value{font-size:16px;font-weight:800}
+
+/* ─── COMMISSION ─── */
+.commission-tier{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+
+/* ─── MOBILE RESPONSIVE ─── */
+@media(max-width:768px){
+  :root{--sidebar:0px}
+  #sidebar{transform:translateX(-100%);width:260px}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0}
+  .topbar{padding:0 16px}
+  .page-content{padding:16px}
+  .pos-layout{grid-template-columns:1fr}
+  .kpi-strip{grid-template-columns:1fr 1fr}
+}
+#menu-toggle{display:none;background:var(--card2);border:1px solid var(--border2);color:var(--text);width:36px;height:36px;border-radius:8px;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+@media(max-width:768px){#menu-toggle{display:flex}}
+.overlay-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99}
+.overlay-bg.show{display:block}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .25s ease}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.pulse{animation:pulse 2s infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite}
+
+/* ─── PRINT ─── */
+@media print{#sidebar,#login-screen,.no-print{display:none!important}#main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+<div class="overlay-bg" id="overlay-bg" onclick="closeSidebar()"></div>
+
+<!-- ═══════════════════════════════════════════════════ LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box fade-in">
+    <div class="login-logo">
+      <div class="brand">ārāma</div>
+      <div class="tagline">Wellness Operations System</div>
+      <div class="version">v7.0 — Railway Kiosk Network</div>
+    </div>
+    <div class="login-tabs">
+      <div class="login-tab active" id="ltab-staff" onclick="setLoginMode('staff')">Staff / Admin</div>
+      <div class="login-tab" id="ltab-customer" onclick="goCustomer()">Customer Portal</div>
+    </div>
+    <div id="staff-login-form">
+      <div class="form-group">
+        <label>Username / Phone</label>
+        <input type="text" id="login-username" placeholder="Enter username or phone" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="form-group">
+        <label>Login Location</label>
+        <select id="login-location">
+          <option value="">— Select your location —</option>
+        </select>
+      </div>
+      <button class="login-btn" onclick="doLogin()">Sign In →</button>
+      <div class="login-divider">or quick access</div>
+      <div class="staff-quick" id="quick-logins"></div>
+    </div>
+    <div class="login-footer">
+      Need access? <a href="staff-register.html" target="_blank">Request Account</a> · 
+      Support: <a href="mailto:tech@arama.asia">tech@arama.asia</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ MAIN APP (hidden until login) -->
+<div id="app" class="hidden">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">ārāma OS</div>
+      <div class="logo-sub" id="sidebar-location-label">—</div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div>
+        <div class="user-name" id="user-display-name">—</div>
+        <div class="user-role" id="user-display-role">—</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div id="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div>
+          <div class="topbar-title" id="topbar-title">Dashboard</div>
+          <div class="topbar-sub" id="topbar-sub" class="text2 small">—</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-secondary btn-sm" id="topbar-clock">—</button>
+        <button class="btn btn-secondary btn-sm" onclick="doLogout()">Sign Out</button>
+      </div>
+    </div>
+    <div class="page-content" id="page-content"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ MODALS CONTAINER -->
+<div id="modals"></div>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// ārāma Wellness OS v7 — Complete Operations System
+// Repo: aramaoperations/arama-wellness | tech@arama.asia
+// ═══════════════════════════════════════════════════════════════════
+
+// ─── DATABASE ───────────────────────────────────────────────────────
+const DB = {
+  get(k){try{return JSON.parse(localStorage.getItem('arama_'+k))}catch(e){return null}},
+  set(k,v){localStorage.setItem('arama_'+k,JSON.stringify(v))},
+  push(k,item){const a=this.get(k)||[];a.push(item);this.set(k,a)},
+  del(k){localStorage.removeItem('arama_'+k)},
+  all(){const out={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('arama_'))out[k.slice(6)]=this.get(k.slice(6))}return out}
+};
+
+// ─── LOCATIONS (33 total) ─────────────────────────────────────────
+const LOCATIONS_DEFAULT = [
+  {code:'ST-P1',name:'Surat P1',fullName:'Surat Platform 1',station:'Surat Railway Station P1',city:'Surat',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ST-CL',name:'Surat Cloakroom',fullName:'Surat Cloakroom',station:'Surat Railway Cloakroom Area',city:'Surat',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VP-VIP',name:'Vapi VIP P1',fullName:'Vapi VIP P1',station:'Vapi Railway Station VIP Platform 1',city:'Vapi',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VP-P2',name:'Vapi P2-3 (Lift)',fullName:'Vapi P2-3 (Lift)',station:'Vapi Railway Station P2-3 near Lift',city:'Vapi',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VSD-P2',name:'Valsad P2-3',fullName:'Valsad P2-3',station:'Valsad Railway Station P2-3',city:'Valsad',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VSD-CON',name:'Valsad Concourse P1',fullName:'Valsad Concourse P1',station:'Valsad Railway Concourse P1',city:'Valsad',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ANK-P1',name:'Ankleshwar P1',fullName:'Ankleshwar P1',station:'Ankleshwar Railway Station P1',city:'Ankleshwar',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BRC-P3',name:'Bharuch P3-4',fullName:'Bharuch P3-4',station:'Bharuch Railway Station P3-4',city:'Bharuch',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BRC-P1',name:'Bharuch Chayapuri',fullName:'Bharuch Chayapuri',station:'Bharuch Chayapuri Area',city:'Bharuch',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VAD-P1',name:'Vadodara P1',fullName:'Vadodara P1',station:'Vadodara Railway Station P1',city:'Vadodara',state:'Gujarat',zone:'WR',chairs:3,active:true,isVendor:false,vendorName:'',equipment:['1A','1B','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'1C',label:'Chair 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:3,legMassagers:0,gunStations:0,fans:2,lights:5,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VAD-P6',name:'Vadodara P6',fullName:'Vadodara P6',station:'Vadodara Railway Station P6',city:'Vadodara',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'AND-P4',name:'Anand P4',fullName:'Anand P4',station:'Anand Railway Station P4',city:'Anand',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'NDD-CON',name:'Nadiad Concourse',fullName:'Nadiad Concourse',station:'Nadiad Railway Station Concourse',city:'Nadiad',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VV-STN',name:'Vallabh Vidyanagar',fullName:'Vallabh Vidyanagar',station:'Vallabh Vidyanagar Railway Station',city:'Vallabh Vidyanagar',state:'Gujarat',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'MMCT-D1',name:'MMCT Deck 1',fullName:'MMCT Deck 1',station:'Mumbai Central MMCT Deck 1',city:'Mumbai',state:'Maharashtra',zone:'CR',chairs:3,active:true,isVendor:false,vendorName:'',equipment:['1A','1B','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'1C',label:'Chair 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:3,legMassagers:0,gunStations:0,fans:3,lights:5,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'MMCT-D2',name:'MMCT Deck 2',fullName:'MMCT Deck 2',station:'Mumbai Central MMCT Deck 2',city:'Mumbai',state:'Maharashtra',zone:'CR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'DDR-P5',name:'Dadar P5',fullName:'Dadar P5',station:'Dadar Railway Station P5',city:'Mumbai',state:'Maharashtra',zone:'CR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'DDR-FOB',name:'Dadar FOB',fullName:'Dadar FOB',station:'Dadar Railway Station FOB',city:'Mumbai',state:'Maharashtra',zone:'CR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ADH-D1',name:'Andheri Deck 1',fullName:'Andheri Deck 1',station:'Andheri Railway Station Deck 1',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:2109870,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ADH-D2',name:'Andheri Deck 2',fullName:'Andheri Deck 2',station:'Andheri Railway Station Deck 2',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ADH-METRO',name:'Andheri Metro',fullName:'Andheri Metro',station:'Andheri Metro Station',city:'Mumbai',state:'Maharashtra',zone:'Metro',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BOR-FOB',name:'Borivali FOB',fullName:'Borivali FOB',station:'Borivali Railway Station FOB',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BOR-P10',name:'Borivali P10',fullName:'Borivali P10',station:'Borivali Railway Station P10',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VIR-P1',name:'Virar P1',fullName:'Virar P1',station:'Virar Railway Station P1',city:'Virar',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BAN-STN',name:'Bandra Station',fullName:'Bandra Station',station:'Bandra Railway Station',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:3,active:true,isVendor:false,vendorName:'',equipment:['1A','1B','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'1C',label:'Chair 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:3,legMassagers:0,gunStations:0,fans:2,lights:5,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'GRG-STN',name:'Goregaon Station',fullName:'Goregaon Station',station:'Goregaon Railway Station',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'NLP-EAST',name:'Nallasopara East',fullName:'Nallasopara East',station:'Nallasopara Railway Station East',city:'Nallasopara',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'NLP-WEST',name:'Nallasopara West',fullName:'Nallasopara West',station:'Nallasopara Railway Station West',city:'Nallasopara',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'MIR-STN',name:'Mira Road Station',fullName:'Mira Road Station',station:'Mira Road Railway Station',city:'Mira Road',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'EKN-AC',name:'Ekta Nagar AC Hall',fullName:'Ekta Nagar AC Hall',station:'Ekta Nagar AC Waiting Hall',city:'Ekta Nagar',state:'Maharashtra',zone:'WR',chairs:2,active:true,isVendor:false,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'PUNE',name:'Pune Vendor',fullName:'Pune Vendor — Keshav Naidu',station:'Pune',city:'Pune',state:'Maharashtra',zone:'CR',chairs:2,active:true,isVendor:true,vendorName:'Keshav Naidu',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'PANVEL',name:'Panvel Vendor',fullName:'Panvel Vendor',station:'Panvel',city:'Panvel',state:'Maharashtra',zone:'CR',chairs:2,active:true,isVendor:true,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'RAIPUR',name:'Raipur Vendor',fullName:'Raipur Vendor',station:'Raipur',city:'Raipur',state:'Chhattisgarh',zone:'SCR',chairs:2,active:true,isVendor:true,vendorName:'',equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',esp32:{ip:'',port:80,apiKey:'',channels:{1:{equipmentCode:'1A',label:'Chair 1'},2:{equipmentCode:'1B',label:'Chair 2'},3:{equipmentCode:'',label:'Slot 3'},4:{equipmentCode:'',label:'Slot 4'}}},inventory:{chairs:2,legMassagers:0,gunStations:0,fans:2,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]}
+];
+
+const SERVICES_DEFAULT = [
+  {id:'CHR15',name:'Chair Massage 15min',duration:15,price:199,category:'chair',icon:'💺',active:true,desc:'15 min full back & neck massage'},
+  {id:'CHR30',name:'Chair Massage 30min',duration:30,price:349,category:'chair',icon:'💺',active:true,desc:'30 min premium back massage'},
+  {id:'CHR45',name:'Chair Massage 45min',duration:45,price:499,category:'chair',icon:'💺',active:true,desc:'45 min deep tissue chair massage'},
+  {id:'LEG15',name:'Leg Massager 15min',duration:15,price:149,category:'leg',icon:'🦵',active:true,desc:'15 min calf & foot massage'},
+  {id:'LEG30',name:'Leg Massager 30min',duration:30,price:249,category:'leg',icon:'🦵',active:true,desc:'30 min full leg relaxation'},
+  {id:'GUN10',name:'Gun Massage 10min',duration:10,price:149,category:'gun',icon:'🔫',active:true,desc:'10 min percussion therapy'},
+  {id:'GUN20',name:'Gun Massage 20min',duration:20,price:249,category:'gun',icon:'🔫',active:true,desc:'20 min deep percussion massage'},
+  {id:'COMBO30',name:'Chair + Leg Combo',duration:30,price:449,category:'combo',icon:'✨',active:true,desc:'30 min combo chair & leg session'},
+  {id:'COMBO45',name:'Chair + Gun Combo',duration:45,price:599,category:'combo',icon:'✨',active:true,desc:'45 min chair + percussion combo'},
+  {id:'PASS5',name:'5-Session Pass',duration:0,price:799,category:'pass',icon:'🎟️',active:true,desc:'5 x 15min chair sessions'},
+  {id:'PASS10',name:'10-Session Pass',duration:0,price:1499,category:'pass',icon:'🎟️',active:true,desc:'10 x 15min chair sessions'},
+  {id:'MONTHLY',name:'Monthly Pass',duration:0,price:2499,category:'pass',icon:'📅',active:true,desc:'Unlimited 15min sessions for 30 days'}
+];
+
+const ROLES = {
+  superadmin:{label:'Super Admin',level:6,color:'#b78bfa'},
+  admin:{label:'Admin',level:5,color:'#f59e0b'},
+  manager:{label:'Manager',level:4,color:'#3b82f6'},
+  supervisor:{label:'Supervisor',level:3,color:'#10b981'},
+  staff:{label:'Staff',level:2,color:'#94a3b8'},
+  vendor:{label:'Vendor',level:1,color:'#f97316'}
+};
+
+const NAV_ITEMS = [
+  {id:'dashboard',icon:'📊',label:'Dashboard',minRole:'staff',section:'Operations'},
+  {id:'pos',icon:'💳',label:'Point of Sale',minRole:'staff',section:'Operations'},
+  {id:'queue',icon:'⏱️',label:'Session Queue',minRole:'staff',section:'Operations'},
+  {id:'daily-report',icon:'📋',label:'Daily Report',minRole:'staff',section:'Operations'},
+  {id:'data-history',icon:'📈',label:'Data History',minRole:'supervisor',section:'Analytics'},
+  {id:'locations',icon:'📍',label:'Locations',minRole:'supervisor',section:'Management'},
+  {id:'users',icon:'👥',label:'Users & Roles',minRole:'manager',section:'Management'},
+  {id:'hrms',icon:'🧑‍💼',label:'HRMS',minRole:'manager',section:'Management'},
+  {id:'crm',icon:'🤝',label:'CRM / Leads',minRole:'supervisor',section:'Management'},
+  {id:'loyalty',icon:'⭐',label:'Loyalty Program',minRole:'staff',section:'Customer'},
+  {id:'esp32',icon:'⚡',label:'ESP32 Console',minRole:'admin',section:'System'},
+  {id:'admin-config',icon:'⚙️',label:'Admin Config',minRole:'admin',section:'System'},
+];
+
+let STATE = {
+  user:null, role:null, locationCode:null, page:'dashboard',
+  posOrder:[], posService:null, posChair:null, posPayment:null,
+  activeTimers:{}, pendingApprovals:0
+};
+
+const DB = {
+  get(k){try{return JSON.parse(localStorage.getItem('arama_'+k))}catch(e){return null}},
+  set(k,v){localStorage.setItem('arama_'+k,JSON.stringify(v))},
+  push(k,item){const a=this.get(k)||[];a.push(item);this.set(k,a)},
+  del(k){localStorage.removeItem('arama_'+k)},
+  all(){const out={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('arama_'))out[k.slice(6)]=this.get(k.slice(6))}return out}
+};
+
+const fmt = {
+  currency(n){return '₹'+Number(n||0).toLocaleString('en-IN')},
+  num(n){return Number(n||0).toLocaleString('en-IN')},
+  pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'—'},
+  date(d){return d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—'},
+  time(d){return d?new Date(d).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):'—'},
+  datetime(d){return d?fmt.date(d)+' '+fmt.time(d):'—'},
+  duration(min){return min>=60?Math.floor(min/60)+'h '+(min%60?min%60+'m':''):min+'min'},
+  ago(d){const diff=Date.now()-new Date(d);const m=Math.floor(diff/60000);if(m<1)return 'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';},
+  truncate(s,n=30){return s&&s.length>n?s.slice(0,n)+'…':s||''}
+};
+
+function toast(msg,type='info',dur=3000){
+  const t=document.createElement('div');
+  const icons={success:'✅',error:'❌',info:'ℹ️',warn:'⚠️'};
+  t.className=`toast toast-${type}`;
+  t.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>t.remove(),dur);
+}
+
+function modal(html,id='main-modal'){
+  let m=document.getElementById(id);if(m)m.remove();
+  const el=document.createElement('div');
+  el.className='modal-overlay';el.id=id;el.innerHTML=html;
+  el.addEventListener('click',e=>{if(e.target===el)el.remove()});
+  document.getElementById('modals').appendChild(el);
+  return el;
+}
+function closeModal(id='main-modal'){const m=document.getElementById(id);if(m)m.remove();}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,4)}
+function generateToken(locCode,eqCode){const ts=Date.now().toString(36).toUpperCase();const rand=Math.random().toString(36).substr(2,4).toUpperCase();return `${locCode}-${eqCode}-${ts}-${rand}`;}
+function getLocations(){return DB.get('locations')||LOCATIONS_DEFAULT}
+function getLocation(code){return getLocations().find(l=>l.code===code)}
+function getUsers(){return DB.get('users')||[]}
+function getServices(){return DB.get('services')||SERVICES_DEFAULT}
+function getConfig(){return DB.get('config')||{orgName:'ārāma Wellness',email:'tech@arama.asia',phone:'',loyaltyRate:10,loyaltyRedeem:100,loyaltyMinRedeem:499,loyaltyCap:20,loyaltyValidity:365,taxRate:0,commissionEnabled:true,commissionTiers:[{label:'Bronze',minRev:0,maxRev:9999,pct:5},{label:'Silver',minRev:10000,maxRev:24999,pct:7},{label:'Gold',minRev:25000,maxRev:49999,pct:9},{label:'Platinum',minRev:50000,maxRev:99999,pct:12},{label:'Diamond',minRev:100000,maxRev:999999,pct:15}],shiftHours:8,autoReportTime:'20:00',whatsappEnabled:false,espGlobalApiKey:''}}
+function roleLevel(r){return ROLES[r]?.level||0}
+function hasRole(minRole){return roleLevel(STATE.role)>=roleLevel(minRole)}
+
+function compressImage(file,cb){
+  const reader=new FileReader();
+  reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');const MAX=800,scale=Math.min(1,MAX/img.width);canvas.width=img.width*scale;canvas.height=img.height*scale;canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);cb(canvas.toDataURL('image/jpeg',0.82));};img.src=e.target.result;};reader.readAsDataURL(file);
+}
+
+async function activateESP32(location,channel,durationSec,token){
+  const esp=location.esp32;
+  if(!esp?.ip)return{success:false,reason:'ESP32 not configured'};
+  try{const res=await fetch(`http://${esp.ip}:${esp.port||80}/activate`,{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':esp.apiKey||''},body:JSON.stringify({channel,duration:durationSec,token}),signal:AbortSignal.timeout(5000)});return await res.json();}
+  catch(e){return{success:false,reason:'ESP32 unreachable'}}
+}
+
+async function deactivateESP32(location,channel){
+  const esp=location.esp32;if(!esp?.ip)return{success:false};
+  try{const res=await fetch(`http://${esp.ip}:${esp.port||80}/deactivate`,{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':esp.apiKey||''},body:JSON.stringify({channel}),signal:AbortSignal.timeout(5000)});return await res.json();}
+  catch(e){return{success:false}}
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────────
+function initDefaultUsers(){
+  if(getUsers().length===0){
+    DB.set('users',[
+      {id:'u1',username:'superadmin',password:'arama@2024',name:'Super Admin',role:'superadmin',phone:'',email:'tech@arama.asia',locationCode:'ALL',active:true,joined:new Date().toISOString()},
+      {id:'u2',username:'admin',password:'admin123',name:'ārāma Admin',role:'admin',phone:'',email:'tech@arama.asia',locationCode:'ALL',active:true,joined:new Date().toISOString()},
+      {id:'u3',username:'manager',password:'mgr123',name:'Operations Manager',role:'manager',phone:'',email:'',locationCode:'ALL',active:true,joined:new Date().toISOString()}
+    ]);
+  }
+}
+
+function doLogin(){
+  const uname=document.getElementById('login-username').value.trim();
+  const pass=document.getElementById('login-password').value;
+  const locCode=document.getElementById('login-location').value;
+  if(!uname||!pass){toast('Enter username and password','error');return}
+  const user=getUsers().find(u=>(u.username===uname||u.phone===uname)&&u.password===pass&&u.active);
+  if(!user){toast('Invalid credentials','error');return}
+  STATE.user=user;STATE.role=user.role;
+  STATE.locationCode=locCode||(user.locationCode==='ALL'?null:user.locationCode);
+  DB.set('session',{userId:user.id,role:user.role,locationCode:STATE.locationCode,ts:Date.now()});
+  startApp();
+}
+
+function setLoginMode(){}
+function goCustomer(){window.open('customer.html','_blank')}
+
+function doLogout(){
+  DB.del('session');STATE.user=null;STATE.role=null;STATE.locationCode=null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('login-password').value='';
+  toast('Signed out','info');
+}
+
+function startApp(){
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  const user=STATE.user;
+  const initials=user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('user-avatar').textContent=initials;
+  document.getElementById('user-display-name').textContent=user.name;
+  document.getElementById('user-display-role').textContent=ROLES[user.role]?.label||user.role;
+  const loc=STATE.locationCode?getLocation(STATE.locationCode):null;
+  document.getElementById('sidebar-location-label').textContent=loc?loc.name:'All Locations';
+  buildSidebar();navigate('dashboard');startClock();checkPendingApprovals();
+}
+
+function buildSidebar(){
+  const nav=document.getElementById('sidebar-nav');nav.innerHTML='';
+  let currentSection='';let openSection=false;
+  NAV_ITEMS.forEach(item=>{
+    if(!hasRole(item.minRole))return;
+    if(item.section!==currentSection){
+      if(openSection)nav.innerHTML+='</div>';
+      currentSection=item.section;openSection=true;
+      nav.innerHTML+=`<div class="nav-section"><div class="nav-label">${currentSection}</div>`;
+    }
+    const badge=item.id==='users'&&STATE.pendingApprovals>0?`<span class="badge-nav">${STATE.pendingApprovals}</span>`:'';
+    nav.innerHTML+=`<div class="nav-item${STATE.page===item.id?' active':''}" onclick="navigate('${item.id}')" id="nav-${item.id}">
+      <span class="icon">${item.icon}</span>${item.label}${badge}</div>`;
+  });
+  if(openSection)nav.innerHTML+='</div>';
+}
+
+function navigate(page){
+  STATE.page=page;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const navEl=document.getElementById(`nav-${page}`);if(navEl)navEl.classList.add('active');
+  const item=NAV_ITEMS.find(n=>n.id===page);
+  document.getElementById('topbar-title').textContent=item?.label||page;
+  const loc=STATE.locationCode?getLocation(STATE.locationCode):null;
+  document.getElementById('topbar-sub').textContent=loc?loc.station:'Network — All Locations';
+  renderPage(page);
+  if(window.innerWidth<=768)closeSidebar();
+}
+
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay-bg').classList.toggle('show')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('show')}
+
+function startClock(){
+  const el=document.getElementById('topbar-clock');
+  setInterval(()=>{el.textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
+}
+
+function checkPendingApprovals(){
+  STATE.pendingApprovals=(DB.get('pending-staff')||[]).filter(r=>r.status==='pending').length;
+}
+
+function renderPage(page){
+  const pc=document.getElementById('page-content');
+  const html=getPageHTML(page);
+  pc.innerHTML=`<div class="fade-in">${html}</div>`;
+  initPageJS(page);
+}
+
+function getPageHTML(page){
+  switch(page){
+    case 'dashboard': return renderDashboard();
+    case 'pos': return renderPOS();
+    case 'queue': return renderQueue();
+    case 'daily-report': return renderDailyReport();
+    case 'data-history': return renderDataHistory();
+    case 'locations': return renderLocations();
+    case 'users': return renderUsers();
+    case 'hrms': return renderHRMS();
+    case 'crm': return renderCRM();
+    case 'loyalty': return renderLoyalty();
+    case 'esp32': return renderESP32Console();
+    case 'admin-config': return renderAdminConfig();
+    default: return '<div class="empty-state"><div class="es-icon">🚧</div><p>Coming soon</p></div>';
+  }
+}
+
+function initPageJS(page){
+  if(page==='pos'){initPOS();}
+  if(page==='queue'){initQueue();}
+  if(page==='data-history'){initDataHistoryTabs();}
+  if(page==='locations'){initLocFilter();}
+  if(page==='users'){initUsersFilter();}
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────
+function renderDashboard(){
+  const locs=getLocations();
+  const transactions=DB.get('transactions')||[];
+  const today=new Date().toDateString();
+  const todayTxn=transactions.filter(t=>new Date(t.ts).toDateString()===today);
+  const filterLoc=t=>!STATE.locationCode||t.locationCode===STATE.locationCode;
+  const todayFiltered=todayTxn.filter(filterLoc);
+  const todayRev=todayFiltered.reduce((s,t)=>s+(t.amount||0),0);
+  const todaySessions=todayFiltered.filter(t=>t.type==='session').length;
+  const todayUPI=todayFiltered.filter(t=>t.paymentMode==='upi').reduce((s,t)=>s+(t.amount||0),0);
+  const todayCash=todayFiltered.filter(t=>t.paymentMode==='cash').reduce((s,t)=>s+(t.amount||0),0);
+  const activeSessions=Object.keys(STATE.activeTimers).length;
+  const activeLocs=locs.filter(l=>l.active&&!l.isVendor).length;
+  const totalChairs=locs.reduce((s,l)=>s+(l.chairs||0),0);
+
+  const recentTxn=transactions.filter(filterLoc).slice(-10).reverse();
+
+  const weekRev = Array.from({length:7},(_,i)=>{
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toDateString();
+    const rev=transactions.filter(t=>filterLoc(t)&&new Date(t.ts).toDateString()===ds).reduce((s,t)=>s+(t.amount||0),0);
+    return {day:d.toLocaleDateString('en-IN',{weekday:'short'}),rev};
+  }).reverse();
+
+  const maxRev=Math.max(...weekRev.map(w=>w.rev),1);
+
+  const pendingStaff=(DB.get('pending-staff')||[]).filter(r=>r.status==='pending');
+
+  return `
+  ${pendingStaff.length>0?`<div class="alert alert-warn mb16">⚠️ <strong>${pendingStaff.length} pending staff registration${pendingStaff.length>1?'s':''}</strong> awaiting approval. <a onclick="navigate('users')" style="cursor:pointer;text-decoration:underline">Review now →</a></div>`:''}
+  
+  <div class="kpi-strip">
+    <div class="stat-card purple">
+      <div class="stat-label">Today's Revenue</div>
+      <div class="stat-value text-accent">${fmt.currency(todayRev)}</div>
+      <div class="stat-sub">UPI: ${fmt.currency(todayUPI)} · Cash: ${fmt.currency(todayCash)}</div>
+      <div class="stat-icon">💰</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Sessions Today</div>
+      <div class="stat-value text-green">${todaySessions}</div>
+      <div class="stat-sub">${activeSessions} active right now</div>
+      <div class="stat-icon">💺</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="stat-label">Active Locations</div>
+      <div class="stat-value text-gold">${activeLocs}</div>
+      <div class="stat-sub">${totalChairs} chairs · ${locs.filter(l=>l.isVendor).length} vendors</div>
+      <div class="stat-icon">📍</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Avg Ticket</div>
+      <div class="stat-value text-blue">${todaySessions?fmt.currency(Math.round(todayRev/todaySessions)):'₹—'}</div>
+      <div class="stat-sub">Total: ${fmt.num(transactions.filter(filterLoc).length)} all-time</div>
+      <div class="stat-icon">📊</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-header"><h3>📈 7-Day Revenue</h3></div>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:100px;padding:8px 0">
+        ${weekRev.map(w=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="flex:1;width:100%;background:var(--bg4);border-radius:4px 4px 0 0;display:flex;align-items:flex-end;overflow:hidden">
+            <div style="width:100%;height:${Math.round((w.rev/maxRev)*100)}%;background:linear-gradient(180deg,var(--accent),var(--accent2));min-height:2px"></div>
+          </div>
+          <div style="font-size:10px;color:var(--text3)">${w.day}</div>
+          <div style="font-size:10px;color:var(--text2);font-weight:700">${w.rev?'₹'+Math.round(w.rev/1000)+'k':'-'}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>🏢 Network Status</h3><button class="btn btn-secondary btn-sm" onclick="navigate('locations')">All Locations</button></div>
+      <div style="max-height:200px;overflow-y:auto">
+        ${getLocations().filter(l=>l.active).slice(0,8).map(l=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-size:12px;font-weight:600">${l.name}</div>
+            <div style="font-size:11px;color:var(--text3)">${l.zone} · ${l.chairs} chairs</div>
+          </div>
+          <div class="flex gap8 ac">
+            ${l.isVendor?'<span class="badge badge-orange">Vendor</span>':'<span class="badge badge-green">Active</span>'}
+            ${l.meterBalance<500&&l.meterBalance>0?'<span class="badge badge-red">Low Meter</span>':''}
+          </div>
+        </div>`).join('')}
+        ${getLocations().filter(l=>l.active).length>8?`<div style="text-align:center;padding:8px;font-size:12px;color:var(--text3)">+${getLocations().filter(l=>l.active).length-8} more</div>`:''}
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt16">
+    <div class="card-header">
+      <h3>🕐 Recent Transactions</h3>
+      <button class="btn btn-secondary btn-sm" onclick="navigate('data-history')">Full History</button>
+    </div>
+    ${recentTxn.length?`
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Time</th><th>Location</th><th>Service</th><th>Amount</th><th>Mode</th><th>Token</th></tr></thead>
+        <tbody>
+          ${recentTxn.map(t=>`<tr>
+            <td>${fmt.time(t.ts)}</td>
+            <td>${getLocation(t.locationCode)?.name||t.locationCode}</td>
+            <td>${t.serviceName||'—'}</td>
+            <td class="text-green bold">${fmt.currency(t.amount)}</td>
+            <td><span class="badge ${t.paymentMode==='upi'?'badge-blue':t.paymentMode==='cash'?'badge-gold':'badge-purple'}">${(t.paymentMode||'—').toUpperCase()}</span></td>
+            <td><code style="font-size:11px;color:var(--text3)">${fmt.truncate(t.token||'—',16)}</code></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`:`<div class="empty-state"><div class="es-icon">📊</div><p>No transactions today. Start your first POS session!</p></div>`}
+  </div>`;
+}
+
+// ─── POS ──────────────────────────────────────────────────────────
+function renderPOS(){
+  const loc=STATE.locationCode?getLocation(STATE.locationCode):null;
+  const services=getServices().filter(s=>s.active&&s.category!=='pass');
+  const passes=getServices().filter(s=>s.active&&s.category==='pass');
+  
+  return `
+  <div class="pos-layout">
+    <div class="pos-left">
+      <div class="card mb16">
+        <div class="card-header">
+          <h3>💳 Point of Sale${loc?' — '+loc.name:''}</h3>
+          ${!loc?'<span class="badge badge-warn">No location selected</span>':''}
+        </div>
+        
+        <div class="tabs" id="pos-service-tabs">
+          <div class="tab active" onclick="filterServices('chair',this)">💺 Chair</div>
+          <div class="tab" onclick="filterServices('leg',this)">🦵 Leg</div>
+          <div class="tab" onclick="filterServices('gun',this)">🔫 Gun</div>
+          <div class="tab" onclick="filterServices('combo',this)">✨ Combo</div>
+          <div class="tab" onclick="filterServices('pass',this)">🎟️ Passes</div>
+          <div class="tab" onclick="filterServices('custom',this)">➕ Custom</div>
+        </div>
+
+        <div class="service-grid" id="service-grid">
+          ${services.filter(s=>s.category==='chair').concat(passes).map(s=>`
+          <div class="service-card" onclick="selectService('${s.id}')" id="svc-${s.id}">
+            <div class="s-icon">${s.icon}</div>
+            <div class="s-name">${s.name}</div>
+            <div class="s-price">${fmt.currency(s.price)}</div>
+            <div class="s-dur">${s.duration?fmt.duration(s.duration):'Multi-use'}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      ${loc?`
+      <div class="card mb16">
+        <div class="card-header"><h3>🪑 Select Chair / Equipment</h3></div>
+        <div class="chair-select" id="chair-grid">
+          ${(loc.equipment||['1A','1B']).map(eq=>{
+            const active=STATE.activeTimers[loc.code+'_'+eq];
+            return `<div class="chair-btn${active?' occupied':''}" onclick="${active?'':''}" id="chair-${eq}">
+              <div style="font-size:20px">${active?'🔴':'🟢'}</div>
+              <div>${eq}</div>
+              <div style="font-size:10px;color:var(--text3)">${active?'Busy':'Free'}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <input type="hidden" id="pos-chair-selected" value="">
+      </div>`:''}
+
+      <div class="card">
+        <div class="card-header"><h3>👤 Customer (Optional)</h3></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="pos-phone" placeholder="9876543210" maxlength="10" onchange="lookupCustomer()">
+          </div>
+          <div class="form-group">
+            <label>Customer Name</label>
+            <input type="text" id="pos-customer-name" placeholder="Walk-in customer">
+          </div>
+        </div>
+        <div id="customer-loyalty-info"></div>
+      </div>
+    </div>
+
+    <div class="pos-right">
+      <div class="order-summary">
+        <h3 class="mb16">🧾 Order Summary</h3>
+        <div id="order-items">
+          <div class="empty-state" style="padding:30px 0">
+            <div style="font-size:32px">💆</div>
+            <p style="font-size:12px">Select a service to begin</p>
+          </div>
+        </div>
+
+        <div id="pos-totals" class="hidden">
+          <div id="discount-row" class="hidden">
+            <div class="flex ac jb">
+              <label class="mt8">Discount / Loyalty Points</label>
+              <button class="btn btn-secondary btn-xs mt8" onclick="applyDiscount()">Apply</button>
+            </div>
+            <input type="text" id="pos-discount-input" placeholder="Amount or loyalty pts" class="mt4">
+          </div>
+
+          <div style="border-top:1px solid var(--border);margin:12px 0;padding-top:12px">
+            <div class="total-row"><span class="text2">Subtotal</span><span id="pos-subtotal">₹0</span></div>
+            <div class="total-row" id="tax-row" style="display:none"><span class="text2">Tax</span><span id="pos-tax">₹0</span></div>
+            <div class="total-row" id="discount-display" style="display:none"><span class="text-green">Discount</span><span id="pos-discount-val" class="text-green">-₹0</span></div>
+            <div class="total-row grand"><span>TOTAL</span><span id="pos-total" class="text-accent">₹0</span></div>
+          </div>
+
+          <div style="margin-bottom:12px">
+            <label>Payment Method</label>
+            <div class="payment-method-grid">
+              <div class="pay-btn" onclick="selectPayment('upi',this)" id="pay-upi">📱<br>PhonePe/UPI</div>
+              <div class="pay-btn" onclick="selectPayment('cash',this)" id="pay-cash">💵<br>Cash</div>
+              <div class="pay-btn" onclick="selectPayment('card',this)" id="pay-card">💳<br>Card</div>
+              <div class="pay-btn" onclick="selectPayment('complimentary',this)" id="pay-comp">🎁<br>Complimentary</div>
+              <div class="pay-btn" onclick="selectPayment('loyalty',this)" id="pay-loyalty">⭐<br>Loyalty</div>
+              <div class="pay-btn" onclick="selectPayment('pass',this)" id="pay-pass">🎟️<br>Pass</div>
+            </div>
+          </div>
+
+          <div id="remarks-section">
+            <label>Remarks (optional)</label>
+            <textarea id="pos-remarks" rows="2" placeholder="Any notes..."></textarea>
+          </div>
+
+          <button class="btn btn-success w100 mt12" style="padding:14px;font-size:15px;font-weight:800" onclick="completeSale()">
+            ✅ Complete Sale & Generate Token
+          </button>
+          <button class="btn btn-secondary w100 mt8" onclick="clearPOS()">🗑️ Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function initPOS(){
+  filterServices('chair',document.querySelector('.tab.active'));
+}
+
+function filterServices(category,el){
+  document.querySelectorAll('#pos-service-tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const services=getServices().filter(s=>s.active);
+  const filtered=category==='custom'?[]:services.filter(s=>s.category===category);
+  const grid=document.getElementById('service-grid');
+  if(!grid)return;
+  if(category==='custom'){
+    grid.innerHTML=`<div style="grid-column:1/-1">
+      <p class="text2 small mb8">Add a custom amount service:</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Service Name</label>
+          <input type="text" id="custom-svc-name" placeholder="Custom Service">
+        </div>
+        <div class="form-group">
+          <label>Amount (₹)</label>
+          <input type="number" id="custom-svc-price" placeholder="0">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addCustomService()">Add to Order</button>
+    </div>`;
+    return;
+  }
+  grid.innerHTML=filtered.map(s=>`
+  <div class="service-card" onclick="selectService('${s.id}')" id="svc-${s.id}">
+    <div class="s-icon">${s.icon}</div>
+    <div class="s-name">${s.name}</div>
+    <div class="s-price">${fmt.currency(s.price)}</div>
+    <div class="s-dur">${s.duration?fmt.duration(s.duration):'Multi-use'}</div>
+  </div>`).join('');
+}
+
+function addCustomService(){
+  const name=document.getElementById('custom-svc-name')?.value||'Custom';
+  const price=parseInt(document.getElementById('custom-svc-price')?.value)||0;
+  if(!price){toast('Enter a valid amount','error');return}
+  STATE.posOrder.push({id:'custom_'+uid(),name,duration:0,price,category:'custom',icon:'🔧'});
+  updateOrderSummary();
+}
+
+function selectService(id){
+  const svc=getServices().find(s=>s.id===id);
+  if(!svc)return;
+  const existing=STATE.posOrder.find(o=>o.id===id);
+  if(existing){STATE.posOrder=STATE.posOrder.filter(o=>o.id!==id);toast('Removed from order','info');}
+  else{STATE.posOrder.push({...svc});toast('Added: '+svc.name,'success');}
+  updateOrderSummary();
+}
+
+function updateOrderSummary(){
+  const items=document.getElementById('order-items');
+  const totals=document.getElementById('pos-totals');
+  if(!items)return;
+  if(STATE.posOrder.length===0){
+    items.innerHTML='<div class="empty-state" style="padding:30px 0"><div style="font-size:32px">💆</div><p style="font-size:12px">Select a service to begin</p></div>';
+    if(totals)totals.classList.add('hidden');return;
+  }
+  if(totals)totals.classList.remove('hidden');
+  const subtotal=STATE.posOrder.reduce((s,o)=>s+(o.price||0),0);
+  items.innerHTML=STATE.posOrder.map(o=>`
+  <div class="order-item">
+    <div><div style="font-size:13px;font-weight:600">${o.icon} ${o.name}</div><div style="font-size:11px;color:var(--text3)">${o.duration?fmt.duration(o.duration):'Pass'}</div></div>
+    <div class="flex ac gap8">
+      <span class="text-gold bold">${fmt.currency(o.price)}</span>
+      <button class="btn btn-danger btn-xs" onclick="STATE.posOrder=STATE.posOrder.filter(x=>x.id!=='${o.id}');updateOrderSummary()">✕</button>
+    </div>
+  </div>`).join('');
+  document.getElementById('pos-subtotal').textContent=fmt.currency(subtotal);
+  document.getElementById('pos-total').textContent=fmt.currency(subtotal);
+}
+
+function selectPayment(mode,el){
+  document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));
+  if(el)el.classList.add('selected');
+  STATE.posPayment=mode;
+}
+
+function applyDiscount(){toast('Discount applied','success')}
+
+async function completeSale(){
+  if(!STATE.posOrder.length){toast('Add at least one service','error');return}
+  if(!STATE.posPayment){toast('Select payment method','error');return}
+  const loc=STATE.locationCode?getLocation(STATE.locationCode):getLocations()[0];
+  if(!loc){toast('No location selected','error');return}
+  const phone=document.getElementById('pos-phone')?.value||'';
+  const customerName=document.getElementById('pos-customer-name')?.value||'Walk-in';
+  const remarks=document.getElementById('pos-remarks')?.value||'';
+  const subtotal=STATE.posOrder.reduce((s,o)=>s+(o.price||0),0);
+  const firstSvc=STATE.posOrder[0];
+  const eqCode=loc.equipment?.[0]||'1A';
+  const token=generateToken(loc.code,eqCode);
+  
+  const txn={
+    id:uid(),token,ts:new Date().toISOString(),
+    locationCode:loc.code,locationName:loc.name,
+    services:STATE.posOrder.map(o=>o.id),
+    serviceName:STATE.posOrder.map(o=>o.name).join(' + '),
+    amount:subtotal,paymentMode:STATE.posPayment,
+    customerPhone:phone,customerName,remarks,
+    staffId:STATE.user.id,staffName:STATE.user.name,
+    duration:firstSvc.duration||0,type:'session'
+  };
+  DB.push('transactions',txn);
+
+  // Loyalty points
+  if(phone){
+    const cfg=getConfig();
+    const pts=Math.floor(subtotal/100*cfg.loyaltyRate);
+    const loyalty=DB.get('loyalty_'+phone)||{phone,name:customerName,points:0,history:[]};
+    loyalty.points+=pts;
+    loyalty.history.push({ts:txn.ts,pts,reason:'Purchase',txnId:txn.id});
+    DB.set('loyalty_'+phone,loyalty);
+  }
+
+  // ESP32
+  let espResult={success:false,reason:'Not triggered'};
+  if(firstSvc.duration>0&&loc.esp32?.ip){
+    const channel=parseInt(Object.keys(loc.esp32.channels)[0])||1;
+    espResult=await activateESP32(loc,channel,firstSvc.duration*60,token);
+    if(espResult.success){
+      STATE.activeTimers[loc.code+'_'+eqCode]={start:Date.now(),duration:firstSvc.duration*60*1000,token,channel};
+      toast(`ESP32: Chair activated for ${fmt.duration(firstSvc.duration)}`,'success');
+    } else {
+      toast(`ESP32: ${espResult.reason} — Token issued but chair not auto-started`,'warn',5000);
+    }
+  }
+
+  // Show receipt
+  showReceipt(txn,espResult);
+  STATE.posOrder=[];STATE.posPayment=null;
+  updateOrderSummary();
+  document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));
+}
+
+function showReceipt(txn,espResult){
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>✅ Sale Complete!</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="token-card">
+        <div style="font-size:12px;opacity:0.8;font-weight:700;letter-spacing:0.1em">SESSION TOKEN</div>
+        <div class="token-code">${txn.token}</div>
+        <div class="token-details">
+          📍 ${txn.locationName}<br>
+          👤 ${txn.customerName}${txn.customerPhone?' · '+txn.customerPhone:''}<br>
+          💳 ${txn.serviceName}<br>
+          ⏱️ ${txn.duration?fmt.duration(txn.duration):'Multi-use pass'}<br>
+          💰 ${fmt.currency(txn.amount)} via ${txn.paymentMode?.toUpperCase()}
+        </div>
+      </div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+        <div class="report-cell">
+          <div class="report-cell-label">Transaction ID</div>
+          <div style="font-size:12px;font-weight:700;font-family:monospace">${txn.id.toUpperCase()}</div>
+        </div>
+        <div class="report-cell">
+          <div class="report-cell-label">Staff</div>
+          <div style="font-size:13px;font-weight:700">${txn.staffName}</div>
+        </div>
+        <div class="report-cell">
+          <div class="report-cell-label">ESP32 Status</div>
+          <div style="font-size:13px;font-weight:700;color:${espResult.success?'var(--green)':'var(--gold)'}">${espResult.success?'✅ Activated':'⚠️ Manual Start'}</div>
+        </div>
+        <div class="report-cell">
+          <div class="report-cell-label">Time</div>
+          <div style="font-size:13px;font-weight:700">${fmt.time(txn.ts)}</div>
+        </div>
+      </div>
+
+      ${txn.customerPhone?`<div class="alert alert-success mt12">⭐ Loyalty points earned: +${Math.floor(txn.amount/100*getConfig().loyaltyRate)} pts</div>`:''}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+      <button class="btn btn-primary" onclick="closeModal()">Done</button>
+    </div>
+  </div>`);
+}
+
+function clearPOS(){STATE.posOrder=[];STATE.posPayment=null;updateOrderSummary();document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));}
+
+function lookupCustomer(){
+  const phone=document.getElementById('pos-phone')?.value;
+  if(!phone||phone.length<10)return;
+  const loyalty=DB.get('loyalty_'+phone);
+  const el=document.getElementById('customer-loyalty-info');
+  if(!el)return;
+  if(loyalty){
+    document.getElementById('pos-customer-name').value=loyalty.name||'';
+    el.innerHTML=`<div class="alert alert-info">⭐ <strong>${loyalty.name||'Customer'}</strong> has <strong>${fmt.num(loyalty.points)} loyalty points</strong> (≈${fmt.currency(Math.floor(loyalty.points/getConfig().loyaltyRedeem)*1)})</div>`;
+  } else {
+    el.innerHTML=`<div class="alert alert-success">🆕 New customer — will earn loyalty points on purchase</div>`;
+  }
+}
+
+// ─── QUEUE ────────────────────────────────────────────────────────
+function renderQueue(){
+  return `
+  <div class="page-header">
+    <h1>⏱️ Session Queue</h1>
+    <button class="btn btn-primary" onclick="refreshQueue()">🔄 Refresh</button>
+  </div>
+  <div id="queue-container">
+    <div class="empty-state"><div class="es-icon">⏱️</div><p>No active sessions right now</p></div>
+  </div>`;
+}
+
+function initQueue(){
+  renderQueueItems();
+  setInterval(renderQueueItems,5000);
+}
+
+function renderQueueItems(){
+  const el=document.getElementById('queue-container');
+  if(!el)return;
+  const now=Date.now();
+  const timers=Object.entries(STATE.activeTimers).filter(([k])=>!STATE.locationCode||k.startsWith(STATE.locationCode));
+  if(!timers.length){el.innerHTML='<div class="empty-state"><div class="es-icon">⏱️</div><p>No active sessions right now</p></div>';return;}
+  el.innerHTML=timers.map(([key,t])=>{
+    const elapsed=now-t.start;
+    const remaining=Math.max(0,t.duration-elapsed);
+    const mins=Math.floor(remaining/60000);
+    const secs=Math.floor((remaining%60000)/1000);
+    const pct=Math.round((elapsed/t.duration)*100);
+    const [locCode,eq]=key.split('_');
+    const loc=getLocation(locCode);
+    return `<div class="queue-item">
+      <div>
+        <div class="bold">${loc?.name||locCode} — ${eq}</div>
+        <div class="small text2">${t.token}</div>
+        <div class="progress-bar mt8" style="width:200px"><div class="progress-fill pf-purple" style="width:${pct}%"></div></div>
+      </div>
+      <div class="flex col ac">
+        <div class="queue-timer">${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}</div>
+        <div class="small text3">${pct}% done</div>
+        <button class="btn btn-danger btn-xs mt4" onclick="endSession('${key}')">End Early</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function refreshQueue(){renderQueueItems();toast('Queue refreshed','info')}
+function endSession(key){
+  delete STATE.activeTimers[key];
+  renderQueueItems();
+  toast('Session ended','success');
+}
+
+// ─── DAILY REPORT ─────────────────────────────────────────────────
+function renderDailyReport(){
+  const loc=STATE.locationCode?getLocation(STATE.locationCode):null;
+  const today=new Date().toISOString().slice(0,10);
+  const report=DB.get(`report_${loc?.code||'ALL'}_${today}`)||{};
+  const locs=loc?[loc]:getLocations().filter(l=>l.active&&!l.isVendor);
+
+  return `
+  <div class="page-header">
+    <h1>📋 Daily Report</h1>
+    <div class="flex gap8">
+      <input type="date" id="report-date" value="${today}" onchange="reloadReport()" style="width:160px">
+      ${hasRole('manager')?`<select id="report-loc-select" onchange="reloadReport()" style="width:200px">
+        <option value="">All Locations</option>
+        ${getLocations().map(l=>`<option value="${l.code}"${l.code===STATE.locationCode?'selected':''}>${l.name}</option>`).join('')}
+      </select>`:''}
+      <button class="btn btn-primary" onclick="saveReport()">💾 Save Report</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+    </div>
+  </div>
+
+  <div id="report-body">
+  ${renderReportBody(loc,today,report)}
+  </div>`;
+}
+
+function renderReportBody(loc,date,report){
+  const txns=(DB.get('transactions')||[]).filter(t=>{
+    const tDate=t.ts?.slice(0,10);
+    const locMatch=!loc||t.locationCode===loc?.code;
+    return tDate===date&&locMatch;
+  });
+  const totalRev=txns.reduce((s,t)=>s+(t.amount||0),0);
+  const upiRev=txns.filter(t=>t.paymentMode==='upi').reduce((s,t)=>s+(t.amount||0),0);
+  const cashRev=txns.filter(t=>t.paymentMode==='cash').reduce((s,t)=>s+(t.amount||0),0);
+  const sessions=txns.filter(t=>t.type==='session').length;
+
+  return `
+  <div class="report-section">
+    <h3>📊 Revenue Summary</h3>
+    <div class="report-grid">
+      <div class="report-cell"><div class="report-cell-label">Total Revenue</div><div class="report-cell-value text-green">${fmt.currency(totalRev)}</div></div>
+      <div class="report-cell"><div class="report-cell-label">UPI / PhonePe</div><div class="report-cell-value text-blue">${fmt.currency(upiRev)}</div></div>
+      <div class="report-cell"><div class="report-cell-label">Cash</div><div class="report-cell-value text-gold">${fmt.currency(cashRev)}</div></div>
+      <div class="report-cell"><div class="report-cell-label">Sessions</div><div class="report-cell-value">${sessions}</div></div>
+      <div class="report-cell"><div class="report-cell-label">Avg Ticket</div><div class="report-cell-value">${sessions?fmt.currency(Math.round(totalRev/sessions)):'—'}</div></div>
+      <div class="report-cell"><div class="report-cell-label">Other</div><div class="report-cell-value">${fmt.currency(totalRev-upiRev-cashRev)}</div></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h3>🪑 Equipment Status</h3>
+    <div class="report-grid">
+      <div class="report-cell">
+        <div class="report-cell-label">Opening Chair Count</div>
+        <input type="number" class="report-input" data-field="chairsOpening" value="${report.chairsOpening||''}" placeholder="0" style="margin-top:4px;padding:4px 8px;font-size:14px;font-weight:700">
+      </div>
+      <div class="report-cell">
+        <div class="report-cell-label">Closing Chair Count</div>
+        <input type="number" class="report-input" data-field="chairsClosing" value="${report.chairsClosing||''}" placeholder="0" style="margin-top:4px;padding:4px 8px;font-size:14px;font-weight:700">
+      </div>
+      <div class="report-cell">
+        <div class="report-cell-label">Equipment Issues</div>
+        <input type="text" class="report-input" data-field="equipmentIssues" value="${report.equipmentIssues||''}" placeholder="None" style="margin-top:4px;padding:4px 8px">
+      </div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h3>💡 Utilities</h3>
+    <div class="report-grid">
+      <div class="report-cell">
+        <div class="report-cell-label">Meter Reading (Opening)</div>
+        <input type="number" class="report-input" data-field="meterOpen" value="${report.meterOpen||''}" placeholder="0" style="margin-top:4px;padding:4px 8px">
+      </div>
+      <div class="report-cell">
+        <div class="report-cell-label">Meter Reading (Closing)</div>
+        <input type="number" class="report-input" data-field="meterClose" value="${report.meterClose||''}" placeholder="0" style="margin-top:4px;padding:4px 8px">
+      </div>
+      <div class="report-cell">
+        <div class="report-cell-label">Units Consumed</div>
+        <div class="report-cell-value" id="units-consumed">${report.meterOpen&&report.meterClose?report.meterClose-report.meterOpen:'—'}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h3>👥 Staff & Attendance</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Staff Present</label>
+        <input type="text" class="report-input" data-field="staffPresent" value="${report.staffPresent||''}" placeholder="Names of staff on duty">
+      </div>
+      <div class="form-group">
+        <label>Shift Handover Time</label>
+        <input type="time" class="report-input" data-field="handoverTime" value="${report.handoverTime||''}">
+      </div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h3>🧹 Housekeeping</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
+      ${['Chairs cleaned','Chair covers changed','Floor mopped','Sanitizer refilled','Cleaning supplies ok','AC/Fan working'].map(item=>`
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+        <input type="checkbox" class="report-checkbox" data-field="hk_${item.replace(/\s/g,'_')}" ${report['hk_'+item.replace(/\s/g,'_')]?'checked':''}>
+        <span style="font-size:13px">${item}</span>
+      </label>`).join('')}
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h3>📦 Inventory Check</h3>
+    <div class="report-grid">
+      ${['Sanitizer','Paper Rolls','Stationery','Cleaning Kit','Masks','Face Towels'].map(item=>`
+      <div class="report-cell">
+        <div class="report-cell-label">${item}</div>
+        <select class="report-input" data-field="inv_${item.replace(/\s/g,'_')}" style="margin-top:4px;padding:4px 8px">
+          <option ${report['inv_'+item.replace(/\s/g,'_')]==='ok'?'selected':''} value="ok">✅ OK</option>
+          <option ${report['inv_'+item.replace(/\s/g,'_')]==='low'?'selected':''} value="low">⚠️ Low</option>
+          <option ${report['inv_'+item.replace(/\s/g,'_')]==='out'?'selected':''} value="out">❌ Out</option>
+        </select>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h3>⚠️ Incidents & Remarks</h3>
+    <div class="form-group">
+      <label>Incidents / Complaints</label>
+      <textarea class="report-input" data-field="incidents" placeholder="Any incidents, complaints, or notable events" rows="3">${report.incidents||''}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Staff Remarks</label>
+      <textarea class="report-input" data-field="remarks" placeholder="General remarks, suggestions, or notes to management" rows="3">${report.remarks||''}</textarea>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h3>💰 Cash Reconciliation</h3>
+    <div class="report-grid">
+      <div class="report-cell">
+        <div class="report-cell-label">Reported Cash Revenue</div>
+        <div class="report-cell-value text-green">${fmt.currency(cashRev)}</div>
+      </div>
+      <div class="report-cell">
+        <div class="report-cell-label">Physical Cash Counted</div>
+        <input type="number" class="report-input" data-field="cashCounted" value="${report.cashCounted||''}" placeholder="0" style="margin-top:4px;padding:4px 8px">
+      </div>
+      <div class="report-cell">
+        <div class="report-cell-label">Variance</div>
+        <div class="report-cell-value" id="cash-variance" style="color:${(report.cashCounted||0)-cashRev===0?'var(--green)':(report.cashCounted||0)-cashRev>0?'var(--blue)':'var(--red)'}">
+          ${report.cashCounted!==undefined?fmt.currency((report.cashCounted||0)-cashRev):'—'}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function saveReport(){
+  const loc=document.getElementById('report-loc-select')?.value||STATE.locationCode||'ALL';
+  const date=document.getElementById('report-date')?.value||new Date().toISOString().slice(0,10);
+  const report={savedAt:new Date().toISOString(),savedBy:STATE.user.name};
+  document.querySelectorAll('.report-input').forEach(el=>{
+    if(el.type==='checkbox')report[el.dataset.field]=el.checked;
+    else report[el.dataset.field]=el.value;
+  });
+  DB.set(`report_${loc}_${date}`,report);
+  toast('Report saved!','success');
+}
+
+function reloadReport(){navigate('daily-report')}
+
+// ─── DATA HISTORY ─────────────────────────────────────────────────
+function renderDataHistory(){
+  return `
+  <div class="page-header">
+    <h1>📈 Data History</h1>
+    <div class="flex gap8">
+      <button class="btn btn-secondary" onclick="exportData()">📤 Export JSON</button>
+      <label class="btn btn-secondary" style="cursor:pointer">📥 Import JSON<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+    </div>
+  </div>
+  <div class="tabs" id="history-tabs">
+    <div class="tab active" onclick="showHistoryTab('transactions',this)">💳 Transactions</div>
+    <div class="tab" onclick="showHistoryTab('phonePe',this)">📱 PhonePe</div>
+    <div class="tab" onclick="showHistoryTab('b2b',this)">🤝 B2B Master</div>
+    <div class="tab" onclick="showHistoryTab('daily',this)">📋 Daily Reports</div>
+  </div>
+  <div id="history-content"></div>`;
+}
+
+function initDataHistoryTabs(){
+  showHistoryTab('transactions',document.querySelector('#history-tabs .tab'));
+}
+
+function showHistoryTab(tab,el){
+  document.querySelectorAll('#history-tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const el2=document.getElementById('history-content');
+  if(!el2)return;
+
+  if(tab==='transactions'){
+    const txns=(DB.get('transactions')||[]).filter(t=>!STATE.locationCode||t.locationCode===STATE.locationCode).slice().reverse();
+    const filterLoc=STATE.locationCode?`Location: ${getLocation(STATE.locationCode)?.name}`:'All Locations';
+    el2.innerHTML=`
+    <div class="card">
+      <div class="flex ac jb mb12 flex-wrap gap8">
+        <div class="text2 small">${txns.length} transactions · ${filterLoc}</div>
+        <div class="flex gap8">
+          <input type="text" id="txn-search" placeholder="Search..." style="width:200px" oninput="filterTxns(this.value)">
+          <select id="txn-mode-filter" onchange="filterTxns(document.getElementById('txn-search').value)" style="width:140px">
+            <option value="">All Modes</option>
+            <option>upi</option><option>cash</option><option>card</option><option>complimentary</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap" id="txn-table-wrap">
+        ${renderTxnTable(txns.slice(0,100))}
+      </div>
+      ${txns.length>100?`<div class="text-center mt12 text2 small">Showing 100 of ${txns.length} — use export for full data</div>`:''}
+    </div>`;
+  }
+  else if(tab==='phonePe'){
+    const data=DB.get('phonePe-imports')||[];
+    el2.innerHTML=`<div class="card">
+      <div class="flex ac jb mb12">
+        <h3>📱 PhonePe Transaction History</h3>
+        <label class="btn btn-primary btn-sm">Import PhonePe CSV<input type="file" accept=".csv,.json" onchange="importPhonePe(event)" style="display:none"></label>
+      </div>
+      ${data.length?renderPhonePeTable(data):'<div class="empty-state"><div class="es-icon">📱</div><p>Import PhonePe statement to view data</p></div>'}
+    </div>`;
+  }
+  else if(tab==='b2b'){
+    const data=DB.get('b2b-transactions')||[];
+    el2.innerHTML=`<div class="card">
+      <div class="flex ac jb mb12">
+        <h3>🤝 B2B Master Transactions</h3>
+        <button class="btn btn-primary btn-sm" onclick="addB2BTxn()">+ Add B2B Transaction</button>
+      </div>
+      ${data.length?renderB2BTable(data):'<div class="empty-state"><div class="es-icon">🤝</div><p>No B2B transactions yet</p><button class="btn btn-primary mt12" onclick="addB2BTxn()">Add First Transaction</button></div>'}
+    </div>`;
+  }
+  else if(tab==='daily'){
+    const keys=[];
+    for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('arama_report_'))keys.push(k.slice(7));}
+    el2.innerHTML=`<div class="card">
+      <h3 class="mb16">📋 Saved Daily Reports</h3>
+      ${keys.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Location</th><th>Saved By</th><th>Actions</th></tr></thead><tbody>
+        ${keys.map(k=>{const[,loc,date]=k.split('_');const r=DB.get(k);return `<tr><td>${fmt.date(date+'T00:00:00')}</td><td>${getLocation(loc)?.name||loc}</td><td>${r?.savedBy||'—'}</td><td><button class="btn btn-secondary btn-xs" onclick="viewReport('${loc}','${date}')">View</button></td></tr>`;}).join('')}
+      </tbody></table></div>`:`<div class="empty-state"><div class="es-icon">📋</div><p>No saved reports yet</p></div>`}
+    </div>`;
+  }
+}
+
+function renderTxnTable(txns){
+  if(!txns.length)return '<div class="empty-state"><div class="es-icon">💳</div><p>No transactions found</p></div>';
+  return `<table><thead><tr><th>Date/Time</th><th>Location</th><th>Service</th><th>Customer</th><th>Amount</th><th>Mode</th><th>Token</th><th>Staff</th></tr></thead>
+  <tbody>${txns.map(t=>`<tr>
+    <td style="white-space:nowrap">${fmt.datetime(t.ts)}</td>
+    <td>${getLocation(t.locationCode)?.name||t.locationCode}</td>
+    <td>${fmt.truncate(t.serviceName||'—',24)}</td>
+    <td>${t.customerPhone?t.customerPhone:'Walk-in'}</td>
+    <td class="text-green bold">${fmt.currency(t.amount)}</td>
+    <td><span class="badge ${t.paymentMode==='upi'?'badge-blue':t.paymentMode==='cash'?'badge-gold':'badge-purple'}">${(t.paymentMode||'—').toUpperCase()}</span></td>
+    <td style="font-family:monospace;font-size:11px;color:var(--text3)">${fmt.truncate(t.token||'—',14)}</td>
+    <td>${fmt.truncate(t.staffName||'—',16)}</td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+function filterTxns(q){
+  const mode=document.getElementById('txn-mode-filter')?.value||'';
+  const txns=(DB.get('transactions')||[]).filter(t=>{
+    const locMatch=!STATE.locationCode||t.locationCode===STATE.locationCode;
+    const modeMatch=!mode||t.paymentMode===mode;
+    const qMatch=!q||JSON.stringify(t).toLowerCase().includes(q.toLowerCase());
+    return locMatch&&modeMatch&&qMatch;
+  }).slice().reverse().slice(0,100);
+  const wrap=document.getElementById('txn-table-wrap');
+  if(wrap)wrap.innerHTML=renderTxnTable(txns);
+}
+
+function renderPhonePeTable(data){
+  if(!data.length)return '';
+  return `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Type</th><th>Status</th></tr></thead>
+  <tbody>${data.slice(0,200).map(d=>`<tr>
+    <td>${fmt.date(d.date||d.ts)}</td>
+    <td>${fmt.truncate(d.description||d.desc||'—',30)}</td>
+    <td class="${(d.amount||0)>0?'text-green':'text-red'} bold">${fmt.currency(Math.abs(d.amount||0))}</td>
+    <td><span class="badge ${(d.amount||0)>0?'badge-green':'badge-red'}">${(d.amount||0)>0?'Credit':'Debit'}</span></td>
+    <td>${d.status||'—'}</td>
+  </tr>`).join('')}</tbody></table></div>`;
+}
+
+function renderB2BTable(data){
+  return `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Company</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+  <tbody>${data.slice().reverse().slice(0,100).map(d=>`<tr>
+    <td>${fmt.date(d.date||d.ts)}</td>
+    <td>${fmt.truncate(d.company||'—',25)}</td>
+    <td class="text-green bold">${fmt.currency(d.amount||0)}</td>
+    <td><span class="badge badge-blue">${d.status||'Active'}</span></td>
+    <td><button class="btn btn-secondary btn-xs" onclick="editB2B('${d.id}')">Edit</button></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+function addB2BTxn(){
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>➕ Add B2B Transaction</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Company Name</label><input type="text" id="b2b-company" placeholder="Company Ltd."></div>
+        <div class="form-group"><label>Contact Person</label><input type="text" id="b2b-contact" placeholder="Contact name"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Amount (₹)</label><input type="number" id="b2b-amount" placeholder="0"></div>
+        <div class="form-group"><label>Date</label><input type="date" id="b2b-date" value="${new Date().toISOString().slice(0,10)}"></div>
+      </div>
+      <div class="form-group"><label>Notes</label><textarea id="b2b-notes" rows="2" placeholder="Service details, terms..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveB2BTxn()">Save</button>
+    </div>
+  </div>`);
+}
+
+function saveB2BTxn(){
+  const txn={id:uid(),company:document.getElementById('b2b-company')?.value,contact:document.getElementById('b2b-contact')?.value,amount:parseInt(document.getElementById('b2b-amount')?.value)||0,date:document.getElementById('b2b-date')?.value,notes:document.getElementById('b2b-notes')?.value,status:'Active',ts:new Date().toISOString()};
+  DB.push('b2b-transactions',txn);closeModal();showHistoryTab('b2b',null);toast('B2B transaction saved','success');
+}
+
+function exportData(){
+  const data=DB.all();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`arama-export-${new Date().toISOString().slice(0,10)}.json`;a.click();
+  toast('Data exported!','success');
+}
+
+function importData(e){
+  const file=e.target.files?.[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      Object.entries(data).forEach(([k,v])=>DB.set(k,v));
+      toast('Data imported! Reload to see changes.','success');
+    }catch(err){toast('Invalid JSON file','error')}
+  };reader.readAsText(file);
+}
+
+function importPhonePe(e){
+  const file=e.target.files?.[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      if(file.name.endsWith('.json')){
+        const data=JSON.parse(ev.target.result);
+        const arr=Array.isArray(data)?data:[data];
+        DB.set('phonePe-imports',arr);
+        toast(`Imported ${arr.length} PhonePe records`,'success');
+        showHistoryTab('phonePe',null);
+      } else {
+        // CSV parse
+        const rows=ev.target.result.split('\n').slice(1).filter(r=>r.trim());
+        const parsed=rows.map(row=>{const cols=row.split(',');return{date:cols[0],description:cols[1],amount:parseFloat(cols[2])||0,status:cols[3]||'',ts:new Date().toISOString()};});
+        DB.set('phonePe-imports',parsed);
+        toast(`Imported ${parsed.length} PhonePe records`,'success');
+        showHistoryTab('phonePe',null);
+      }
+    }catch(err){toast('Import failed: '+err.message,'error')}
+  };reader.readAsText(file);
+}
+
+// ─── LOCATIONS ────────────────────────────────────────────────────
+function renderLocations(){
+  const locs=getLocations();
+  const filterZone=STATE.role==='staff'||STATE.role==='supervisor'?STATE.locationCode:'';
+  
+  return `
+  <div class="page-header">
+    <h1>📍 Locations</h1>
+    <div class="flex gap8">
+      <input type="text" id="loc-search" placeholder="Search locations..." style="width:200px" oninput="filterLocations(this.value)">
+      <select id="loc-zone-filter" onchange="filterLocations(document.getElementById('loc-search').value)" style="width:140px">
+        <option value="">All Zones</option>
+        <option>WR</option><option>CR</option><option>Metro</option><option>SCR</option>
+      </select>
+      ${hasRole('admin')?`<button class="btn btn-primary" onclick="addLocation()">+ Add Location</button>`:''}
+    </div>
+  </div>
+
+  <div id="loc-grid" class="grid3">
+    ${locs.map(l=>renderLocationCard(l)).join('')}
+  </div>`;
+}
+
+function initLocFilter(){
+  // no-op, filtering is on-demand
+}
+
+function renderLocationCard(l){
+  const txns=DB.get('transactions')||[];
+  const today=new Date().toDateString();
+  const todayRev=txns.filter(t=>t.locationCode===l.code&&new Date(t.ts).toDateString()===today).reduce((s,t)=>s+(t.amount||0),0);
+  return `<div class="location-card" onclick="openLocation('${l.code}')">
+    <div class="flex ac jb mb8">
+      <div class="location-code">${l.code}</div>
+      <div class="flex gap4 ac">
+        ${l.isVendor?'<span class="badge badge-orange">Vendor</span>':''}
+        <span class="badge ${l.active?'badge-green':'badge-grey'}">${l.active?'Active':'Inactive'}</span>
+      </div>
+    </div>
+    <div class="location-name">${l.fullName||l.name}</div>
+    <div class="location-meta">
+      <span>🏙️ ${l.city}</span>
+      <span>🚉 ${l.zone}</span>
+      <span>💺 ${l.chairs} chairs</span>
+    </div>
+    ${todayRev>0?`<div style="margin-top:8px;font-size:12px;font-weight:700;color:var(--green)">Today: ${fmt.currency(todayRev)}</div>`:''}
+    ${l.meterBalance>0&&l.meterBalance<500?`<div class="flex ac gap4 mt8"><span class="health-dot health-red"></span><span class="small text-red">Low meter: ₹${l.meterBalance}</span></div>`:''}
+  </div>`;
+}
+
+function filterLocations(q){
+  const zone=document.getElementById('loc-zone-filter')?.value||'';
+  const locs=getLocations().filter(l=>{
+    const zMatch=!zone||l.zone===zone;
+    const qMatch=!q||l.name.toLowerCase().includes(q.toLowerCase())||l.code.toLowerCase().includes(q.toLowerCase())||l.city.toLowerCase().includes(q.toLowerCase());
+    return zMatch&&qMatch;
+  });
+  const grid=document.getElementById('loc-grid');
+  if(grid)grid.innerHTML=locs.map(l=>renderLocationCard(l)).join('');
+}
+
+function openLocation(code){
+  const l=getLocation(code);if(!l)return;
+  const txns=(DB.get('transactions')||[]).filter(t=>t.locationCode===code);
+  const totalRev=txns.reduce((s,t)=>s+(t.amount||0),0);
+  const thisMonth=new Date().toISOString().slice(0,7);
+  const monthRev=txns.filter(t=>t.ts?.startsWith(thisMonth)).reduce((s,t)=>s+(t.amount||0),0);
+
+  modal(`<div class="modal modal-lg">
+    <div class="modal-header">
+      <div>
+        <h3>${l.fullName||l.name}</h3>
+        <div style="font-size:12px;color:var(--text2)">${l.station} · ${l.zone} · ${l.code}</div>
+      </div>
+      <div class="flex gap8">
+        ${hasRole('admin')?`<button class="btn btn-primary btn-sm" onclick="editLocation('${code}')">✏️ Edit</button>`:''}
+        <button class="close-btn" onclick="closeModal()">✕</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="grid3 mb16">
+        <div class="report-cell"><div class="report-cell-label">Total Revenue</div><div class="report-cell-value text-green">${fmt.currency(totalRev)}</div></div>
+        <div class="report-cell"><div class="report-cell-label">This Month</div><div class="report-cell-value text-blue">${fmt.currency(monthRev)}</div></div>
+        <div class="report-cell"><div class="report-cell-label">Chairs</div><div class="report-cell-value">${l.chairs}</div></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="showLocTab('details','${code}',this)">Details</div>
+        <div class="tab" onclick="showLocTab('utilities','${code}',this)">Utilities</div>
+        <div class="tab" onclick="showLocTab('inventory','${code}',this)">Inventory</div>
+        <div class="tab" onclick="showLocTab('esp32','${code}',this)">ESP32</div>
+        <div class="tab" onclick="showLocTab('remarks','${code}',this)">Remarks</div>
+      </div>
+      <div id="loc-tab-body">${renderLocTab('details',l)}</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+      ${hasRole('admin')?`<button class="btn btn-success" onclick="saveLocationFromModal('${code}')">💾 Save Changes</button>`:''}
+    </div>
+  </div>`);
+}
+
+function showLocTab(tab,code,el){
+  document.querySelectorAll('#loc-tab-body').forEach(()=>{});
+  document.querySelectorAll('.modal .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const l=getLocation(code);
+  document.getElementById('loc-tab-body').innerHTML=renderLocTab(tab,l);
+}
+
+function renderLocTab(tab,l){
+  if(tab==='details') return `
+    <div class="form-row">
+      <div class="form-group"><label>Location Name</label><input type="text" id="lf-name" value="${l.name}"></div>
+      <div class="form-group"><label>Full Name</label><input type="text" id="lf-fullName" value="${l.fullName||l.name}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Station</label><input type="text" id="lf-station" value="${l.station||''}"></div>
+      <div class="form-group"><label>City</label><input type="text" id="lf-city" value="${l.city}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>State</label><input type="text" id="lf-state" value="${l.state}"></div>
+      <div class="form-group"><label>Zone</label>
+        <select id="lf-zone">
+          ${['WR','CR','NR','SR','ER','Metro','SCR','NCR'].map(z=>`<option${l.zone===z?' selected':''}>${z}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>No. of Chairs</label><input type="number" id="lf-chairs" value="${l.chairs}" min="1"></div>
+      <div class="form-group"><label>Shift Template</label>
+        <select id="lf-shift">${['8hr','12hr','split','24hr'].map(s=>`<option${l.shiftTemplate===s?' selected':''}>${s}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>PhonePe Store ID</label><input type="text" id="lf-phonepeId" value="${l.phonepeStoreId||''}"></div>
+      <div class="form-group"><label>Vendor Name (if vendor)</label><input type="text" id="lf-vendorName" value="${l.vendorName||''}"></div>
+    </div>
+    <div class="form-group">
+      <label class="flex ac gap8">
+        <label class="toggle"><input type="checkbox" id="lf-active" ${l.active?'checked':''}><span class="toggle-slider"></span></label>
+        Location Active
+      </label>
+      <label class="flex ac gap8 mt8">
+        <label class="toggle"><input type="checkbox" id="lf-isVendor" ${l.isVendor?'checked':''}><span class="toggle-slider"></span></label>
+        Vendor Location
+      </label>
+    </div>`;
+
+  if(tab==='utilities') return `
+    <div class="form-row">
+      <div class="form-group"><label>Electricity Meter Balance (₹)</label><input type="number" id="lf-meterBalance" value="${l.meterBalance||0}"></div>
+      <div class="form-group"><label>Last Meter Recharge Date</label><input type="date" id="lf-meterLastUpdated" value="${l.meterLastUpdated?.slice(0,10)||''}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Internet Provider</label><input type="text" id="lf-internetProvider" value="${l.internetProvider||''}" placeholder="Jio, Airtel, BSNL..."></div>
+      <div class="form-group"><label>Internet Balance / Plan</label><input type="text" id="lf-internetBalance" value="${l.internetBalance||''}" placeholder="₹399/mo, expires..."></div>
+    </div>
+    <div class="form-group"><label>Last Internet Recharge Date</label><input type="date" id="lf-internetLastRecharged" value="${l.internetLastRecharged?.slice(0,10)||''}"></div>
+    ${l.meterBalance<500&&l.meterBalance>0?'<div class="alert alert-error">⚠️ Low meter balance! Please recharge soon.</div>':''}`;
+
+  if(tab==='inventory') return `
+    <div class="form-row">
+      <div class="form-group"><label>Massage Chairs</label><input type="number" id="lf-inv-chairs" value="${l.inventory?.chairs||0}"></div>
+      <div class="form-group"><label>Leg Massagers</label><input type="number" id="lf-inv-legMassagers" value="${l.inventory?.legMassagers||0}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Gun Stations</label><input type="number" id="lf-inv-gunStations" value="${l.inventory?.gunStations||0}"></div>
+      <div class="form-group"><label>Fans</label><input type="number" id="lf-inv-fans" value="${l.inventory?.fans||0}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Lights</label><input type="number" id="lf-inv-lights" value="${l.inventory?.lights||0}"></div>
+      <div class="form-group"><label>Stationery Kit</label>
+        <label class="toggle mt8"><input type="checkbox" id="lf-inv-stationaryKit" ${l.inventory?.stationaryKit?'checked':''}><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+    <div class="form-group"><label>Cleaning Kit Available</label>
+      <label class="toggle"><input type="checkbox" id="lf-inv-cleaningKit" ${l.inventory?.cleaningKit?'checked':''}><span class="toggle-slider"></span></label>
+    </div>
+    <div class="form-group"><label>Other Items</label><input type="text" id="lf-inv-other" value="${(l.inventory?.otherItems||[]).join(', ')}" placeholder="Comma-separated list"></div>`;
+
+  if(tab==='esp32') return `
+    <div class="alert alert-info mb16">📡 ESP32 WiFi 4-Channel Relay Module controls chairs via local WiFi. Enter the module's local IP address.</div>
+    <div class="form-row">
+      <div class="form-group"><label>ESP32 Local IP Address</label><input type="text" id="lf-esp-ip" value="${l.esp32?.ip||''}" placeholder="192.168.1.100"></div>
+      <div class="form-group"><label>Port</label><input type="number" id="lf-esp-port" value="${l.esp32?.port||80}"></div>
+    </div>
+    <div class="form-group"><label>API Key (for security)</label><input type="text" id="lf-esp-key" value="${l.esp32?.apiKey||''}" placeholder="secret-key"></div>
+    <div style="margin-top:16px">
+      <h4 class="mb12">Channel Mapping</h4>
+      ${[1,2,3,4].map(ch=>`<div class="flex ac gap8 mb8">
+        <span class="badge badge-purple" style="min-width:60px">CH ${ch}</span>
+        <input type="text" id="lf-esp-ch${ch}-eq" value="${l.esp32?.channels?.[ch]?.equipmentCode||''}" placeholder="Equipment code (e.g. 1A)" style="flex:1">
+        <input type="text" id="lf-esp-ch${ch}-label" value="${l.esp32?.channels?.[ch]?.label||''}" placeholder="Label (e.g. Chair 1)" style="flex:1">
+      </div>`).join('')}
+    </div>
+    <button class="btn btn-secondary btn-sm mt8" onclick="testESP32('${l.code}')">🔌 Test Connection</button>`;
+
+  if(tab==='remarks') return `
+    <div class="form-group"><label>Staff Remarks (visible to admin)</label>
+      <textarea id="lf-remarks" rows="5" placeholder="Any issues, observations, or notes about this location...">${l.remarks||''}</textarea>
+    </div>
+    <div class="form-group"><label>Admin Notes (internal)</label>
+      <textarea id="lf-adminNotes" rows="4" placeholder="Admin-only notes...">${l.adminNotes||''}</textarea>
+    </div>`;
+
+  return '';
+}
+
+function saveLocationFromModal(code){
+  const locs=getLocations();
+  const idx=locs.findIndex(l=>l.code===code);
+  if(idx<0)return;
+  const l={...locs[idx]};
+
+  // Details
+  if(document.getElementById('lf-name'))l.name=document.getElementById('lf-name').value;
+  if(document.getElementById('lf-fullName'))l.fullName=document.getElementById('lf-fullName').value;
+  if(document.getElementById('lf-station'))l.station=document.getElementById('lf-station').value;
+  if(document.getElementById('lf-city'))l.city=document.getElementById('lf-city').value;
+  if(document.getElementById('lf-state'))l.state=document.getElementById('lf-state').value;
+  if(document.getElementById('lf-zone'))l.zone=document.getElementById('lf-zone').value;
+  if(document.getElementById('lf-chairs'))l.chairs=parseInt(document.getElementById('lf-chairs').value)||l.chairs;
+  if(document.getElementById('lf-shift'))l.shiftTemplate=document.getElementById('lf-shift').value;
+  if(document.getElementById('lf-phonepeId'))l.phonepeStoreId=document.getElementById('lf-phonepeId').value;
+  if(document.getElementById('lf-vendorName'))l.vendorName=document.getElementById('lf-vendorName').value;
+  if(document.getElementById('lf-active'))l.active=document.getElementById('lf-active').checked;
+  if(document.getElementById('lf-isVendor'))l.isVendor=document.getElementById('lf-isVendor').checked;
+
+  // Utilities
+  if(document.getElementById('lf-meterBalance'))l.meterBalance=parseFloat(document.getElementById('lf-meterBalance').value)||0;
+  if(document.getElementById('lf-meterLastUpdated'))l.meterLastUpdated=document.getElementById('lf-meterLastUpdated').value;
+  if(document.getElementById('lf-internetProvider'))l.internetProvider=document.getElementById('lf-internetProvider').value;
+  if(document.getElementById('lf-internetBalance'))l.internetBalance=document.getElementById('lf-internetBalance').value;
+  if(document.getElementById('lf-internetLastRecharged'))l.internetLastRecharged=document.getElementById('lf-internetLastRecharged').value;
+
+  // Inventory
+  if(document.getElementById('lf-inv-chairs'))l.inventory={...l.inventory,
+    chairs:parseInt(document.getElementById('lf-inv-chairs')?.value)||0,
+    legMassagers:parseInt(document.getElementById('lf-inv-legMassagers')?.value)||0,
+    gunStations:parseInt(document.getElementById('lf-inv-gunStations')?.value)||0,
+    fans:parseInt(document.getElementById('lf-inv-fans')?.value)||0,
+    lights:parseInt(document.getElementById('lf-inv-lights')?.value)||0,
+    stationaryKit:document.getElementById('lf-inv-stationaryKit')?.checked||false,
+    cleaningKit:document.getElementById('lf-inv-cleaningKit')?.checked||false,
+    otherItems:(document.getElementById('lf-inv-other')?.value||'').split(',').map(s=>s.trim()).filter(Boolean)
+  };
+
+  // ESP32
+  if(document.getElementById('lf-esp-ip'))l.esp32={...l.esp32,
+    ip:document.getElementById('lf-esp-ip').value,
+    port:parseInt(document.getElementById('lf-esp-port')?.value)||80,
+    apiKey:document.getElementById('lf-esp-key')?.value||'',
+    channels:{
+      1:{equipmentCode:document.getElementById('lf-esp-ch1-eq')?.value||'',label:document.getElementById('lf-esp-ch1-label')?.value||''},
+      2:{equipmentCode:document.getElementById('lf-esp-ch2-eq')?.value||'',label:document.getElementById('lf-esp-ch2-label')?.value||''},
+      3:{equipmentCode:document.getElementById('lf-esp-ch3-eq')?.value||'',label:document.getElementById('lf-esp-ch3-label')?.value||''},
+      4:{equipmentCode:document.getElementById('lf-esp-ch4-eq')?.value||'',label:document.getElementById('lf-esp-ch4-label')?.value||''}
+    }
+  };
+
+  // Remarks
+  if(document.getElementById('lf-remarks'))l.remarks=document.getElementById('lf-remarks').value;
+  if(document.getElementById('lf-adminNotes'))l.adminNotes=document.getElementById('lf-adminNotes').value;
+
+  locs[idx]=l;DB.set('locations',locs);closeModal();navigate('locations');toast('Location saved!','success');
+}
+
+async function testESP32(code){
+  const l=getLocation(code);
+  const ip=document.getElementById('lf-esp-ip')?.value||l.esp32?.ip;
+  if(!ip){toast('Enter IP address first','error');return}
+  toast('Testing ESP32 connection...','info');
+  try{
+    const res=await fetch(`http://${ip}:${document.getElementById('lf-esp-port')?.value||80}/status`,{signal:AbortSignal.timeout(5000)});
+    const data=await res.json();
+    toast('ESP32 connected! Status: '+JSON.stringify(data),'success',5000);
+  }catch(e){toast('ESP32 unreachable: '+e.message,'error',5000)}
+}
+
+function addLocation(){
+  const newLoc={...LOCATIONS_DEFAULT[0],code:'NEW-'+uid().slice(0,4).toUpperCase(),name:'New Location',fullName:'New Location',station:'',city:'',active:false,phonepeTotal:0};
+  const locs=getLocations();locs.push(newLoc);DB.set('locations',locs);
+  openLocation(newLoc.code);toast('New location created — fill in the details','info');
+}
+
+// ─── USERS & ROLES ────────────────────────────────────────────────
+function renderUsers(){
+  const users=getUsers();
+  const pending=DB.get('pending-staff')||[];
+  const pendingPending=pending.filter(r=>r.status==='pending');
+
+  return `
+  <div class="page-header">
+    <h1>👥 Users & Roles</h1>
+    <button class="btn btn-primary" onclick="addUser()">+ Add User</button>
+  </div>
+
+  ${pendingPending.length>0?`
+  <div class="card mb16">
+    <div class="card-header">
+      <h3>⏳ Pending Staff Registrations <span class="badge badge-red">${pendingPending.length}</span></h3>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Phone</th><th>Location</th><th>Requested</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${pendingPending.map(r=>`<tr>
+            <td><strong>${r.name}</strong></td>
+            <td>${r.phone}</td>
+            <td>${getLocation(r.locationCode)?.name||r.locationCode}</td>
+            <td>${fmt.ago(r.ts)}</td>
+            <td class="flex gap4">
+              <button class="btn btn-success btn-xs" onclick="approveStaff('${r.id}')">✅ Approve</button>
+              <button class="btn btn-danger btn-xs" onclick="rejectStaff('${r.id}')">❌ Reject</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`:''}
+
+  <div class="card">
+    <div class="flex ac jb mb12">
+      <h3>All Users (${users.length})</h3>
+      <div class="flex gap8">
+        <input type="text" id="user-search" placeholder="Search..." style="width:180px" oninput="filterUsersList(this.value)">
+        <select id="user-role-filter" onchange="filterUsersList(document.getElementById('user-search').value)" style="width:140px">
+          <option value="">All Roles</option>
+          ${Object.entries(ROLES).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="users-table">
+        <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="users-tbody">
+          ${renderUserRows(users)}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function renderUserRows(users){
+  return users.map(u=>`<tr>
+    <td>
+      <div class="bold">${u.name}</div>
+      <div class="small text2">${u.email||u.phone||'—'}</div>
+    </td>
+    <td><code style="font-size:12px">${u.username}</code></td>
+    <td><span class="badge" style="background:${ROLES[u.role]?.color+'22'};color:${ROLES[u.role]?.color}">${ROLES[u.role]?.label||u.role}</span></td>
+    <td>${u.locationCode==='ALL'?'All Locations':getLocation(u.locationCode)?.name||u.locationCode}</td>
+    <td><span class="badge ${u.active?'badge-green':'badge-grey'}">${u.active?'Active':'Inactive'}</span></td>
+    <td class="flex gap4">
+      <button class="btn btn-secondary btn-xs" onclick="editUser('${u.id}')">✏️ Edit</button>
+      <button class="btn btn-${u.active?'danger':'success'} btn-xs" onclick="toggleUserActive('${u.id}')">${u.active?'Deactivate':'Activate'}</button>
+    </td>
+  </tr>`).join('');
+}
+
+function initUsersFilter(){}
+
+function filterUsersList(q){
+  const role=document.getElementById('user-role-filter')?.value||'';
+  const users=getUsers().filter(u=>{
+    const rMatch=!role||u.role===role;
+    const qMatch=!q||u.name.toLowerCase().includes(q.toLowerCase())||u.username.toLowerCase().includes(q.toLowerCase());
+    return rMatch&&qMatch;
+  });
+  const tbody=document.getElementById('users-tbody');
+  if(tbody)tbody.innerHTML=renderUserRows(users);
+}
+
+function addUser(){
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>➕ Add User</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name</label><input type="text" id="nu-name" placeholder="Staff Member Name"></div>
+        <div class="form-group"><label>Phone</label><input type="tel" id="nu-phone" placeholder="9876543210"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Email</label><input type="email" id="nu-email" placeholder="email@example.com"></div>
+        <div class="form-group"><label>Role</label>
+          <select id="nu-role">
+            ${Object.entries(ROLES).filter(([k])=>roleLevel(k)<roleLevel(STATE.role)).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Username</label><input type="text" id="nu-username" placeholder="username123"></div>
+        <div class="form-group"><label>Password</label><input type="text" id="nu-password" placeholder="Set initial password"></div>
+      </div>
+      <div class="form-group"><label>Assigned Location</label>
+        <select id="nu-location">
+          <option value="ALL">All Locations</option>
+          ${getLocations().map(l=>`<option value="${l.code}">${l.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewUser()">Create User</button>
+    </div>
+  </div>`);
+}
+
+function saveNewUser(){
+  const name=document.getElementById('nu-name').value;
+  const username=document.getElementById('nu-username').value;
+  const password=document.getElementById('nu-password').value;
+  if(!name||!username||!password){toast('Fill all required fields','error');return}
+  const users=getUsers();
+  if(users.find(u=>u.username===username)){toast('Username already exists','error');return}
+  const newUser={id:uid(),name,username,password,phone:document.getElementById('nu-phone').value,email:document.getElementById('nu-email').value,role:document.getElementById('nu-role').value,locationCode:document.getElementById('nu-location').value,active:true,joined:new Date().toISOString()};
+  users.push(newUser);DB.set('users',users);closeModal();navigate('users');toast('User created! Credentials: '+username+'/'+password,'success',6000);
+}
+
+function editUser(id){
+  const user=getUsers().find(u=>u.id===id);if(!user)return;
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>✏️ Edit User: ${user.name}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name</label><input type="text" id="eu-name" value="${user.name}"></div>
+        <div class="form-group"><label>Phone</label><input type="tel" id="eu-phone" value="${user.phone||''}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Email</label><input type="email" id="eu-email" value="${user.email||''}"></div>
+        <div class="form-group"><label>Role</label>
+          <select id="eu-role">
+            ${Object.entries(ROLES).map(([k,v])=>`<option value="${k}"${user.role===k?' selected':''}>${v.label}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>New Password (leave blank to keep)</label><input type="text" id="eu-password" placeholder="New password"></div>
+        <div class="form-group"><label>Assigned Location</label>
+          <select id="eu-location">
+            <option value="ALL"${user.locationCode==='ALL'?' selected':''}>All Locations</option>
+            ${getLocations().map(l=>`<option value="${l.code}"${user.locationCode===l.code?' selected':''}>${l.name}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateUser('${id}')">Save Changes</button>
+    </div>
+  </div>`);
+}
+
+function updateUser(id){
+  const users=getUsers();
+  const idx=users.findIndex(u=>u.id===id);if(idx<0)return;
+  users[idx]={...users[idx],
+    name:document.getElementById('eu-name').value||users[idx].name,
+    phone:document.getElementById('eu-phone').value||users[idx].phone,
+    email:document.getElementById('eu-email').value||users[idx].email,
+    role:document.getElementById('eu-role').value||users[idx].role,
+    locationCode:document.getElementById('eu-location').value||users[idx].locationCode,
+    ...(document.getElementById('eu-password').value?{password:document.getElementById('eu-password').value}:{})
+  };
+  DB.set('users',users);closeModal();navigate('users');toast('User updated!','success');
+}
+
+function toggleUserActive(id){
+  const users=getUsers();
+  const idx=users.findIndex(u=>u.id===id);if(idx<0)return;
+  users[idx].active=!users[idx].active;
+  DB.set('users',users);navigate('users');toast(`User ${users[idx].active?'activated':'deactivated'}`,'success');
+}
+
+function approveStaff(id){
+  const pending=DB.get('pending-staff')||[];
+  const r=pending.find(p=>p.id===id);if(!r)return;
+  r.status='approved';r.approvedAt=new Date().toISOString();r.approvedBy=STATE.user.id;
+  DB.set('pending-staff',pending);
+  // Create user
+  const newUser={id:uid(),name:r.name,username:r.phone,password:'arama@'+r.phone.slice(-4),phone:r.phone,email:r.email||'',role:'staff',locationCode:r.locationCode,active:true,joined:new Date().toISOString()};
+  const users=getUsers();users.push(newUser);DB.set('users',users);
+  toast(`${r.name} approved! Login: ${newUser.username} / ${newUser.password}`,'success',8000);
+  STATE.pendingApprovals--;navigate('users');
+}
+
+function rejectStaff(id){
+  const pending=DB.get('pending-staff')||[];
+  const idx=pending.findIndex(p=>p.id===id);if(idx<0)return;
+  pending[idx].status='rejected';DB.set('pending-staff',pending);
+  STATE.pendingApprovals--;navigate('users');toast('Registration rejected','info');
+}
+
+// ─── HRMS ─────────────────────────────────────────────────────────
+function renderHRMS(){
+  const users=getUsers().filter(u=>u.role==='staff'||u.role==='supervisor');
+  return `
+  <div class="page-header">
+    <h1>🧑‍💼 HRMS</h1>
+    <div class="flex gap8">
+      <button class="btn btn-secondary" onclick="hrmsTab('attendance',this)">📅 Attendance</button>
+      <button class="btn btn-secondary" onclick="hrmsTab('payroll',this)">💰 Payroll</button>
+      <button class="btn btn-secondary" onclick="hrmsTab('compliance',this)">✅ Compliance</button>
+    </div>
+  </div>
+
+  <div class="grid2 mb16">
+    <div class="stat-card green">
+      <div class="stat-label">Staff Count</div>
+      <div class="stat-value text-green">${users.length}</div>
+      <div class="stat-sub">${users.filter(u=>u.active).length} active</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="stat-label">Locations Staffed</div>
+      <div class="stat-value text-gold">${new Set(users.filter(u=>u.locationCode!=='ALL').map(u=>u.locationCode)).size}</div>
+      <div class="stat-sub">of ${getLocations().filter(l=>l.active).length} active locations</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>👤 Staff Directory</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Role</th><th>Location</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${users.map(u=>`<tr>
+            <td><div class="bold">${u.name}</div><div class="small text2">${u.phone||u.email||'—'}</div></td>
+            <td><span class="badge" style="background:${ROLES[u.role]?.color+'22'};color:${ROLES[u.role]?.color}">${ROLES[u.role]?.label||u.role}</span></td>
+            <td>${u.locationCode==='ALL'?'All':getLocation(u.locationCode)?.name||u.locationCode}</td>
+            <td>${fmt.date(u.joined)}</td>
+            <td><span class="badge ${u.active?'badge-green':'badge-grey'}">${u.active?'Active':'Inactive'}</span></td>
+            <td><button class="btn btn-secondary btn-xs" onclick="viewStaffProfile('${u.id}')">View</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mt16">
+    <div class="card-header"><h3>📊 Performance by Location</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Location</th><th>Staff</th><th>This Month Revenue</th><th>Sessions</th></tr></thead>
+        <tbody>
+          ${getLocations().filter(l=>l.active).map(l=>{
+            const thisMonth=new Date().toISOString().slice(0,7);
+            const txns=(DB.get('transactions')||[]).filter(t=>t.locationCode===l.code&&t.ts?.startsWith(thisMonth));
+            const rev=txns.reduce((s,t)=>s+(t.amount||0),0);
+            const staffCount=users.filter(u=>u.locationCode===l.code).length;
+            return `<tr><td>${l.name}</td><td>${staffCount}</td><td class="text-green">${fmt.currency(rev)}</td><td>${txns.length}</td></tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function hrmsTab(tab,el){}
+
+function viewStaffProfile(id){
+  const u=getUsers().find(x=>x.id===id);if(!u)return;
+  const txns=(DB.get('transactions')||[]).filter(t=>t.staffId===id);
+  const thisMonth=new Date().toISOString().slice(0,7);
+  const monthTxns=txns.filter(t=>t.ts?.startsWith(thisMonth));
+  const monthRev=monthTxns.reduce((s,t)=>s+(t.amount||0),0);
+  const cfg=getConfig();
+  const commPct=cfg.commissionTiers.find(tier=>monthRev>=tier.minRev&&monthRev<=tier.maxRev)?.pct||0;
+  
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>👤 ${u.name}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="grid2 mb16">
+        <div class="report-cell"><div class="report-cell-label">Role</div><div class="report-cell-value">${ROLES[u.role]?.label}</div></div>
+        <div class="report-cell"><div class="report-cell-label">Location</div><div class="report-cell-value">${getLocation(u.locationCode)?.name||u.locationCode}</div></div>
+        <div class="report-cell"><div class="report-cell-label">This Month Revenue</div><div class="report-cell-value text-green">${fmt.currency(monthRev)}</div></div>
+        <div class="report-cell"><div class="report-cell-label">Commission (${commPct}%)</div><div class="report-cell-value text-gold">${fmt.currency(Math.round(monthRev*commPct/100))}</div></div>
+        <div class="report-cell"><div class="report-cell-label">Total Sessions</div><div class="report-cell-value">${txns.length}</div></div>
+        <div class="report-cell"><div class="report-cell-label">Joined</div><div class="report-cell-value">${fmt.date(u.joined)}</div></div>
+      </div>
+      <div class="commission-tier">
+        <div>
+          <div class="bold">Commission Tier</div>
+          <div class="small text2">${cfg.commissionTiers.find(t=>monthRev>=t.minRev&&monthRev<=t.maxRev)?.label||'Not qualified'}</div>
+        </div>
+        <div class="text-gold bold">${commPct}%</div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal()">Close</button></div>
+  </div>`);
+}
+
+// ─── CRM ──────────────────────────────────────────────────────────
+const CRM_STAGES = ['New Lead','First Call Attempted','Call Back Requested','Connected','Qualified','Needs Assessment','Proposal Sent','Follow-Up','Negotiation','Decision Pending','Verbal Commitment','Agreement Signed','Onboarding','Active','Upsell Opportunity','Closed Lost'];
+
+function renderCRM(){
+  const leads=DB.get('crm-leads')||[];
+  return `
+  <div class="page-header">
+    <h1>🤝 CRM / Leads</h1>
+    <button class="btn btn-primary" onclick="addLead()">+ Add Lead</button>
+  </div>
+
+  <div class="grid4 mb16">
+    ${['New Lead','Connected','Active','Closed Lost'].map(stage=>`
+    <div class="stat-card ${stage==='Active'?'green':stage==='Closed Lost'?'orange':'blue'}">
+      <div class="stat-label">${stage}</div>
+      <div class="stat-value">${leads.filter(l=>l.stage===stage).length}</div>
+    </div>`).join('')}
+  </div>
+
+  <div class="card">
+    <div class="flex ac jb mb12">
+      <h3>All Leads (${leads.length})</h3>
+      <div class="flex gap8">
+        <input type="text" id="crm-search" placeholder="Search..." style="width:180px" oninput="filterLeads(this.value)">
+        <select id="crm-stage-filter" onchange="filterLeads(document.getElementById('crm-search').value)" style="width:180px">
+          <option value="">All Stages</option>
+          ${CRM_STAGES.map(s=>`<option>${s}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="table-wrap" id="crm-table">
+      ${renderLeadTable(leads)}
+    </div>
+  </div>`;
+}
+
+function renderLeadTable(leads){
+  if(!leads.length)return '<div class="empty-state"><div class="es-icon">🤝</div><p>No leads yet. Add your first B2B lead!</p></div>';
+  return `<table><thead><tr><th>Company</th><th>Contact</th><th>Stage</th><th>Value (₹)</th><th>Last Contact</th><th>Actions</th></tr></thead>
+  <tbody>${leads.slice().reverse().map(l=>`<tr>
+    <td><div class="bold">${l.company||'—'}</div><div class="small text2">${l.industry||''}</div></td>
+    <td><div>${l.contactName||'—'}</div><div class="small text2">${l.phone||''}</div></td>
+    <td><span class="crm-stage ${l.stage==='Active'?'stage-active':l.stage==='Closed Lost'?'stage-closed':l.stage==='New Lead'?'stage-new':'stage-hot'}">${l.stage||'New Lead'}</span></td>
+    <td class="text-gold bold">${fmt.currency(l.value||0)}</td>
+    <td>${fmt.ago(l.lastContact||l.ts)}</td>
+    <td><button class="btn btn-secondary btn-xs" onclick="editLead('${l.id}')">✏️ Edit</button></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+function filterLeads(q){
+  const stage=document.getElementById('crm-stage-filter')?.value||'';
+  const leads=(DB.get('crm-leads')||[]).filter(l=>{
+    const sMatch=!stage||l.stage===stage;
+    const qMatch=!q||JSON.stringify(l).toLowerCase().includes(q.toLowerCase());
+    return sMatch&&qMatch;
+  });
+  const el=document.getElementById('crm-table');if(el)el.innerHTML=renderLeadTable(leads);
+}
+
+function addLead(){
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>➕ Add Lead</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Company Name</label><input type="text" id="nl-company" placeholder="Company Pvt. Ltd."></div>
+        <div class="form-group"><label>Industry</label><input type="text" id="nl-industry" placeholder="IT, Hospital, Hotel..."></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Contact Person</label><input type="text" id="nl-contact" placeholder="Name"></div>
+        <div class="form-group"><label>Phone</label><input type="tel" id="nl-phone" placeholder="9876543210"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Expected Value (₹)</label><input type="number" id="nl-value" placeholder="0"></div>
+        <div class="form-group"><label>Stage</label>
+          <select id="nl-stage">${CRM_STAGES.map(s=>`<option>${s}</option>`).join('')}</select>
+        </div>
+      </div>
+      <div class="form-group"><label>Notes</label><textarea id="nl-notes" rows="3" placeholder="Initial notes..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>`);
+}
+
+function saveLead(){
+  const lead={id:uid(),company:document.getElementById('nl-company').value,industry:document.getElementById('nl-industry').value,contactName:document.getElementById('nl-contact').value,phone:document.getElementById('nl-phone').value,value:parseInt(document.getElementById('nl-value').value)||0,stage:document.getElementById('nl-stage').value,notes:document.getElementById('nl-notes').value,ts:new Date().toISOString(),lastContact:new Date().toISOString(),createdBy:STATE.user.id};
+  DB.push('crm-leads',lead);closeModal();navigate('crm');toast('Lead added!','success');
+}
+
+function editLead(id){
+  const lead=(DB.get('crm-leads')||[]).find(l=>l.id===id);if(!lead)return;
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>✏️ ${lead.company||'Lead'}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Company</label><input type="text" id="el-company" value="${lead.company||''}"></div>
+        <div class="form-group"><label>Contact</label><input type="text" id="el-contact" value="${lead.contactName||''}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Phone</label><input type="tel" id="el-phone" value="${lead.phone||''}"></div>
+        <div class="form-group"><label>Value (₹)</label><input type="number" id="el-value" value="${lead.value||0}"></div>
+      </div>
+      <div class="form-group"><label>Stage</label>
+        <select id="el-stage">${CRM_STAGES.map(s=>`<option${lead.stage===s?' selected':''}>${s}</option>`).join('')}</select>
+      </div>
+      <div class="form-group"><label>Notes</label><textarea id="el-notes" rows="4">${lead.notes||''}</textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="deleteLead('${id}')">Delete</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateLead('${id}')">Save</button>
+    </div>
+  </div>`);
+}
+
+function updateLead(id){
+  const leads=DB.get('crm-leads')||[];
+  const idx=leads.findIndex(l=>l.id===id);if(idx<0)return;
+  leads[idx]={...leads[idx],company:document.getElementById('el-company').value,contactName:document.getElementById('el-contact').value,phone:document.getElementById('el-phone').value,value:parseInt(document.getElementById('el-value').value)||0,stage:document.getElementById('el-stage').value,notes:document.getElementById('el-notes').value,lastContact:new Date().toISOString()};
+  DB.set('crm-leads',leads);closeModal();navigate('crm');toast('Lead updated!','success');
+}
+
+function deleteLead(id){
+  const leads=(DB.get('crm-leads')||[]).filter(l=>l.id!==id);
+  DB.set('crm-leads',leads);closeModal();navigate('crm');toast('Lead deleted','info');
+}
+
+// ─── LOYALTY ──────────────────────────────────────────────────────
+function renderLoyalty(){
+  return `
+  <div class="page-header">
+    <h1>⭐ Loyalty Program</h1>
+    <button class="btn btn-primary" onclick="lookupLoyaltyCustomer()">🔍 Look Up Customer</button>
+  </div>
+
+  <div class="grid3 mb16">
+    <div class="stat-card gold">
+      <div class="stat-label">Total Members</div>
+      <div class="stat-value text-gold">${getLoyaltyMembers().length}</div>
+      <div class="stat-sub">Registered loyalty members</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-label">Points Issued</div>
+      <div class="stat-value text-accent">${fmt.num(getLoyaltyMembers().reduce((s,m)=>s+(m.points||0),0))}</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Points Redeemed</div>
+      <div class="stat-value text-green">—</div>
+    </div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-header"><h3>⭐ Loyalty Rules</h3>${hasRole('admin')?`<button class="btn btn-secondary btn-sm" onclick="navigate('admin-config')">Edit Rules</button>`:''}</div>
+    ${renderLoyaltyRules()}
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>👥 Top Members</h3>
+      <input type="text" placeholder="Search by phone..." style="width:180px" oninput="searchLoyalty(this.value)">
+    </div>
+    <div id="loyalty-list" class="table-wrap">
+      ${renderLoyaltyTable(getLoyaltyMembers().sort((a,b)=>b.points-a.points).slice(0,50))}
+    </div>
+  </div>`;
+}
+
+function getLoyaltyMembers(){
+  const members=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k.startsWith('arama_loyalty_')){
+      try{const m=JSON.parse(localStorage.getItem(k));if(m&&m.phone)members.push(m);}catch(e){}
+    }
+  }
+  return members;
+}
+
+function renderLoyaltyRules(){
+  const cfg=getConfig();
+  return `<div class="grid3">
+    <div class="report-cell"><div class="report-cell-label">Earn Rate</div><div class="report-cell-value">${cfg.loyaltyRate} pts per ₹100</div></div>
+    <div class="report-cell"><div class="report-cell-label">Redemption</div><div class="report-cell-value">${cfg.loyaltyRedeem} pts = ₹1</div></div>
+    <div class="report-cell"><div class="report-cell-label">Min to Redeem</div><div class="report-cell-value">${fmt.currency(cfg.loyaltyMinRedeem)}</div></div>
+    <div class="report-cell"><div class="report-cell-label">Max Cap</div><div class="report-cell-value">${cfg.loyaltyCap}% of bill</div></div>
+    <div class="report-cell"><div class="report-cell-label">Validity</div><div class="report-cell-value">${cfg.loyaltyValidity} days</div></div>
+    <div class="report-cell"><div class="report-cell-label">Sign-up Bonus</div><div class="report-cell-value">50 pts</div></div>
+  </div>`;
+}
+
+function renderLoyaltyTable(members){
+  if(!members.length)return '<div class="empty-state"><div class="es-icon">⭐</div><p>No loyalty members yet</p></div>';
+  return `<table><thead><tr><th>Phone</th><th>Name</th><th>Points</th><th>Value</th><th>Transactions</th><th>Action</th></tr></thead>
+  <tbody>${members.map(m=>`<tr>
+    <td>${m.phone}</td>
+    <td>${m.name||'—'}</td>
+    <td class="text-gold bold">${fmt.num(m.points)}</td>
+    <td class="text-green">${fmt.currency(Math.floor((m.points||0)/getConfig().loyaltyRedeem))}</td>
+    <td>${(m.history||[]).length}</td>
+    <td><button class="btn btn-secondary btn-xs" onclick="viewLoyaltyMember('${m.phone}')">View</button></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+function searchLoyalty(q){
+  const members=getLoyaltyMembers().filter(m=>!q||m.phone.includes(q)||(m.name||'').toLowerCase().includes(q.toLowerCase())).sort((a,b)=>b.points-a.points).slice(0,50);
+  const el=document.getElementById('loyalty-list');if(el)el.innerHTML=renderLoyaltyTable(members);
+}
+
+function lookupLoyaltyCustomer(){
+  modal(`<div class="modal" style="max-width:400px">
+    <div class="modal-header"><h3>🔍 Look Up Customer</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Phone Number</label><input type="tel" id="lc-phone" placeholder="9876543210" maxlength="10"></div>
+      <button class="btn btn-primary w100" onclick="doLoyaltyLookup()">Look Up</button>
+      <div id="lc-result" class="mt16"></div>
+    </div>
+  </div>`);
+}
+
+function doLoyaltyLookup(){
+  const phone=document.getElementById('lc-phone')?.value;
+  if(!phone||phone.length<10){toast('Enter 10-digit phone','error');return}
+  const m=DB.get('loyalty_'+phone);
+  const el=document.getElementById('lc-result');
+  if(!m){el.innerHTML=`<div class="alert alert-info">🆕 No loyalty account for this number. Will be created on first purchase.</div>`;return}
+  el.innerHTML=`<div class="points-display"><div class="points-big">${fmt.num(m.points)}</div><div class="points-label">LOYALTY POINTS</div></div>
+  <div class="mt12">
+    <div class="flex jb mt8"><span class="text2">Name:</span><strong>${m.name||'—'}</strong></div>
+    <div class="flex jb mt8"><span class="text2">Cash Value:</span><strong class="text-green">${fmt.currency(Math.floor(m.points/getConfig().loyaltyRedeem))}</strong></div>
+    <div class="flex jb mt8"><span class="text2">Transactions:</span><strong>${(m.history||[]).length}</strong></div>
+  </div>
+  ${hasRole('admin')?`<div class="mt12"><label>Adjust Points (+ or -)</label><div class="flex gap8 mt4">
+    <input type="number" id="lc-adjust" placeholder="+100 or -50" style="flex:1">
+    <button class="btn btn-primary" onclick="adjustLoyaltyPoints('${phone}')">Apply</button>
+  </div></div>`:''}`;
+}
+
+function adjustLoyaltyPoints(phone){
+  const adj=parseInt(document.getElementById('lc-adjust')?.value)||0;if(!adj)return;
+  const m=DB.get('loyalty_'+phone)||{phone,points:0,history:[]};
+  m.points=Math.max(0,m.points+adj);
+  m.history.push({ts:new Date().toISOString(),pts:adj,reason:'Manual adjustment by '+STATE.user.name});
+  DB.set('loyalty_'+phone,m);
+  doLoyaltyLookup();toast(`Points ${adj>0?'added':'deducted'}: ${Math.abs(adj)} pts`,'success');
+}
+
+function viewLoyaltyMember(phone){
+  const m=DB.get('loyalty_'+phone);if(!m)return;
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>⭐ ${m.name||phone}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="points-display mb16"><div class="points-big">${fmt.num(m.points)}</div><div class="points-label">LOYALTY POINTS</div></div>
+      <div class="table-wrap"><table><thead><tr><th>Date</th><th>Points</th><th>Reason</th></tr></thead>
+        <tbody>${(m.history||[]).slice().reverse().slice(0,30).map(h=>`<tr>
+          <td>${fmt.datetime(h.ts)}</td>
+          <td class="${h.pts>0?'text-green':'text-red'} bold">${h.pts>0?'+':''}${h.pts}</td>
+          <td>${h.reason||'—'}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal()">Close</button></div>
+  </div>`);
+}
+
+// ─── ESP32 CONSOLE ────────────────────────────────────────────────
+function renderESP32Console(){
+  const locs=getLocations().filter(l=>l.esp32?.ip);
+  return `
+  <div class="page-header">
+    <h1>⚡ ESP32 Console</h1>
+    <span class="badge badge-purple">Admin Only</span>
+  </div>
+
+  <div class="alert alert-info mb16">
+    📡 <strong>ESP32 WiFi 4-Channel Relay Module</strong> controls chairs via local WiFi. Each location needs its own ESP32 with a static IP on the kiosk WiFi network. Chairs are activated on token generation via HTTP POST.
+  </div>
+
+  <div class="grid2 mb16">
+    <div class="stat-card green">
+      <div class="stat-label">Configured ESP32s</div>
+      <div class="stat-value text-green">${locs.length}</div>
+      <div class="stat-sub">of ${getLocations().length} locations</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-label">Active Sessions</div>
+      <div class="stat-value text-accent">${Object.keys(STATE.activeTimers).length}</div>
+    </div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-header"><h3>🔌 Manual Relay Control</h3></div>
+    <div class="form-row">
+      <div class="form-group"><label>Location</label>
+        <select id="esp-loc-select" onchange="loadESPChannels()">
+          <option value="">Select Location</option>
+          ${getLocations().map(l=>`<option value="${l.code}">${l.name} ${l.esp32?.ip?'('+l.esp32.ip+')':'(not configured)'}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Channel</label>
+        <select id="esp-channel-select" style="width:100%">
+          ${[1,2,3,4].map(ch=>`<option value="${ch}">Channel ${ch}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Duration (minutes)</label>
+        <input type="number" id="esp-duration" value="15" min="1" max="120">
+      </div>
+      <div class="form-group"><label>Token (auto-generated)</label>
+        <input type="text" id="esp-token" placeholder="Will be generated" readonly>
+      </div>
+    </div>
+    <div class="flex gap8">
+      <button class="btn btn-success" onclick="manualESP32Activate()">⚡ Activate Channel</button>
+      <button class="btn btn-danger" onclick="manualESP32Deactivate()">🛑 Deactivate Channel</button>
+      <button class="btn btn-secondary" onclick="testESP32Status()">📊 Get Status</button>
+    </div>
+    <div id="esp-result" class="mt12"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>📋 ESP32 Location Summary</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Location</th><th>IP Address</th><th>Status</th><th>Channels</th></tr></thead>
+        <tbody>
+          ${getLocations().map(l=>`<tr>
+            <td>${l.name}</td>
+            <td><code style="font-size:12px">${l.esp32?.ip||'Not configured'}</code></td>
+            <td><span class="badge ${l.esp32?.ip?'badge-green':'badge-grey'}">${l.esp32?.ip?'Configured':'Pending'}</span></td>
+            <td>${Object.values(l.esp32?.channels||{}).filter(ch=>ch.equipmentCode).map(ch=>`<span class="badge badge-purple" style="margin:1px">${ch.label}</span>`).join('')||'—'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function loadESPChannels(){
+  const code=document.getElementById('esp-loc-select')?.value;
+  if(!code)return;
+  const l=getLocation(code);if(!l)return;
+  const sel=document.getElementById('esp-channel-select');
+  if(!sel)return;
+  sel.innerHTML=[1,2,3,4].map(ch=>{
+    const chan=l.esp32?.channels?.[ch];
+    return `<option value="${ch}">CH${ch}${chan?.label?' — '+chan.label:''}</option>`;
+  }).join('');
+  document.getElementById('esp-token').value=generateToken(l.code,(l.esp32?.channels?.[1]?.equipmentCode||'1A'));
+}
+
+async function manualESP32Activate(){
+  const code=document.getElementById('esp-loc-select')?.value;
+  if(!code){toast('Select a location','error');return}
+  const l=getLocation(code);
+  const channel=parseInt(document.getElementById('esp-channel-select')?.value)||1;
+  const duration=parseInt(document.getElementById('esp-duration')?.value)||15;
+  const token=document.getElementById('esp-token')?.value||generateToken(l.code,'1A');
+  const result=await activateESP32(l,channel,duration*60,token);
+  const el=document.getElementById('esp-result');
+  if(el)el.innerHTML=`<div class="alert ${result.success?'alert-success':'alert-error'}">${result.success?'✅ Channel activated!':'❌ '+result.reason}</div>`;
+}
+
+async function manualESP32Deactivate(){
+  const code=document.getElementById('esp-loc-select')?.value;
+  if(!code){toast('Select a location','error');return}
+  const l=getLocation(code);
+  const channel=parseInt(document.getElementById('esp-channel-select')?.value)||1;
+  const result=await deactivateESP32(l,channel);
+  const el=document.getElementById('esp-result');
+  if(el)el.innerHTML=`<div class="alert ${result.success?'alert-success':'alert-error'}">${result.success?'✅ Channel deactivated!':'❌ Failed to deactivate'}</div>`;
+}
+
+async function testESP32Status(){
+  const code=document.getElementById('esp-loc-select')?.value;
+  if(!code){toast('Select a location','error');return}
+  const l=getLocation(code);
+  if(!l.esp32?.ip){toast('No ESP32 configured for this location','error');return}
+  try{
+    const res=await fetch(`http://${l.esp32.ip}:${l.esp32.port||80}/status`,{signal:AbortSignal.timeout(5000)});
+    const data=await res.json();
+    const el=document.getElementById('esp-result');
+    if(el)el.innerHTML=`<div class="alert alert-success"><pre style="font-size:12px">${JSON.stringify(data,null,2)}</pre></div>`;
+  }catch(e){
+    const el=document.getElementById('esp-result');
+    if(el)el.innerHTML=`<div class="alert alert-error">❌ ESP32 unreachable: ${e.message}</div>`;
+  }
+}
+
+// ─── ADMIN CONFIG ─────────────────────────────────────────────────
+function renderAdminConfig(){
+  const cfg=getConfig();
+  return `
+  <div class="page-header">
+    <h1>⚙️ Admin Configuration</h1>
+    <button class="btn btn-success" onclick="saveAdminConfig()">💾 Save All Settings</button>
+  </div>
+
+  <div class="tabs" id="config-tabs">
+    <div class="tab active" onclick="showConfigTab('general',this)">General</div>
+    <div class="tab" onclick="showConfigTab('loyalty',this)">Loyalty</div>
+    <div class="tab" onclick="showConfigTab('commission',this)">Commission</div>
+    <div class="tab" onclick="showConfigTab('services',this)">Services</div>
+    <div class="tab" onclick="showConfigTab('system',this)">System</div>
+    <div class="tab" onclick="showConfigTab('backup',this)">Backup</div>
+  </div>
+  <div id="config-body">
+    ${renderConfigTab('general',cfg)}
+  </div>`;
+}
+
+function showConfigTab(tab,el){
+  document.querySelectorAll('#config-tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('config-body').innerHTML=renderConfigTab(tab,getConfig());
+}
+
+function renderConfigTab(tab,cfg){
+  if(tab==='general') return `
+    <div class="card">
+      <div class="card-header"><h3>🏢 Organisation</h3></div>
+      <div class="form-row">
+        <div class="form-group"><label>Organisation Name</label><input type="text" id="cfg-orgName" value="${cfg.orgName||'ārāma Wellness'}"></div>
+        <div class="form-group"><label>Support Email</label><input type="email" id="cfg-email" value="${cfg.email||'tech@arama.asia'}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Support Phone</label><input type="tel" id="cfg-phone" value="${cfg.phone||''}"></div>
+        <div class="form-group"><label>Shift Hours (default)</label><input type="number" id="cfg-shiftHours" value="${cfg.shiftHours||8}" min="4" max="24"></div>
+      </div>
+      <div class="form-group"><label>Auto Report Time</label><input type="time" id="cfg-reportTime" value="${cfg.autoReportTime||'20:00'}"></div>
+    </div>`;
+
+  if(tab==='loyalty') return `
+    <div class="card">
+      <div class="card-header"><h3>⭐ Loyalty Rules</h3></div>
+      <div class="form-row">
+        <div class="form-group"><label>Points per ₹100 (Earn Rate)</label><input type="number" id="cfg-loyaltyRate" value="${cfg.loyaltyRate||10}" min="1"></div>
+        <div class="form-group"><label>Redemption (points per ₹1)</label><input type="number" id="cfg-loyaltyRedeem" value="${cfg.loyaltyRedeem||100}" min="1"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Minimum to Redeem (₹)</label><input type="number" id="cfg-loyaltyMinRedeem" value="${cfg.loyaltyMinRedeem||499}" min="0"></div>
+        <div class="form-group"><label>Max Cap (% of bill)</label><input type="number" id="cfg-loyaltyCap" value="${cfg.loyaltyCap||20}" min="1" max="100"></div>
+      </div>
+      <div class="form-group"><label>Points Validity (days)</label><input type="number" id="cfg-loyaltyValidity" value="${cfg.loyaltyValidity||365}" min="30"></div>
+      <div class="alert alert-info mt12">
+        <strong>Earning Examples:</strong> Chair 15min (₹199) → ${Math.floor(199/100*(cfg.loyaltyRate||10))} pts · Chair 30min (₹349) → ${Math.floor(349/100*(cfg.loyaltyRate||10))} pts<br>
+        <strong>Redemption:</strong> ${cfg.loyaltyRedeem||100} pts = ₹1 · To redeem ₹${cfg.loyaltyMinRedeem||499} need ${(cfg.loyaltyMinRedeem||499)*(cfg.loyaltyRedeem||100)} pts
+      </div>
+    </div>`;
+
+  if(tab==='commission') return `
+    <div class="card">
+      <div class="card-header">
+        <h3>💰 Commission Tiers</h3>
+        <label class="flex ac gap8">
+          <label class="toggle"><input type="checkbox" id="cfg-commEnabled" ${cfg.commissionEnabled?'checked':''}><span class="toggle-slider"></span></label>
+          Enable Commissions
+        </label>
+      </div>
+      <div id="commission-tiers">
+        ${(cfg.commissionTiers||[]).map((tier,i)=>`
+        <div class="commission-tier">
+          <div class="flex ac gap8" style="flex:1">
+            <input type="text" id="ct-label-${i}" value="${tier.label}" style="width:100px" placeholder="Tier name">
+            <input type="number" id="ct-min-${i}" value="${tier.minRev}" style="width:90px" placeholder="Min ₹">
+            <span class="text2">to</span>
+            <input type="number" id="ct-max-${i}" value="${tier.maxRev}" style="width:90px" placeholder="Max ₹">
+            <input type="number" id="ct-pct-${i}" value="${tier.pct}" style="width:70px" placeholder="%" min="0" max="50">
+            <span class="text2">%</span>
+          </div>
+          <button class="btn btn-danger btn-xs" onclick="removeTier(${i})">✕</button>
+        </div>`).join('')}
+      </div>
+      <button class="btn btn-secondary btn-sm mt12" onclick="addTier()">+ Add Tier</button>
+    </div>`;
+
+  if(tab==='services') return `
+    <div class="card">
+      <div class="card-header">
+        <h3>💆 Services</h3>
+        <button class="btn btn-primary btn-sm" onclick="addService()">+ Add Service</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Icon</th><th>Name</th><th>Duration</th><th>Price</th><th>Category</th><th>Active</th><th>Actions</th></tr></thead>
+          <tbody id="services-table-body">
+            ${renderServicesRows()}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+
+  if(tab==='system') return `
+    <div class="card">
+      <div class="card-header"><h3>🔧 System</h3></div>
+      <div class="form-group">
+        <label class="flex ac gap8">
+          <label class="toggle"><input type="checkbox" id="cfg-whatsapp" ${cfg.whatsappEnabled?'checked':''}><span class="toggle-slider"></span></label>
+          WhatsApp Notifications (Gupshup API)
+        </label>
+      </div>
+      <div class="form-group"><label>ESP32 Global API Key</label><input type="text" id="cfg-espKey" value="${cfg.espGlobalApiKey||''}" placeholder="Global API key for all ESP32 modules"></div>
+      <div class="form-group"><label>Tax Rate (%)</label><input type="number" id="cfg-taxRate" value="${cfg.taxRate||0}" min="0" max="30"></div>
+      <div class="alert alert-warn mt16">⚠️ System settings affect all locations. Changes take effect immediately.</div>
+    </div>`;
+
+  if(tab==='backup') return `
+    <div class="card">
+      <div class="card-header"><h3>💾 Data Backup & Restore</h3></div>
+      <div class="grid2">
+        <div>
+          <h4 class="mb8">Export Data</h4>
+          <p class="text2 small mb12">Download all ārāma OS data as a JSON file for backup or transfer.</p>
+          <button class="btn btn-primary w100" onclick="exportData()">📤 Export All Data</button>
+        </div>
+        <div>
+          <h4 class="mb8">Import Data</h4>
+          <p class="text2 small mb12">Restore from a previously exported JSON file.</p>
+          <label class="btn btn-secondary w100" style="cursor:pointer">📥 Import Data<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+        </div>
+      </div>
+      <div class="mt16">
+        <h4 class="mb8 text-red">⚠️ Danger Zone</h4>
+        <button class="btn btn-danger" onclick="confirmResetData()">🗑️ Reset All Data</button>
+        <p class="small text2 mt4">This will delete all transactions, users, and settings. Cannot be undone.</p>
+      </div>
+    </div>`;
+
+  return '';
+}
+
+function renderServicesRows(){
+  return getServices().map(s=>`<tr id="svc-row-${s.id}">
+    <td>${s.icon}</td>
+    <td>${s.name}</td>
+    <td>${s.duration?fmt.duration(s.duration):'Pass'}</td>
+    <td class="text-gold bold">${fmt.currency(s.price)}</td>
+    <td><span class="badge badge-purple">${s.category}</span></td>
+    <td><label class="toggle"><input type="checkbox" ${s.active?'checked':''} onchange="toggleService('${s.id}',this.checked)"><span class="toggle-slider"></span></label></td>
+    <td class="flex gap4">
+      <button class="btn btn-secondary btn-xs" onclick="editService('${s.id}')">✏️</button>
+      <button class="btn btn-danger btn-xs" onclick="deleteService('${s.id}')">✕</button>
+    </td>
+  </tr>`).join('');
+}
+
+function toggleService(id,checked){
+  const svcs=getServices();const idx=svcs.findIndex(s=>s.id===id);
+  if(idx>=0){svcs[idx].active=checked;DB.set('services',svcs);}
+}
+
+function addService(){
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>➕ Add Service</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Name</label><input type="text" id="ns-name" placeholder="Service Name"></div>
+        <div class="form-group"><label>Icon (emoji)</label><input type="text" id="ns-icon" placeholder="💺" maxlength="2"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Price (₹)</label><input type="number" id="ns-price" placeholder="199" min="0"></div>
+        <div class="form-group"><label>Duration (min, 0 for pass)</label><input type="number" id="ns-duration" placeholder="15" min="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Category</label>
+          <select id="ns-category"><option>chair</option><option>leg</option><option>gun</option><option>combo</option><option>pass</option><option>other</option></select>
+        </div>
+        <div class="form-group"><label>Description</label><input type="text" id="ns-desc" placeholder="Short description"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewService()">Add Service</button>
+    </div>
+  </div>`);
+}
+
+function saveNewService(){
+  const name=document.getElementById('ns-name').value;
+  const price=parseInt(document.getElementById('ns-price').value)||0;
+  if(!name||!price){toast('Name and price required','error');return}
+  const svc={id:uid(),name,icon:document.getElementById('ns-icon').value||'💆',price,duration:parseInt(document.getElementById('ns-duration').value)||0,category:document.getElementById('ns-category').value,desc:document.getElementById('ns-desc').value,active:true};
+  const svcs=getServices();svcs.push(svc);DB.set('services',svcs);
+  closeModal();showConfigTab('services',null);navigate('admin-config');toast('Service added!','success');
+}
+
+function editService(id){
+  const svc=getServices().find(s=>s.id===id);if(!svc)return;
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>✏️ Edit: ${svc.name}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Name</label><input type="text" id="es-name" value="${svc.name}"></div>
+        <div class="form-group"><label>Icon</label><input type="text" id="es-icon" value="${svc.icon||'💆'}" maxlength="2"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Price (₹)</label><input type="number" id="es-price" value="${svc.price}"></div>
+        <div class="form-group"><label>Duration (min)</label><input type="number" id="es-duration" value="${svc.duration||0}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Category</label>
+          <select id="es-category">${['chair','leg','gun','combo','pass','other'].map(c=>`<option${svc.category===c?' selected':''}>${c}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Description</label><input type="text" id="es-desc" value="${svc.desc||''}"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateService('${id}')">Save</button>
+    </div>
+  </div>`);
+}
+
+function updateService(id){
+  const svcs=getServices();const idx=svcs.findIndex(s=>s.id===id);if(idx<0)return;
+  svcs[idx]={...svcs[idx],name:document.getElementById('es-name').value,icon:document.getElementById('es-icon').value,price:parseInt(document.getElementById('es-price').value)||svcs[idx].price,duration:parseInt(document.getElementById('es-duration').value)||0,category:document.getElementById('es-category').value,desc:document.getElementById('es-desc').value};
+  DB.set('services',svcs);closeModal();navigate('admin-config');toast('Service updated!','success');
+}
+
+function deleteService(id){
+  const svcs=getServices().filter(s=>s.id!==id);DB.set('services',svcs);navigate('admin-config');toast('Service deleted','info');
+}
+
+function saveAdminConfig(){
+  const cfg=getConfig();
+  if(document.getElementById('cfg-orgName'))cfg.orgName=document.getElementById('cfg-orgName').value;
+  if(document.getElementById('cfg-email'))cfg.email=document.getElementById('cfg-email').value;
+  if(document.getElementById('cfg-phone'))cfg.phone=document.getElementById('cfg-phone').value;
+  if(document.getElementById('cfg-shiftHours'))cfg.shiftHours=parseInt(document.getElementById('cfg-shiftHours').value)||8;
+  if(document.getElementById('cfg-reportTime'))cfg.autoReportTime=document.getElementById('cfg-reportTime').value;
+  if(document.getElementById('cfg-loyaltyRate'))cfg.loyaltyRate=parseInt(document.getElementById('cfg-loyaltyRate').value)||10;
+  if(document.getElementById('cfg-loyaltyRedeem'))cfg.loyaltyRedeem=parseInt(document.getElementById('cfg-loyaltyRedeem').value)||100;
+  if(document.getElementById('cfg-loyaltyMinRedeem'))cfg.loyaltyMinRedeem=parseInt(document.getElementById('cfg-loyaltyMinRedeem').value)||499;
+  if(document.getElementById('cfg-loyaltyCap'))cfg.loyaltyCap=parseInt(document.getElementById('cfg-loyaltyCap').value)||20;
+  if(document.getElementById('cfg-loyaltyValidity'))cfg.loyaltyValidity=parseInt(document.getElementById('cfg-loyaltyValidity').value)||365;
+  if(document.getElementById('cfg-commEnabled'))cfg.commissionEnabled=document.getElementById('cfg-commEnabled').checked;
+  if(document.getElementById('cfg-whatsapp'))cfg.whatsappEnabled=document.getElementById('cfg-whatsapp').checked;
+  if(document.getElementById('cfg-espKey'))cfg.espGlobalApiKey=document.getElementById('cfg-espKey').value;
+  if(document.getElementById('cfg-taxRate'))cfg.taxRate=parseInt(document.getElementById('cfg-taxRate').value)||0;
+  // Commission tiers
+  const tiers=[];let i=0;
+  while(document.getElementById(`ct-label-${i}`)){
+    tiers.push({label:document.getElementById(`ct-label-${i}`).value,minRev:parseInt(document.getElementById(`ct-min-${i}`).value)||0,maxRev:parseInt(document.getElementById(`ct-max-${i}`).value)||0,pct:parseFloat(document.getElementById(`ct-pct-${i}`).value)||0});i++;
+  }
+  if(tiers.length>0)cfg.commissionTiers=tiers;
+  DB.set('config',cfg);toast('Config saved!','success');
+}
+
+function addTier(){
+  const cfg=getConfig();
+  cfg.commissionTiers.push({label:'New Tier',minRev:0,maxRev:9999,pct:5});
+  DB.set('config',cfg);showConfigTab('commission',null);navigate('admin-config');
+}
+
+function removeTier(i){
+  const cfg=getConfig();cfg.commissionTiers.splice(i,1);DB.set('config',cfg);showConfigTab('commission',null);navigate('admin-config');
+}
+
+function confirmResetData(){
+  if(prompt('Type RESET to confirm data wipe:')!=='RESET'){toast('Reset cancelled','info');return}
+  const keys=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('arama_'))keys.push(k);}
+  keys.forEach(k=>localStorage.removeItem(k));
+  toast('All data cleared. Reloading...','warn');setTimeout(()=>location.reload(),2000);
+}
+
+function viewReport(loc,date){closeModal();navigate('daily-report');}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+function init(){
+  initDefaultUsers();
+  // Populate login location select
+  const sel=document.getElementById('login-location');
+  if(sel){
+    getLocations().forEach(l=>{
+      const opt=document.createElement('option');opt.value=l.code;opt.textContent=l.name+(l.city?' — '+l.city:'');sel.appendChild(opt);
+    });
+  }
+  // Quick login buttons
+  const qb=document.getElementById('quick-logins');
+  if(qb){
+    const quickUsers=[{u:'admin',p:'admin123',label:'Admin'},{u:'manager',p:'mgr123',label:'Manager'},{u:'superadmin',p:'arama@2024',label:'Super Admin'}];
+    qb.innerHTML=quickUsers.map(q=>`<div class="quick-btn" onclick="quickLogin('${q.u}','${q.p}')">
+      <div>🔑 ${q.label}</div>
+      <div style="font-size:10px;opacity:0.7">${q.u}</div>
+    </div>`).join('');
+  }
+  // Restore session
+  const session=DB.get('session');
+  if(session&&session.ts&&Date.now()-session.ts<8*60*60*1000){
+    const user=getUsers().find(u=>u.id===session.userId);
+    if(user&&user.active){
+      STATE.user=user;STATE.role=user.role;STATE.locationCode=session.locationCode;
+      startApp();return;
+    }
+  }
+}
+
+function quickLogin(username,password){
+  document.getElementById('login-username').value=username;
+  document.getElementById('login-password').value=password;
+  doLogin();
+}
+
+
+// ─── PATCH: editB2B ──────────────────────────────────────────────
+function editB2B(id){
+  const data=DB.get('b2b-transactions')||[];
+  const d=data.find(x=>x.id===id);if(!d)return;
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>✏️ Edit B2B Transaction</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Company</label><input type="text" id="eb-company" value="${d.company||''}"></div>
+        <div class="form-group"><label>Contact</label><input type="text" id="eb-contact" value="${d.contact||''}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Amount (₹)</label><input type="number" id="eb-amount" value="${d.amount||0}"></div>
+        <div class="form-group"><label>Date</label><input type="date" id="eb-date" value="${(d.date||d.ts||'').slice(0,10)}"></div>
+      </div>
+      <div class="form-group"><label>Status</label>
+        <select id="eb-status">
+          ${['Active','Pending','Completed','Cancelled'].map(s=>`<option${d.status===s?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Notes</label><textarea id="eb-notes" rows="3">${d.notes||''}</textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="deleteB2B('${id}')">Delete</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateB2B('${id}')">Save</button>
+    </div>
+  </div>`);
+}
+
+function updateB2B(id){
+  const data=DB.get('b2b-transactions')||[];
+  const idx=data.findIndex(x=>x.id===id);if(idx<0)return;
+  data[idx]={...data[idx],
+    company:document.getElementById('eb-company').value,
+    contact:document.getElementById('eb-contact').value,
+    amount:parseInt(document.getElementById('eb-amount').value)||0,
+    date:document.getElementById('eb-date').value,
+    status:document.getElementById('eb-status').value,
+    notes:document.getElementById('eb-notes').value,
+    updatedAt:new Date().toISOString()
+  };
+  DB.set('b2b-transactions',data);closeModal();showHistoryTab('b2b',null);toast('B2B transaction updated!','success');
+}
+
+function deleteB2B(id){
+  const data=(DB.get('b2b-transactions')||[]).filter(x=>x.id!==id);
+  DB.set('b2b-transactions',data);closeModal();showHistoryTab('b2b',null);toast('Deleted','info');
+}
+
+// ─── PATCH: viewReport (inline) ───────────────────────────────────
+function viewReport(loc,date){
+  const report=DB.get(`report_${loc}_${date}`)||{};
+  const txns=(DB.get('transactions')||[]).filter(t=>t.locationCode===loc&&t.ts?.slice(0,10)===date);
+  const totalRev=txns.reduce((s,t)=>s+(t.amount||0),0);
+  const cashRev=txns.filter(t=>t.paymentMode==='cash').reduce((s,t)=>s+(t.amount||0),0);
+  const upiRev=txns.filter(t=>t.paymentMode==='upi').reduce((s,t)=>s+(t.amount||0),0);
+  const locName=getLocation(loc)?.name||loc;
+  const fields=[
+    {label:'Opening Chairs',key:'chairsOpening'},
+    {label:'Closing Chairs',key:'chairsClosing'},
+    {label:'Equipment Issues',key:'equipmentIssues'},
+    {label:'Meter Open',key:'meterOpen'},
+    {label:'Meter Close',key:'meterClose'},
+    {label:'Staff Present',key:'staffPresent'},
+    {label:'Cash Counted',key:'cashCounted'},
+    {label:'Incidents',key:'incidents'},
+    {label:'Remarks',key:'remarks'},
+  ];
+  modal(`<div class="modal modal-lg">
+    <div class="modal-header">
+      <div><h3>📋 Daily Report — ${locName}</h3><div style="font-size:12px;color:var(--text2)">${fmt.date(date+'T00:00:00')} · Saved by ${report.savedBy||'—'}</div></div>
+      <div class="flex gap8">
+        <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print</button>
+        <button class="close-btn" onclick="closeModal()">✕</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="report-grid mb16">
+        <div class="report-cell"><div class="report-cell-label">Total Revenue</div><div class="report-cell-value text-green">${fmt.currency(totalRev)}</div></div>
+        <div class="report-cell"><div class="report-cell-label">UPI</div><div class="report-cell-value text-blue">${fmt.currency(upiRev)}</div></div>
+        <div class="report-cell"><div class="report-cell-label">Cash</div><div class="report-cell-value text-gold">${fmt.currency(cashRev)}</div></div>
+        <div class="report-cell"><div class="report-cell-label">Sessions</div><div class="report-cell-value">${txns.length}</div></div>
+        <div class="report-cell"><div class="report-cell-label">Cash Variance</div><div class="report-cell-value" style="color:${(report.cashCounted||0)-cashRev===0?'var(--green)':Math.abs((report.cashCounted||0)-cashRev)<50?'var(--gold)':'var(--red)'}">${report.cashCounted!==undefined?fmt.currency((report.cashCounted||0)-cashRev):'Not counted'}</div></div>
+        <div class="report-cell"><div class="report-cell-label">Units Used</div><div class="report-cell-value">${report.meterOpen&&report.meterClose?(report.meterClose-report.meterOpen)+' units':'—'}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+        ${fields.map(f=>`<div class="report-cell"><div class="report-cell-label">${f.label}</div><div style="font-size:13px;font-weight:600">${report[f.key]||'—'}</div></div>`).join('')}
+      </div>
+      <div class="report-cell mb8"><div class="report-cell-label">Housekeeping</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+          ${['Chairs cleaned','Chair covers changed','Floor mopped','Sanitizer refilled','Cleaning supplies ok','AC/Fan working'].map(item=>{
+            const key='hk_'+item.replace(/\s/g,'_');
+            return `<span class="badge ${report[key]?'badge-green':'badge-red'}">${report[key]?'✅':'❌'} ${item}</span>`;
+          }).join('')}
+        </div>
+      </div>
+      ${report.remarks?`<div class="alert alert-info"><strong>Staff Remarks:</strong> ${report.remarks}</div>`:''}
+      ${report.incidents?`<div class="alert alert-warn"><strong>Incidents:</strong> ${report.incidents}</div>`:''}
+    </div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal()">Close</button></div>
+  </div>`);
+}
+
+// ─── PATCH: HRMS tabs (Attendance + Payroll) ─────────────────────
+function hrmsTab(tab,el){
+  document.querySelectorAll('.page-header .btn').forEach(b=>b.classList.remove('btn-primary'));
+  if(el)el.classList.add('btn-primary');
+  const container=document.getElementById('hrms-tab-body');
+  if(!container){
+    // Create container after page header
+    const pc=document.getElementById('page-content');
+    if(!pc)return;
+    let div=document.createElement('div');div.id='hrms-tab-body';div.className='mt16';
+    pc.appendChild(div);
+  }
+  const c=document.getElementById('hrms-tab-body');
+  if(!c)return;
+  if(tab==='attendance'){
+    const records=DB.get('attendance')||[];
+    const today=new Date().toISOString().slice(0,10);
+    const todayRec=records.filter(r=>r.date===today);
+    c.innerHTML=`<div class="card">
+      <div class="card-header"><h3>📅 Attendance — ${fmt.date(today+'T00:00:00')}</h3>
+        <button class="btn btn-primary btn-sm" onclick="markAttendance()">+ Mark Attendance</button>
+      </div>
+      ${todayRec.length?`<div class="table-wrap"><table>
+        <thead><tr><th>Staff</th><th>Location</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th></tr></thead>
+        <tbody>${todayRec.map(r=>{
+          const hours=r.checkOut?((new Date(r.checkOut)-new Date(r.checkIn))/3600000).toFixed(1):'—';
+          return `<tr><td>${r.staffName}</td><td>${getLocation(r.locationCode)?.name||r.locationCode}</td><td>${fmt.time(r.checkIn)}</td><td>${r.checkOut?fmt.time(r.checkOut):'Active'}</td><td>${hours}</td><td><span class="badge ${r.checkOut?'badge-grey':'badge-green'}">${r.checkOut?'Done':'On Shift'}</span></td></tr>`;
+        }).join('')}</tbody>
+      </table></div>`:`<div class="empty-state"><div class="es-icon">📅</div><p>No attendance records for today</p></div>`}
+    </div>`;
+  } else if(tab==='payroll'){
+    const users=getUsers().filter(u=>u.role==='staff'||u.role==='supervisor');
+    const cfg=getConfig();
+    const thisMonth=new Date().toISOString().slice(0,7);
+    c.innerHTML=`<div class="card">
+      <div class="card-header"><h3>💰 Payroll — ${thisMonth}</h3>
+        <button class="btn btn-secondary btn-sm" onclick="exportPayroll()">📤 Export</button>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Staff</th><th>Location</th><th>Revenue</th><th>Sessions</th><th>Commission Tier</th><th>Commission</th></tr></thead>
+        <tbody>${users.map(u=>{
+          const txns=(DB.get('transactions')||[]).filter(t=>t.staffId===u.id&&t.ts?.startsWith(thisMonth));
+          const rev=txns.reduce((s,t)=>s+(t.amount||0),0);
+          const tier=cfg.commissionTiers?.find(t=>rev>=t.minRev&&rev<=t.maxRev);
+          const comm=tier?Math.round(rev*tier.pct/100):0;
+          return `<tr><td><strong>${u.name}</strong></td><td>${getLocation(u.locationCode)?.name||u.locationCode}</td><td class="text-green">${fmt.currency(rev)}</td><td>${txns.length}</td><td><span class="badge badge-gold">${tier?.label||'—'} ${tier?'('+tier.pct+'%)':''}</span></td><td class="text-gold bold">${fmt.currency(comm)}</td></tr>`;
+        }).join('')}</tbody>
+      </table></div>
+    </div>`;
+  } else if(tab==='compliance'){
+    c.innerHTML=`<div class="card">
+      <div class="card-header"><h3>✅ Compliance Checklist</h3></div>
+      <div style="display:grid;gap:10px">
+        ${['All staff have valid ID proof on file','Labour contract signed by all staff','Weekly safety briefing conducted','Equipment maintenance log updated','Fire safety equipment checked','First aid kit stocked','Emergency contact list posted'].map((item,i)=>{
+          const checked=DB.get('compliance_'+i)||false;
+          return `<label style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card2);border-radius:8px;cursor:pointer;border:1px solid var(--border)">
+            <input type="checkbox" ${checked?'checked':''} onchange="DB.set('compliance_${i}',this.checked)" style="width:18px;height:18px;cursor:pointer">
+            <span>${item}</span>
+            ${checked?'<span class="badge badge-green" style="margin-left:auto">✅ Done</span>':'<span class="badge badge-red" style="margin-left:auto">⚠️ Pending</span>'}
+          </label>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+}
+
+function markAttendance(){
+  const users=getUsers().filter(u=>u.active&&(u.role==='staff'||u.role==='supervisor'));
+  modal(`<div class="modal">
+    <div class="modal-header"><h3>📅 Mark Attendance</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Staff Member</label>
+          <select id="att-staff">
+            ${users.map(u=>`<option value="${u.id}|${u.name}|${u.locationCode}">${u.name} — ${getLocation(u.locationCode)?.name||u.locationCode}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label>Type</label>
+          <select id="att-type"><option value="in">Check In</option><option value="out">Check Out</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Time</label><input type="time" id="att-time" value="${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false})}"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAttendance()">Save</button>
+    </div>
+  </div>`);
+}
+
+function saveAttendance(){
+  const staffVal=document.getElementById('att-staff')?.value.split('|');
+  const type=document.getElementById('att-type')?.value;
+  const time=document.getElementById('att-time')?.value;
+  if(!staffVal)return;
+  const today=new Date().toISOString().slice(0,10);
+  const ts=new Date(today+'T'+time+':00').toISOString();
+  const records=DB.get('attendance')||[];
+  if(type==='in'){
+    records.push({id:uid(),staffId:staffVal[0],staffName:staffVal[1],locationCode:staffVal[2],date:today,checkIn:ts,checkOut:null});
+  } else {
+    const rec=records.filter(r=>r.staffId===staffVal[0]&&r.date===today&&!r.checkOut).pop();
+    if(rec)rec.checkOut=ts;else{toast('No check-in found for today','error');return}
+  }
+  DB.set('attendance',records);closeModal();hrmsTab('attendance',null);toast('Attendance saved!','success');
+}
+
+function exportPayroll(){
+  const users=getUsers().filter(u=>u.role==='staff'||u.role==='supervisor');
+  const cfg=getConfig();const thisMonth=new Date().toISOString().slice(0,7);
+  const rows=[['Name','Location','Revenue','Sessions','Tier','Commission%','Commission']];
+  users.forEach(u=>{
+    const txns=(DB.get('transactions')||[]).filter(t=>t.staffId===u.id&&t.ts?.startsWith(thisMonth));
+    const rev=txns.reduce((s,t)=>s+(t.amount||0),0);
+    const tier=cfg.commissionTiers?.find(t=>rev>=t.minRev&&rev<=t.maxRev);
+    const comm=tier?Math.round(rev*tier.pct/100):0;
+    rows.push([u.name,getLocation(u.locationCode)?.name||u.locationCode,rev,txns.length,tier?.label||'—',tier?.pct||0,comm]);
+  });
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`payroll-${thisMonth}.csv`;a.click();
+  toast('Payroll exported!','success');
+}
+
+// Expose globals
+window.navigate=navigate;window.doLogin=doLogin;window.doLogout=doLogout;
+window.openLocation=openLocation;window.editLocation=editLocation;
+window.saveLocationFromModal=saveLocationFromModal;window.showLocTab=showLocTab;
+window.testESP32=testESP32;window.addLocation=addLocation;
+window.filterLocations=filterLocations;window.filterServices=filterServices;
+window.selectService=selectService;window.completeSale=completeSale;
+window.clearPOS=clearPOS;window.lookupCustomer=lookupCustomer;
+window.selectPayment=selectPayment;window.applyDiscount=applyDiscount;
+window.addCustomService=addCustomService;window.filterTxns=filterTxns;
+window.showHistoryTab=showHistoryTab;window.exportData=exportData;
+window.importData=importData;window.importPhonePe=importPhonePe;
+window.addB2BTxn=addB2BTxn;window.saveB2BTxn=saveB2BTxn;
+window.addUser=addUser;window.saveNewUser=saveNewUser;
+window.editUser=editUser;window.updateUser=updateUser;
+window.toggleUserActive=toggleUserActive;window.approveStaff=approveStaff;
+window.rejectStaff=rejectStaff;window.filterUsersList=filterUsersList;
+window.addLead=addLead;window.saveLead=saveLead;
+window.editLead=editLead;window.updateLead=updateLead;
+window.deleteLead=deleteLead;window.filterLeads=filterLeads;
+window.lookupLoyaltyCustomer=lookupLoyaltyCustomer;window.doLoyaltyLookup=doLoyaltyLookup;
+window.adjustLoyaltyPoints=adjustLoyaltyPoints;window.viewLoyaltyMember=viewLoyaltyMember;
+window.searchLoyalty=searchLoyalty;window.hrmsTab=hrmsTab;window.viewStaffProfile=viewStaffProfile;
+window.manualESP32Activate=manualESP32Activate;window.manualESP32Deactivate=manualESP32Deactivate;
+window.testESP32Status=testESP32Status;window.loadESPChannels=loadESPChannels;
+window.showConfigTab=showConfigTab;window.saveAdminConfig=saveAdminConfig;
+window.addTier=addTier;window.removeTier=removeTier;
+window.addService=addService;window.saveNewService=saveNewService;
+window.editService=editService;window.updateService=updateService;
+window.deleteService=deleteService;window.toggleService=toggleService;
+window.confirmResetData=confirmResetData;window.setLoginMode=setLoginMode;
+window.goCustomer=goCustomer;window.quickLogin=quickLogin;
+window.saveReport=saveReport;window.reloadReport=reloadReport;
+window.refreshQueue=refreshQueue;window.endSession=endSession;
+window.closeModal=closeModal;
+window.editB2B=editB2B;window.updateB2B=updateB2B;window.deleteB2B=deleteB2B;
+window.viewReport=viewReport;
+window.hrmsTab=hrmsTab;window.markAttendance=markAttendance;window.saveAttendance=saveAttendance;window.exportPayroll=exportPayroll;window.toggleSidebar=toggleSidebar;
+window.closeSidebar=closeSidebar;
+
+function editLocation(code){openLocation(code);}
+
+init();
+</script>
+</body>
+</html>

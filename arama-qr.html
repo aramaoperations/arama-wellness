@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ārāma — QR Code Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0f1a;--bg2:#1a1a2e;--bg3:#16213e;--card:#1e1e30;--card2:#252540;--accent:#7c3aed;--accent2:#9d5cf6;--accent3:#b78bfa;--gold:#f59e0b;--gold2:#fbbf24;--green:#10b981;--red:#ef4444;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--border:#2d2d4a;--border2:#3d3d5c;--radius:10px;--radius2:16px;}
+html,body{min-height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+input,select,textarea{font-family:inherit;outline:none;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:var(--radius);padding:10px 14px;font-size:14px}
+input:focus,select:focus{border-color:var(--accent)}
+select option{background:var(--bg2)}
+label{display:block;margin-bottom:5px;color:var(--text2);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.form-group{margin-bottom:16px}
+button{cursor:pointer;border:none;font-family:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2)}.btn-secondary:hover{border-color:var(--accent);color:var(--accent3)}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:var(--gold2)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-green{background:rgba(16,185,129,.15);color:#34d399}
+.badge-purple{background:rgba(124,58,237,.15);color:var(--accent3)}
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.toast-success{background:#064e3b;border:1px solid var(--green);color:#34d399}
+.toast-error{background:#450a0a;border:1px solid var(--red);color:#f87171}
+.toast-info{background:#1e1b4b;border:1px solid var(--accent);color:var(--accent3)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .3s ease}
+
+.qr-preview-wrap{background:#fff;border-radius:var(--radius2);padding:20px;display:flex;align-items:center;justify-content:center;min-height:240px;position:relative}
+.qr-card-preview{background:#fff;border-radius:16px;padding:24px 20px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15);max-width:280px;margin:0 auto}
+.qr-loc-name{font-size:13px;font-weight:800;color:#1a1a2e;margin-bottom:4px}
+.qr-tagline{font-size:10px;color:#64748b;margin-bottom:12px}
+.qr-canvas-wrap{position:relative;display:inline-block}
+.qr-logo-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);overflow:hidden}
+.qr-footer{margin-top:12px;font-size:9px;color:#94a3b8;letter-spacing:.05em}
+.qr-brand{font-size:16px;font-weight:900;color:#7c3aed;margin-bottom:2px}
+
+.logo-drop{border:2px dashed var(--border2);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .15s}
+.logo-drop:hover{border-color:var(--accent);background:rgba(124,58,237,.05)}
+.logo-drop.has-logo{border-color:var(--green);background:rgba(16,185,129,.05)}
+
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:16px}
+.mini-qr-card{background:#fff;border-radius:10px;padding:12px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.1);cursor:pointer;transition:all .15s}
+.mini-qr-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+</style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<div style="max-width:1000px;margin:0 auto;padding:24px">
+
+  <!-- HEADER -->
+  <div style="margin-bottom:28px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">ārāma QR Generator</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">Branded QR codes for customer kiosk display · Print-ready</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="ARAMA_OS_V7.html" class="btn btn-secondary">← Back to OS</a>
+        <button class="btn btn-gold" onclick="downloadAllQRs()">📥 Download All</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <!-- LEFT: SETTINGS -->
+    <div>
+      <div class="card mb16">
+        <h3 style="margin-bottom:16px;font-size:15px">⚙️ QR Settings</h3>
+
+        <div class="form-group">
+          <label>Customer Portal URL</label>
+          <input type="text" id="qr-url" value="https://aramaoperations.github.io/arama-wellness/customer.html" placeholder="https://your-site.com/customer.html">
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Change after GitHub Pages deploy</div>
+        </div>
+
+        <div class="form-group">
+          <label>Generate For</label>
+          <select id="qr-location" onchange="updatePreview()">
+            <option value="ALL">All Locations (Generic)</option>
+            <optgroup label="Gujarat">
+              <option value="ST-P1">Surat Platform 1</option>
+              <option value="ST-CL">Surat Cloakroom</option>
+              <option value="VP-VIP">Vapi VIP P1</option>
+              <option value="VP-P2">Vapi P2-3 (Lift)</option>
+              <option value="VSD-P2">Valsad P2-3</option>
+              <option value="VSD-CON">Valsad Concourse P1</option>
+              <option value="ANK-P1">Ankleshwar P1</option>
+              <option value="BRC-P3">Bharuch P3-4</option>
+              <option value="BRC-P1">Bharuch Chayapuri</option>
+              <option value="VAD-P1">Vadodara P1</option>
+              <option value="VAD-P6">Vadodara P6</option>
+              <option value="AND-P4">Anand P4</option>
+              <option value="NDD-CON">Nadiad Concourse</option>
+              <option value="VV-STN">Vallabh Vidyanagar</option>
+            </optgroup>
+            <optgroup label="Mumbai CR">
+              <option value="MMCT-D1">MMCT Deck 1</option>
+              <option value="MMCT-D2">MMCT Deck 2</option>
+              <option value="DDR-P5">Dadar P5</option>
+              <option value="DDR-FOB">Dadar FOB</option>
+            </optgroup>
+            <optgroup label="Mumbai WR">
+              <option value="ADH-D1">Andheri Deck 1</option>
+              <option value="ADH-D2">Andheri Deck 2</option>
+              <option value="ADH-METRO">Andheri Metro</option>
+              <option value="BOR-FOB">Borivali FOB</option>
+              <option value="BOR-P10">Borivali P10</option>
+              <option value="VIR-P1">Virar P1</option>
+              <option value="BAN-STN">Bandra Station</option>
+              <option value="GRG-STN">Goregaon Station</option>
+              <option value="NLP-EAST">Nallasopara East</option>
+              <option value="NLP-WEST">Nallasopara West</option>
+              <option value="MIR-STN">Mira Road Station</option>
+              <option value="EKN-AC">Ekta Nagar AC Hall</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>QR Size</label>
+          <select id="qr-size" onchange="updatePreview()">
+            <option value="200">Small (200px — digital)</option>
+            <option value="300" selected>Medium (300px — A5 print)</option>
+            <option value="400">Large (400px — A4 print)</option>
+            <option value="500">XL (500px — poster)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>QR Colour Theme</label>
+          <select id="qr-theme" onchange="updatePreview()">
+            <option value="dark">Dark (black on white)</option>
+            <option value="purple">Purple Brand (#7c3aed)</option>
+            <option value="gold">Gold (#f59e0b)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>CTA Text on Card</label>
+          <input type="text" id="qr-cta" value="Scan to View Services, Passes & Loyalty Points" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group">
+          <label>Show Hindi Tagline</label>
+          <select id="qr-hindi" onchange="updatePreview()">
+            <option value="yes">Yes — पहले लग़री था, अब ज़रूरी है।</option>
+            <option value="no">No (English only)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- LOGO UPLOAD -->
+      <div class="card">
+        <h3 style="margin-bottom:12px;font-size:15px">🖼️ Logo (Centre of QR)</h3>
+        <div class="logo-drop" id="logo-drop" onclick="document.getElementById('logo-input').click()"
+          ondrop="handleLogoDrop(event)" ondragover="event.preventDefault()">
+          <div id="logo-preview-text">
+            <div style="font-size:32px;margin-bottom:8px">📁</div>
+            <div style="font-size:13px;color:var(--text2)">Click or drag & drop your ārāma logo</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px">PNG with transparent background works best</div>
+          </div>
+          <img id="logo-preview-img" style="display:none;max-height:80px;max-width:180px;border-radius:8px">
+        </div>
+        <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="handleLogoUpload(this)">
+
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="setLogoSize(40)">Small logo</button>
+          <button class="btn btn-secondary btn-sm" onclick="setLogoSize(52)">Medium logo</button>
+          <button class="btn btn-secondary btn-sm" onclick="setLogoSize(68)">Large logo</button>
+          <button class="btn btn-secondary btn-sm" onclick="clearLogo()">Remove logo</button>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px">⚡ Uses Error Correction Level H — QR remains scannable even with 30% centre covered</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: PREVIEW -->
+    <div>
+      <div class="card" style="position:sticky;top:20px">
+        <h3 style="margin-bottom:16px;font-size:15px">👁️ Preview</h3>
+
+        <div class="qr-preview-wrap" id="qr-preview-wrap">
+          <div class="qr-card-preview" id="qr-card-preview">
+            <div class="qr-brand">ārāma</div>
+            <div class="qr-loc-name" id="prev-loc-name">All Locations</div>
+            <div class="qr-tagline" id="prev-tagline">Scan to View Services, Passes & Loyalty Points</div>
+            <div class="qr-canvas-wrap" id="qr-canvas-wrap">
+              <div id="qr-render"></div>
+              <div class="qr-logo-overlay" id="qr-logo-overlay" style="display:none">
+                <img id="qr-logo-img" style="width:100%;height:100%;object-fit:contain;padding:4px">
+              </div>
+            </div>
+            <div class="qr-footer" id="prev-hindi">पहले लग़री था, अब ज़रूरी है।</div>
+            <div class="qr-footer" style="margin-top:2px">arama.asia · Wellness Kiosks</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+          <button class="btn btn-primary" style="flex:1" onclick="generateQR()">🔄 Generate</button>
+          <button class="btn btn-gold" style="flex:1" onclick="downloadQR()">📥 Download PNG</button>
+        </div>
+        <button class="btn btn-secondary w100 mt8" style="width:100%" onclick="generateAllLocations()">📋 Preview All 33 Locations</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ALL LOCATIONS GRID -->
+  <div id="all-locations-section" style="display:none;margin-top:32px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h3>📍 All Location QR Codes</h3>
+      <button class="btn btn-gold" onclick="downloadAllQRs()">📥 Download All as ZIP</button>
+    </div>
+    <div class="qr-grid" id="all-qr-grid"></div>
+  </div>
+
+</div>
+
+<script>
+let logoData = null;
+let logoSize = 52;
+let currentQR = null;
+
+const LOCATIONS = [
+  {code:'ALL',name:'All Locations'},
+  {code:'ST-P1',name:'Surat P1'},{code:'ST-CL',name:'Surat Cloakroom'},
+  {code:'VP-VIP',name:'Vapi VIP P1'},{code:'VP-P2',name:'Vapi P2-3 (Lift)'},
+  {code:'VSD-P2',name:'Valsad P2-3'},{code:'VSD-CON',name:'Valsad Concourse P1'},
+  {code:'ANK-P1',name:'Ankleshwar P1'},{code:'BRC-P3',name:'Bharuch P3-4'},
+  {code:'BRC-P1',name:'Bharuch Chayapuri'},{code:'VAD-P1',name:'Vadodara P1'},
+  {code:'VAD-P6',name:'Vadodara P6'},{code:'AND-P4',name:'Anand P4'},
+  {code:'NDD-CON',name:'Nadiad Concourse'},{code:'VV-STN',name:'Vallabh Vidyanagar'},
+  {code:'MMCT-D1',name:'MMCT Deck 1'},{code:'MMCT-D2',name:'MMCT Deck 2'},
+  {code:'DDR-P5',name:'Dadar P5'},{code:'DDR-FOB',name:'Dadar FOB'},
+  {code:'ADH-D1',name:'Andheri Deck 1'},{code:'ADH-D2',name:'Andheri Deck 2'},
+  {code:'ADH-METRO',name:'Andheri Metro'},{code:'BOR-FOB',name:'Borivali FOB'},
+  {code:'BOR-P10',name:'Borivali P10'},{code:'VIR-P1',name:'Virar P1'},
+  {code:'BAN-STN',name:'Bandra Station'},{code:'GRG-STN',name:'Goregaon Station'},
+  {code:'NLP-EAST',name:'Nallasopara East'},{code:'NLP-WEST',name:'Nallasopara West'},
+  {code:'MIR-STN',name:'Mira Road Station'},{code:'EKN-AC',name:'Ekta Nagar AC Hall'}
+];
+
+const COLOURS = {
+  dark: {dark:'#1a1a2e', light:'#ffffff'},
+  purple: {dark:'#7c3aed', light:'#ffffff'},
+  gold: {dark:'#b45309', light:'#fffbeb'}
+};
+
+function toast(msg,type='info'){
+  const t=document.createElement('div');
+  t.className=`toast toast-${type}`;
+  const icons={success:'✅',error:'❌',info:'ℹ️'};
+  t.innerHTML=`${icons[type]||'ℹ️'} ${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+function getURL(){
+  const base=document.getElementById('qr-url').value.trim();
+  const loc=document.getElementById('qr-location').value;
+  return loc==='ALL'?base:base+'?loc='+loc;
+}
+
+function getLocName(){
+  const loc=document.getElementById('qr-location').value;
+  return LOCATIONS.find(l=>l.code===loc)?.name||'All Locations';
+}
+
+function generateQR(containerId='qr-render', url=null, size=null, colourKey=null){
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  el.innerHTML='';
+  const qrUrl=url||getURL();
+  const qrSize=size||parseInt(document.getElementById('qr-size').value)||300;
+  const theme=COLOURS[colourKey||document.getElementById('qr-theme').value]||COLOURS.dark;
+  try{
+    currentQR=new QRCode(el,{
+      text:qrUrl,
+      width:qrSize,height:qrSize,
+      colorDark:theme.dark,colorLight:theme.light,
+      correctLevel:QRCode.CorrectLevel.H
+    });
+    // Update preview text
+    document.getElementById('prev-loc-name').textContent=getLocName();
+    document.getElementById('prev-tagline').textContent=document.getElementById('qr-cta').value;
+    document.getElementById('prev-hindi').style.display=document.getElementById('qr-hindi').value==='yes'?'block':'none';
+    // Position logo overlay
+    updateLogoOverlay(qrSize);
+    toast('QR generated!','success');
+  }catch(e){toast('Error: '+e.message,'error')}
+}
+
+function updateLogoOverlay(size){
+  const overlay=document.getElementById('qr-logo-overlay');
+  if(!overlay)return;
+  if(logoData){
+    overlay.style.display='flex';
+    overlay.style.width=logoSize+'px';
+    overlay.style.height=logoSize+'px';
+    document.getElementById('qr-logo-img').src=logoData;
+  } else {
+    overlay.style.display='none';
+  }
+}
+
+function updatePreview(){
+  generateQR();
+}
+
+function handleLogoUpload(input){
+  const file=input.files?.[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    logoData=e.target.result;
+    document.getElementById('logo-preview-text').style.display='none';
+    const img=document.getElementById('logo-preview-img');
+    img.src=logoData;img.style.display='block';
+    document.getElementById('logo-drop').classList.add('has-logo');
+    generateQR();
+    toast('Logo uploaded!','success');
+  };reader.readAsDataURL(file);
+}
+
+function handleLogoDrop(e){
+  e.preventDefault();
+  const file=e.dataTransfer.files?.[0];if(!file)return;
+  const inp=document.getElementById('logo-input');
+  const dt=new DataTransfer();dt.items.add(file);inp.files=dt.files;
+  handleLogoUpload(inp);
+}
+
+function setLogoSize(size){logoSize=size;updateLogoOverlay();toast('Logo size updated','info')}
+
+function clearLogo(){
+  logoData=null;
+  document.getElementById('logo-preview-text').style.display='block';
+  document.getElementById('logo-preview-img').style.display='none';
+  document.getElementById('logo-drop').classList.remove('has-logo');
+  document.getElementById('qr-logo-overlay').style.display='none';
+  toast('Logo removed','info');
+}
+
+async function downloadQR(){
+  const wrap=document.getElementById('qr-card-preview');
+  if(!wrap){toast('Generate a QR first','error');return}
+  const canvas=await cardToCanvas(wrap);
+  const link=document.createElement('a');
+  link.download=`arama-qr-${getLocName().replace(/\s/g,'-')}.png`;
+  link.href=canvas.toDataURL('image/png');link.click();
+  toast('Downloaded!','success');
+}
+
+async function cardToCanvas(cardEl){
+  const qrImg=cardEl.querySelector('img')||cardEl.querySelector('canvas');
+  const locName=getLocName();
+  const cta=document.getElementById('qr-cta').value;
+  const showHindi=document.getElementById('qr-hindi').value==='yes';
+  const qrSize=parseInt(document.getElementById('qr-size').value)||300;
+  const W=qrSize+80, H=qrSize+160+(showHindi?20:0);
+  const canvas=document.createElement('canvas');
+  canvas.width=W*2;canvas.height=H*2; // 2x for retina
+  const ctx=canvas.getContext('2d');
+  ctx.scale(2,2);
+  // Background
+  ctx.fillStyle='#ffffff';
+  ctx.beginPath();roundRect(ctx,0,0,W,H,16);ctx.fill();
+  // Brand
+  ctx.fillStyle='#7c3aed';ctx.font='bold 18px Segoe UI, sans-serif';ctx.textAlign='center';
+  ctx.fillText('ārāma',W/2,30);
+  // Location
+  ctx.fillStyle='#1a1a2e';ctx.font='bold 13px Segoe UI, sans-serif';
+  ctx.fillText(locName,W/2,52);
+  // CTA
+  ctx.fillStyle='#64748b';ctx.font='10px Segoe UI, sans-serif';
+  const words=cta.split(' ');let line='',y=68;
+  words.forEach(w=>{const test=line+w+' ';if(ctx.measureText(test).width>W-40&&line){ctx.fillText(line.trim(),W/2,y);line=w+' ';y+=14;}else line=test;});
+  ctx.fillText(line.trim(),W/2,y);
+  // QR
+  const qrEl=document.getElementById('qr-render').querySelector('canvas')||document.getElementById('qr-render').querySelector('img');
+  if(qrEl){
+    const qrY=y+10;
+    try{ctx.drawImage(qrEl,40,qrY,qrSize,qrSize);}catch(e){}
+    // Logo overlay
+    if(logoData){
+      await new Promise(resolve=>{
+        const lImg=new Image();lImg.onload=()=>{
+          const ls=logoSize;const lx=W/2-ls/2;const ly=qrY+qrSize/2-ls/2;
+          ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(lx+ls/2,ly+ls/2,ls/2+4,0,Math.PI*2);ctx.fill();
+          ctx.drawImage(lImg,lx,ly,ls,ls);resolve();
+        };lImg.src=logoData;
+      });
+    }
+    const footerY=qrY+qrSize+18;
+    // Hindi tagline
+    if(showHindi){ctx.fillStyle='#94a3b8';ctx.font='11px Segoe UI, sans-serif';ctx.fillText('पहले लग़री था, अब ज़रूरी है।',W/2,footerY);}
+    ctx.fillStyle='#94a3b8';ctx.font='10px Segoe UI, sans-serif';
+    ctx.fillText('arama.asia · Wellness Kiosks',W/2,footerY+(showHindi?16:0));
+  }
+  return canvas;
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+function generateAllLocations(){
+  const section=document.getElementById('all-locations-section');
+  const grid=document.getElementById('all-qr-grid');
+  section.style.display='block';grid.innerHTML='';
+  const url=document.getElementById('qr-url').value.trim();
+  const theme=document.getElementById('qr-theme').value;
+  const colours=COLOURS[theme]||COLOURS.dark;
+  LOCATIONS.filter(l=>l.code!=='ALL').forEach(loc=>{
+    const card=document.createElement('div');
+    card.className='mini-qr-card';
+    card.innerHTML=`<div style="font-size:11px;font-weight:800;color:#7c3aed;margin-bottom:2px">ārāma</div>
+      <div style="font-size:11px;font-weight:700;color:#1a1a2e;margin-bottom:8px">${loc.name}</div>
+      <div id="mini-qr-${loc.code}"></div>
+      <div style="margin-top:8px;font-size:9px;color:#94a3b8">${loc.code}</div>
+      <button onclick="downloadMiniQR('${loc.code}','${loc.name}')" style="margin-top:8px;padding:4px 12px;background:#7c3aed;color:#fff;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">↓ Download</button>`;
+    grid.appendChild(card);
+    const locUrl=url+'?loc='+loc.code;
+    new QRCode(document.getElementById('mini-qr-'+loc.code),{
+      text:locUrl,width:140,height:140,
+      colorDark:colours.dark,colorLight:'#ffffff',
+      correctLevel:QRCode.CorrectLevel.H
+    });
+  });
+  section.scrollIntoView({behavior:'smooth'});
+  toast('All 33 QR codes generated!','success');
+}
+
+async function downloadMiniQR(code,name){
+  const container=document.getElementById('mini-qr-'+code);
+  if(!container)return;
+  const qrEl=container.querySelector('canvas')||container.querySelector('img');
+  if(!qrEl){toast('Generate first','error');return}
+  const canvas=document.createElement('canvas');
+  const S=300;canvas.width=S*2;canvas.height=S*2;
+  const ctx=canvas.getContext('2d');ctx.scale(2,2);
+  ctx.fillStyle='#ffffff';
+  ctx.beginPath();roundRect(ctx,0,0,S,S,14);ctx.fill();
+  ctx.fillStyle='#7c3aed';ctx.font='bold 16px Segoe UI, sans-serif';ctx.textAlign='center';
+  ctx.fillText('ārāma',S/2,26);
+  ctx.fillStyle='#1a1a2e';ctx.font='bold 11px Segoe UI, sans-serif';
+  ctx.fillText(name,S/2,42);
+  const qrSize=200;const qrX=(S-qrSize)/2;const qrY=52;
+  try{ctx.drawImage(qrEl,qrX,qrY,qrSize,qrSize);}catch(e){}
+  if(logoData){
+    await new Promise(resolve=>{
+      const li=new Image();li.onload=()=>{
+        const ls=40;const lx=S/2-ls/2;const ly=qrY+qrSize/2-ls/2;
+        ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(lx+ls/2,ly+ls/2,ls/2+3,0,Math.PI*2);ctx.fill();
+        ctx.drawImage(li,lx,ly,ls,ls);resolve();
+      };li.src=logoData;
+    });
+  }
+  ctx.fillStyle='#94a3b8';ctx.font='9px Segoe UI, sans-serif';
+  ctx.fillText(code+' · arama.asia',S/2,S-10);
+  const link=document.createElement('a');
+  link.download=`arama-qr-${code}.png`;link.href=canvas.toDataURL('image/png');link.click();
+}
+
+async function downloadAllQRs(){
+  const locs=LOCATIONS.filter(l=>l.code!=='ALL');
+  if(!document.getElementById('mini-qr-'+locs[0].code)){
+    toast('Generate all QRs first','error');return;
+  }
+  toast('Downloading one by one...','info');
+  for(const loc of locs){
+    await downloadMiniQR(loc.code,loc.name);
+    await new Promise(r=>setTimeout(r,300));
+  }
+  toast('All downloaded!','success');
+}
+
+// INIT: generate default QR on load
+window.addEventListener('load',()=>{
+  generateQR();
+});
+</script>
+</body>
+</html>
