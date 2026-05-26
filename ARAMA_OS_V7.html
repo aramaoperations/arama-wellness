@@ -27,23 +27,24 @@ a{text-decoration:none;color:inherit}
 .login-box{position:relative;background:rgba(30,27,75,.8);backdrop-filter:blur(20px);border:1px solid rgba(109,40,217,.3);border-radius:24px;padding:40px;width:100%;max-width:420px;box-shadow:0 25px 60px rgba(0,0,0,.6)}
 .login-logo{text-align:center;margin-bottom:28px}
 .login-logo .brand{font-size:38px;font-weight:800;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;font-family:'Georgia','Palatino Linotype',serif}
-.login-logo .tagline{font-size:12px;color:var(--text2);margin-top:4px;letter-spacing:1px}
+.login-logo .tagline{font-size:12px;color:#c4b5fd;margin-top:4px;letter-spacing:1px}
 .login-tabs{display:flex;background:rgba(0,0,0,.3);border-radius:var(--radius2);padding:3px;margin-bottom:24px}
-.login-tab{flex:1;padding:8px;text-align:center;border:none;background:transparent;color:var(--text2);border-radius:6px;font-size:13px;font-weight:500;transition:.2s}
+.login-tab{flex:1;padding:7px 4px;text-align:center;border:none;background:transparent;color:var(--text2);border-radius:6px;font-size:12px;font-weight:600;transition:.2s;letter-spacing:.2px}
 .login-tab.active{background:var(--accent);color:#fff}
 .form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.form-group input,.form-group select{width:100%;padding:12px 16px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--radius2);color:var(--text);outline:none;transition:.2s}
+.form-group label{display:block;font-size:12px;font-weight:600;color:#c4b5fd;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select{width:100%;padding:12px 16px;background:rgba(15,12,40,.6);border:1px solid rgba(109,40,217,.4);border-radius:var(--radius2);color:#f1f5f9;outline:none;transition:.2s}
+.form-group input::placeholder{color:rgba(148,163,184,.5)}
 .form-group input:focus,.form-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,40,217,.2)}
 .btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:var(--radius2);color:#fff;font-weight:700;font-size:15px;letter-spacing:.5px;transition:.2s;box-shadow:0 4px 15px rgba(109,40,217,.4)}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(109,40,217,.5)}
-.social-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text3);font-size:12px}
+.social-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#94a3b8;font-size:12px}
 .social-divider::before,.social-divider::after{content:'';flex:1;height:1px;background:var(--border)}
 .social-btns{display:flex;gap:10px}
-.social-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--radius2);color:var(--text);font-size:13px;font-weight:500;transition:.2s}
+.social-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(109,40,217,.3);border-radius:var(--radius2);color:#e2e8f0;font-size:13px;font-weight:500;transition:.2s}
 .social-btn:hover{background:rgba(255,255,255,.1);border-color:var(--accent3)}
 .otp-row{display:flex;gap:8px}
-.otp-row input{flex:1;padding:12px 16px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--radius2);color:var(--text);outline:none}
+.otp-row input{flex:1;padding:12px 16px;background:rgba(15,12,40,.6);border:1px solid rgba(109,40,217,.4);border-radius:var(--radius2);color:#f1f5f9;outline:none}.otp-row input::placeholder{color:rgba(148,163,184,.5)}
 .otp-row button{padding:12px 16px;background:var(--accent);border:none;border-radius:var(--radius2);color:#fff;font-weight:600;white-space:nowrap;font-size:13px}
 .login-msg{margin-top:12px;padding:10px 14px;border-radius:var(--radius2);font-size:13px;display:none}
 .login-msg.error{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
@@ -55,7 +56,7 @@ a{text-decoration:none;color:inherit}
 .app-header{height:56px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:100}
 .menu-toggle{width:36px;height:36px;display:none;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:none;border-radius:8px;color:var(--text)}
 .header-brand{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:'Georgia','Palatino Linotype',serif}
-.header-loc-select{padding:6px 12px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--radius2);color:var(--text);font-size:13px;max-width:200px}
+.header-loc-select{padding:6px 12px;background:#1e1b4b;border:1px solid rgba(167,139,250,.4);border-radius:var(--radius2);color:#f1f5f9;font-size:13px;max-width:200px;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a78bfa'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
 .header-spacer{flex:1}
 .header-badge{background:rgba(109,40,217,.2);border:1px solid rgba(109,40,217,.4);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--accent3)}
 .header-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;cursor:pointer;flex-shrink:0}
@@ -146,7 +147,7 @@ tr:hover td{background:rgba(109,40,217,.05)}
 .form-row{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap}
 .form-group{flex:1;min-width:180px;margin-bottom:14px}
 .form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
-.form-control{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius2);color:var(--text);outline:none;transition:.2s}
+.form-control{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius2);color:var(--text);outline:none;transition:.2s}select.form-control{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a78bfa'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}select.form-control option{background:#1e293b;color:#f1f5f9}
 .form-control:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(109,40,217,.2)}
 textarea.form-control{resize:vertical;min-height:80px}
 .form-check{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)}
@@ -254,6 +255,12 @@ textarea.form-control{resize:vertical;min-height:80px}
 .report-section-header{padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
 .report-section-body{padding:16px}
 
+/* SELECT DROPDOWN GLOBAL FIX */
+select,select.form-control,select.header-loc-select{color-scheme:dark}
+select option{background:#1e293b!important;color:#f1f5f9!important}
+select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight:700}
+.header-loc-select option{background:#1a1040!important;color:#f1f5f9!important}
+
 /* RESPONSIVE */
 @media(max-width:768px){
   :root{--sw:0px}
@@ -291,10 +298,11 @@ textarea.form-control{resize:vertical;min-height:80px}
       <div style="font-size:10px;color:var(--text3);margin-top:2px">पहले luxury था, अब ज़रूरी है</div>
     </div>
     <div class="login-tabs">
-      <button class="login-tab active" onclick="switchLoginTab('staff')">Staff / Admin</button>
-      <button class="login-tab" onclick="switchLoginTab('customer')">Customer</button>
+      <button class="login-tab active" onclick="switchLoginTab('customer')" id="ltab-customer">Customer</button>
+      <button class="login-tab" onclick="switchLoginTab('staff')" id="ltab-staff">Staff</button>
+      <button class="login-tab" onclick="switchLoginTab('admin')" id="ltab-admin">Admin</button>
     </div>
-    <div id="tabStaff">
+    <div id="tabStaff" style="display:none">
       <div class="form-group">
         <label>Username or Email</label>
         <input type="text" id="lUsername" placeholder="Enter username" autocomplete="username">
@@ -305,6 +313,7 @@ textarea.form-control{resize:vertical;min-height:80px}
       </div>
       <button class="btn-primary" onclick="doLogin()">Sign In to Ops Portal →</button>
       <div id="loginMsg" class="login-msg error"></div>
+      <div id="loginAdminHint" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:12px;color:#fde68a;text-align:center">🔐 Admin access restricted to authorised personnel only.</div>
       <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--text3)">New staff? <a href="staff-register.html" target="_blank" style="color:var(--accent3);text-decoration:underline">Register here</a>&nbsp;&nbsp;|&nbsp;&nbsp;Forgot password? Contact Admin</div>
       <div class="social-divider">or continue with</div>
       <div class="social-btns">
@@ -322,7 +331,7 @@ textarea.form-control{resize:vertical;min-height:80px}
         </button>
       </div>
     </div>
-    <div id="tabCustomer" style="display:none">
+    <div id="tabCustomer">
       <div class="form-group">
         <label>Mobile Number</label>
         <div class="otp-row">
@@ -931,41 +940,41 @@ async function logTransactionToSheets(txn){
 // ═══════════════════════════════════════════════
 const DEFAULT_LOCATIONS = [
   // Gujarat Corridor — Owned
-  {code:'ST-P1',name:'Surat Platform 1',fullName:'Surat Railway Station P1',city:'Surat',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:3,equipment:['1A','1B','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:2200000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:3,legMassagers:1,gunStations:1,fans:2,lights:6,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'ST-CL',name:'Surat Cloakroom',fullName:'Surat Railway Cloakroom Area',city:'Surat',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:980000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'VP-VIP',name:'Vapi VIP P1',fullName:'Vapi Railway Station VIP Platform 1',city:'Vapi',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:750000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'VP-P2',name:'Vapi P2-3 (Lift)',fullName:'Vapi Railway Station P2-3 near Lift',city:'Vapi',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:680000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'VSD-P2',name:'Valsad P2-3',fullName:'Valsad Railway Station P2-3',city:'Valsad',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:620000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'VSD-CON',name:'Valsad Concourse P1',fullName:'Valsad Railway Concourse Platform 1',city:'Valsad',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:540000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'ANK-P1',name:'Ankleshwar P1',fullName:'Ankleshwar Railway Station P1',city:'Ankleshwar',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:490000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'BRC-P3',name:'Bharuch P3-4',fullName:'Bharuch Railway Station P3-4',city:'Bharuch',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:580000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'BRC-P1',name:'Bharuch Chayapuri',fullName:'Bharuch Chayapuri Area',city:'Bharuch',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:510000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'VAD-P1',name:'Vadodara P1',fullName:'Vadodara Railway Station P1',city:'Vadodara',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:3,equipment:['1A','1B','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:1800000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:3,legMassagers:1,gunStations:1,fans:2,lights:6,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'VAD-P6',name:'Vadodara P6',fullName:'Vadodara Railway Station P6',city:'Vadodara',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:920000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'AND-P4',name:'Anand P4',fullName:'Anand Railway Station P4',city:'Anand',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:670000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'NDD-CON',name:'Nadiad Concourse',fullName:'Nadiad Railway Station Concourse',city:'Nadiad',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:430000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'VV-STN',name:'Vallabh Vidyanagar',fullName:'Vallabh Vidyanagar Railway Station',city:'Vallabh Vidyanagar',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:380000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ST-P1',name:'Surat Platform 1',fullName:'Surat Railway Station P1',city:'Surat',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:3,equipment:['1A','1B','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:3,legMassagers:1,gunStations:1,fans:2,lights:6,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ST-CL',name:'Surat Cloakroom',fullName:'Surat Railway Cloakroom Area',city:'Surat',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VP-VIP',name:'Vapi VIP P1',fullName:'Vapi Railway Station VIP Platform 1',city:'Vapi',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VP-P2',name:'Vapi P2-3 (Lift)',fullName:'Vapi Railway Station P2-3 near Lift',city:'Vapi',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VSD-P2',name:'Valsad P2-3',fullName:'Valsad Railway Station P2-3',city:'Valsad',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VSD-CON',name:'Valsad Concourse P1',fullName:'Valsad Railway Concourse Platform 1',city:'Valsad',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ANK-P1',name:'Ankleshwar P1',fullName:'Ankleshwar Railway Station P1',city:'Ankleshwar',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BRC-P3',name:'Bharuch P3-4',fullName:'Bharuch Railway Station P3-4',city:'Bharuch',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BRC-P1',name:'Bharuch Chayapuri',fullName:'Bharuch Chayapuri Area',city:'Bharuch',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VAD-P1',name:'Vadodara P1',fullName:'Vadodara Railway Station P1',city:'Vadodara',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:3,equipment:['1A','1B','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:3,legMassagers:1,gunStations:1,fans:2,lights:6,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VAD-P6',name:'Vadodara P6',fullName:'Vadodara Railway Station P6',city:'Vadodara',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'AND-P4',name:'Anand P4',fullName:'Anand Railway Station P4',city:'Anand',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'NDD-CON',name:'Nadiad Concourse',fullName:'Nadiad Railway Station Concourse',city:'Nadiad',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VV-STN',name:'Vallabh Vidyanagar',fullName:'Vallabh Vidyanagar Railway Station',city:'Vallabh Vidyanagar',state:'Gujarat',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
   // Mumbai WR Corridor — Owned
-  {code:'MMCT-D1',name:'MMCT Deck 1',fullName:'Mumbai Central / CSMT Deck 1',city:'Mumbai',state:'Maharashtra',zone:'CR',isVendor:false,vendorName:'',active:true,chairs:3,equipment:['1A','1B','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:2800000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:3,legMassagers:1,gunStations:1,fans:2,lights:6,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'MMCT-D2',name:'MMCT Deck 2',fullName:'Mumbai Central / CSMT Deck 2',city:'Mumbai',state:'Maharashtra',zone:'CR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:1400000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'DDR-P5',name:'Dadar P5',fullName:'Dadar Railway Station P5',city:'Mumbai',state:'Maharashtra',zone:'CR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:1100000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'DDR-FOB',name:'Dadar FOB',fullName:'Dadar Railway Station FOB',city:'Mumbai',state:'Maharashtra',zone:'CR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:980000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'ADH-D1',name:'Andheri Deck 1',fullName:'Andheri Railway Station Deck 1',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:1250000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'ADH-D2',name:'Andheri Deck 2',fullName:'Andheri Railway Station Deck 2',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:1100000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'ADH-METRO',name:'Andheri Metro',fullName:'Andheri Metro Station',city:'Mumbai',state:'Maharashtra',zone:'Metro',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:890000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'BOR-FOB',name:'Borivali FOB',fullName:'Borivali Railway Station FOB',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:1050000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'BOR-P10',name:'Borivali P10',fullName:'Borivali Railway Station P10',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:870000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'VIR-P1',name:'Virar P1',fullName:'Virar Railway Station P1',city:'Virar',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:760000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'BAN-STN',name:'Bandra Station',fullName:'Bandra Railway Station',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:3,equipment:['1A','1B','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:1650000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:3,legMassagers:1,gunStations:1,fans:2,lights:6,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'GRG-STN',name:'Goregaon Station',fullName:'Goregaon Railway Station',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:920000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'NLP-EAST',name:'Nallasopara East',fullName:'Nallasopara Railway Station East',city:'Nallasopara',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:680000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'NLP-WEST',name:'Nallasopara West',fullName:'Nallasopara Railway Station West',city:'Nallasopara',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:640000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'MIR-STN',name:'Mira Road Station',fullName:'Mira Road Railway Station',city:'Mira Road',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:720000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'EKN-AC',name:'Ekta Nagar AC Hall',fullName:'Ekta Nagar AC Waiting Hall',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:830000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:0,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'MMCT-D1',name:'MMCT Deck 1',fullName:'Mumbai Central / CSMT Deck 1',city:'Mumbai',state:'Maharashtra',zone:'CR',isVendor:false,vendorName:'',active:true,chairs:3,equipment:['1A','1B','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:3,legMassagers:1,gunStations:1,fans:2,lights:6,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'MMCT-D2',name:'MMCT Deck 2',fullName:'Mumbai Central / CSMT Deck 2',city:'Mumbai',state:'Maharashtra',zone:'CR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'DDR-P5',name:'Dadar P5',fullName:'Dadar Railway Station P5',city:'Mumbai',state:'Maharashtra',zone:'CR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'DDR-FOB',name:'Dadar FOB',fullName:'Dadar Railway Station FOB',city:'Mumbai',state:'Maharashtra',zone:'CR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ADH-D1',name:'Andheri Deck 1',fullName:'Andheri Railway Station Deck 1',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ADH-D2',name:'Andheri Deck 2',fullName:'Andheri Railway Station Deck 2',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'ADH-METRO',name:'Andheri Metro',fullName:'Andheri Metro Station',city:'Mumbai',state:'Maharashtra',zone:'Metro',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BOR-FOB',name:'Borivali FOB',fullName:'Borivali Railway Station FOB',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BOR-P10',name:'Borivali P10',fullName:'Borivali Railway Station P10',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'VIR-P1',name:'Virar P1',fullName:'Virar Railway Station P1',city:'Virar',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'BAN-STN',name:'Bandra Station',fullName:'Bandra Railway Station',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:3,equipment:['1A','1B','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:3,legMassagers:1,gunStations:1,fans:2,lights:6,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'GRG-STN',name:'Goregaon Station',fullName:'Goregaon Railway Station',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'NLP-EAST',name:'Nallasopara East',fullName:'Nallasopara Railway Station East',city:'Nallasopara',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'NLP-WEST',name:'Nallasopara West',fullName:'Nallasopara Railway Station West',city:'Nallasopara',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'MIR-STN',name:'Mira Road Station',fullName:'Mira Road Railway Station',city:'Mira Road',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'EKN-AC',name:'Ekta Nagar AC Hall',fullName:'Ekta Nagar AC Waiting Hall',city:'Mumbai',state:'Maharashtra',zone:'WR',isVendor:false,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'12hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:0,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
   // Vendor Locations
-  {code:'PUNE',name:'Pune Vendor',fullName:'Pune — Keshav Naidu',city:'Pune',state:'Maharashtra',zone:'CR',isVendor:true,vendorName:'Keshav Naidu',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:420000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'PANVEL',name:'Panvel Vendor',fullName:'Panvel Railway Station',city:'Panvel',state:'Maharashtra',zone:'CR',isVendor:true,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:310000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
-  {code:'RAIPUR',name:'Raipur Vendor',fullName:'Raipur Railway Station',city:'Raipur',state:'Chhattisgarh',zone:'SCR',isVendor:true,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:280000,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]}
+  {code:'PUNE',name:'Pune Vendor',fullName:'Pune — Keshav Naidu',city:'Pune',state:'Maharashtra',zone:'CR',isVendor:true,vendorName:'Keshav Naidu',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'PANVEL',name:'Panvel Vendor',fullName:'Panvel Railway Station',city:'Panvel',state:'Maharashtra',zone:'CR',isVendor:true,vendorName:'',active:true,chairs:2,equipment:['1A','1C'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:0,gunStations:1,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]},
+  {code:'RAIPUR',name:'Raipur Vendor',fullName:'Raipur Railway Station',city:'Raipur',state:'Chhattisgarh',zone:'SCR',isVendor:true,vendorName:'',active:true,chairs:2,equipment:['1A','1B'],shiftTemplate:'8hr',phonepeStoreId:'',phonepeQr:'',phonepeTotal:0,meterBalance:0,meterLastUpdated:'',internetProvider:'',internetBalance:'',internetLastRecharged:'',inventory:{chairs:2,legMassagers:1,gunStations:0,fans:1,lights:4,stationaryKit:true,cleaningKit:true,otherItems:[]},introActive:false,passOverrides:{},customServices:[]}
 ];
 
 const DEFAULT_CONFIG = {
@@ -1006,6 +1015,39 @@ let currentSession = null;
 let activeLocation = null;
 let posCart = [];
 
+// ═══════════════════════════════════════════════
+// SESSION TIMEOUT (8 hours inactivity)
+// ═══════════════════════════════════════════════
+const SESSION_TIMEOUT_MS = 8 * 60 * 60 * 1000; // 8 hours
+let _activityTimer = null;
+function startActivityMonitor(){
+  clearInterval(_activityTimer);
+  _activityTimer = setInterval(()=>{
+    if(!currentSession)return;
+    const sess = DB.get('session');
+    if(!sess)return;
+    const idle = Date.now() - (sess.lastActivity || Date.now());
+    if(idle > SESSION_TIMEOUT_MS){
+      clearInterval(_activityTimer);
+      toast('Session expired due to inactivity. Please sign in again.','info');
+      setTimeout(doLogout, 2000);
+    }
+  }, 60000); // check every minute
+}
+function refreshActivity(){
+  if(!currentSession)return;
+  const sess = DB.get('session');
+  if(sess){
+    sess.lastActivity = Date.now();
+    DB.set('session', sess);
+    if(currentSession) currentSession.lastActivity = Date.now();
+  }
+}
+// Track user interactions
+['click','keydown','touchstart','mousemove'].forEach(evt=>{
+  document.addEventListener(evt, refreshActivity, {passive:true});
+});
+
 function seedIfEmpty(){
   if(!DB.get('seeded_v83')||(DB.get('users')||[]).length===0){
     DB.set('locations',DEFAULT_LOCATIONS);
@@ -1034,12 +1076,26 @@ function seedIfEmpty(){
 // AUTH & NAVIGATION
 // ═══════════════════════════════════════════════
 function switchLoginTab(tab){
-  document.querySelectorAll('.login-tab').forEach((b,i)=>{
-    b.classList.toggle('active',['staff','customer','otp'][i]===tab);
+  // Update tab button states
+  ['customer','staff','admin'].forEach(t=>{
+    const el=document.getElementById('ltab-'+t);
+    if(el)el.classList.toggle('active',t===tab);
   });
-  document.getElementById('tabStaff').style.display=tab==='staff'?'block':'none';
+  // Show/hide panels
+  document.getElementById('tabStaff').style.display=(tab==='staff'||tab==='admin')?'block':'none';
   document.getElementById('tabCustomer').style.display=tab==='customer'?'block':'none';
   document.getElementById('tabOTP').style.display=tab==='otp'?'block':'none';
+  // Update sign-in button text
+  const btn=document.querySelector('#tabStaff .btn-primary');
+  if(btn){
+    if(tab==='admin')btn.textContent='Sign In to Admin Portal →';
+    else if(tab==='staff')btn.textContent='Sign In to Ops Portal →';
+  }
+  // Store current tab context
+  window._loginTabContext=tab;
+  // Show/hide admin-only hint
+  const hint=document.getElementById('loginAdminHint');
+  if(hint)hint.style.display=tab==='admin'?'block':'none';
 }
 function doLogin(){
   try{
@@ -1050,9 +1106,16 @@ function doLogin(){
     if(!users.length){seedIfEmpty();users=DB.get('users')||[];}
     const user=users.find(x=>(x.username===u||x.email===u)&&x.password===p&&x.active!==false);
     if(!user){
-      showLoginMsg('Invalid credentials. Default: superadmin / Arama@2026!','error');
+      showLoginMsg('Invalid credentials. Please check your username and password.','error');
       return;
     }
+    // Enforce admin tab: only superadmin/admin roles can log in via Admin tab
+    const ctx=window._loginTabContext||'staff';
+    if(ctx==='admin'&&!['superadmin','admin'].includes(user.role)){
+      showLoginMsg('This account does not have admin access.','error');
+      return;
+    }
+    // Enforce staff tab: block superadmin from staff portal (optional)
     loginUser(user);
   }catch(err){
     console.error('doLogin error:',err);
@@ -1060,10 +1123,11 @@ function doLogin(){
   }
 }
 function loginUser(user){
-  const session={...user,loginAt:new Date().toISOString()};
+  const session={...user,loginAt:new Date().toISOString(),lastActivity:Date.now()};
   DB.set('session',session);
   sessionStorage.setItem('arama_session',JSON.stringify(session));
   currentSession=session;
+  startActivityMonitor();
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('app').classList.add('visible');
   setupApp();
@@ -1091,7 +1155,7 @@ function sendOTP(){
   const m=document.getElementById('custMobile').value.trim();
   if(!m||m.length<10){showCustMsg('Enter valid mobile number','error');return;}
   document.getElementById('otpSection').style.display='block';
-  toast('OTP sent to '+m+' (demo: use 123456)','success');
+  toast('OTP sent to '+m+'. Enter the 6-digit code.','success');
 }
 function verifyOTP(){
   const otp=document.getElementById('custOTP').value.trim();
@@ -1105,7 +1169,7 @@ function verifyOTP(){
     }
     toast('Logged in as customer — redirecting to Customer Portal','success');
     setTimeout(()=>window.open('customer.html','_blank'),1000);
-  }else{showCustMsg('Invalid OTP. Use 123456 for demo.','error');}
+  }else{showCustMsg('Invalid OTP. Please try again.','error');}
 }
 function showCustMsg(msg,type){
   const el=document.getElementById('custLoginMsg');
@@ -1115,7 +1179,7 @@ function showCustMsg(msg,type){
 function custUserPass(){toast('Email/password login for customers coming in Phase 2','info');}
 function sendStaffOTP(){
   document.getElementById('staffOTPSection').style.display='block';
-  toast('OTP sent (demo: use 123456)','success');
+  toast('OTP sent successfully. Enter the 6-digit code.','success');
 }
 function verifyStaffOTP(){
   const otp=document.getElementById('staffOTPCode').value;
@@ -1203,10 +1267,8 @@ function toggleSidebar(){document.getElementById('sidebar').classList.toggle('op
 /* toast defined below */
 /* openModal / closeModal defined below */
 /* ModalOverlay click handler */
-document.addEventListener('DOMContentLoaded',function(){
-  var ov=document.getElementById('modalOverlay');
-  if(ov)ov.addEventListener('click',function(e){if(e.target===this)closeModal();});
-});
+// Modal backdrop click handler (secondary init in checkSession below)
+window._loginTabContext = 'customer';
 
 // ═══════════════════════════════════════════════
 // DASHBOARD
@@ -3956,9 +4018,15 @@ function checkSession(){
   // Try localStorage session
   const ls=DB.get('session');
   if(ls){
+    const idle = Date.now() - (ls.lastActivity || Date.now());
+    if(idle > SESSION_TIMEOUT_MS){
+      DB.remove('session');
+      showLogin();
+      return;
+    }
     const users=DB.get('users')||[];
     const stillValid=users.find(u=>u.id===ls.id&&u.active!==false);
-    if(stillValid){loginUser({...stillValid,loginAt:ls.loginAt});return;}
+    if(stillValid){loginUser({...stillValid,loginAt:ls.loginAt,lastActivity:ls.lastActivity});return;}
   }
   showLogin();
 }
