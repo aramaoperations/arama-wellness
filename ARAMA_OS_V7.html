@@ -1024,23 +1024,29 @@ function startActivityMonitor(){
   clearInterval(_activityTimer);
   _activityTimer = setInterval(()=>{
     if(!currentSession)return;
-    const sess = DB.get('session');
+    const sess = sessionStorage.getItem('arama_sess');
     if(!sess)return;
-    const idle = Date.now() - (sess.lastActivity || Date.now());
-    if(idle > SESSION_TIMEOUT_MS){
-      clearInterval(_activityTimer);
-      toast('Session expired due to inactivity. Please sign in again.','info');
-      setTimeout(doLogout, 2000);
-    }
+    try{
+      const parsed = JSON.parse(sess);
+      const idle = Date.now() - (parsed.lastActivity || Date.now());
+      if(idle > SESSION_TIMEOUT_MS){
+        clearInterval(_activityTimer);
+        toast('Session expired due to inactivity. Please sign in again.','info');
+        setTimeout(doLogout, 2000);
+      }
+    }catch(e){}
   }, 60000); // check every minute
 }
 function refreshActivity(){
   if(!currentSession)return;
-  const sess = DB.get('session');
+  const sess = sessionStorage.getItem('arama_sess');
   if(sess){
-    sess.lastActivity = Date.now();
-    DB.set('session', sess);
-    if(currentSession) currentSession.lastActivity = Date.now();
+    try{
+      const parsed = JSON.parse(sess);
+      parsed.lastActivity = Date.now();
+      sessionStorage.setItem('arama_sess', JSON.stringify(parsed));
+      if(currentSession) currentSession.lastActivity = Date.now();
+    }catch(e){}
   }
 }
 // Track user interactions
@@ -1115,7 +1121,13 @@ function doLogin(){
       showLoginMsg('This account does not have admin access.','error');
       return;
     }
-    // Enforce staff tab: block superadmin from staff portal (optional)
+    // GRACE PERIOD: Allow newly approved staff to login for 10 days even if compliance pending
+    const now=Date.now();
+    const gracePeriod=user.graceUntil ? (user.graceUntil > now) : false;
+    if(!gracePeriod && user.compliance && user.compliance.pending===true){
+      showLoginMsg('Your account is pending compliance verification. Please contact admin.','error');
+      return;
+    }
     loginUser(user);
   }catch(err){
     console.error('doLogin error:',err);
@@ -1123,9 +1135,11 @@ function doLogin(){
   }
 }
 function loginUser(user){
-  const session={...user,loginAt:new Date().toISOString(),lastActivity:Date.now()};
-  DB.set('session',session);
-  sessionStorage.setItem('arama_session',JSON.stringify(session));
+  // Create session WITHOUT password for security
+  const {password, ...safeUser} = user;
+  const session={...safeUser,loginAt:new Date().toISOString(),lastActivity:Date.now()};
+  // Use sessionStorage ONLY (tab-level, cleared on close)
+  sessionStorage.setItem('arama_sess',JSON.stringify(session));
   currentSession=session;
   startActivityMonitor();
   document.getElementById('loginScreen').style.display='none';
@@ -1141,8 +1155,10 @@ function showLoginMsg(msg,type){
 }
 function doLogout(){
   if(!confirm('Sign out?'))return;
-  DB.remove('session');
   currentSession=null;
+  sessionStorage.removeItem('arama_sess');
+  sessionStorage.removeItem('pending_cust_otp');
+  sessionStorage.removeItem('pending_staff_otp');
   document.getElementById('app').classList.remove('visible');
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('lUsername').value='';
@@ -1154,22 +1170,32 @@ function socialLogin(provider){
 function sendOTP(){
   const m=document.getElementById('custMobile').value.trim();
   if(!m||m.length<10){showCustMsg('Enter valid mobile number','error');return;}
+  // Generate real random 6-digit OTP
+  const otp=String(Math.floor(100000+Math.random()*900000));
+  sessionStorage.setItem('pending_cust_otp',JSON.stringify({otp,mobile:m,sentAt:Date.now()}));
   document.getElementById('otpSection').style.display='block';
-  toast('OTP sent to '+m+'. Enter the 6-digit code.','success');
+  toast('OTP sent to '+m+'. Code: '+otp,'success');
+  // Show OTP for demo (in production, SMS gateway would send this)
+  console.log('Demo OTP:',otp);
 }
 function verifyOTP(){
   const otp=document.getElementById('custOTP').value.trim();
-  if(otp==='123456'||otp.length===6){
-    const mob=document.getElementById('custMobile').value.trim();
-    let customers=DB.get('customers')||[];
-    let cust=customers.find(c=>c.phone===mob);
-    if(!cust){
-      cust={id:'c'+Date.now(),phone:mob,name:'Customer',role:'customer',active:true,createdAt:new Date().toISOString()};
-      customers.push(cust);DB.set('customers',customers);
-    }
-    toast('Logged in as customer — redirecting to Customer Portal','success');
-    setTimeout(()=>window.open('customer.html','_blank'),1000);
-  }else{showCustMsg('Invalid OTP. Please try again.','error');}
+  const pending=sessionStorage.getItem('pending_cust_otp');
+  if(!pending){showCustMsg('OTP expired. Please request a new one.','error');return;}
+  const {otp:correctOtp,mobile,sentAt}=JSON.parse(pending);
+  // Check OTP expiry (5 minutes)
+  if(Date.now()-sentAt>300000){showCustMsg('OTP expired (valid for 5 min). Request new one.','error');return;}
+  if(otp!==correctOtp){showCustMsg('Invalid OTP. Please try again.','error');return;}
+  const mob=document.getElementById('custMobile').value.trim();
+  let customers=DB.get('customers')||[];
+  let cust=customers.find(c=>c.phone===mob);
+  if(!cust){
+    cust={id:'c'+Date.now(),phone:mob,name:'Customer',role:'customer',active:true,createdAt:new Date().toISOString()};
+    customers.push(cust);DB.set('customers',customers);
+  }
+  sessionStorage.removeItem('pending_cust_otp');
+  toast('Logged in as customer — redirecting to Customer Portal','success');
+  setTimeout(()=>window.open('customer.html','_blank'),1000);
 }
 function showCustMsg(msg,type){
   const el=document.getElementById('custLoginMsg');
@@ -1178,18 +1204,32 @@ function showCustMsg(msg,type){
 }
 function custUserPass(){toast('Email/password login for customers coming in Phase 2','info');}
 function sendStaffOTP(){
+  const contact=document.getElementById('staffOTPContact').value.trim();
+  if(!contact){showLoginMsg('Enter phone or email','error');return;}
+  // Generate real random 6-digit OTP
+  const otp=String(Math.floor(100000+Math.random()*900000));
+  sessionStorage.setItem('pending_staff_otp',JSON.stringify({otp,contact,sentAt:Date.now()}));
   document.getElementById('staffOTPSection').style.display='block';
-  toast('OTP sent successfully. Enter the 6-digit code.','success');
+  toast('OTP sent successfully to '+contact+'. Code: '+otp,'success');
+  // Show OTP in console for demo (in production, SMS/Email gateway sends this)
+  console.log('Demo OTP for staff:',otp);
 }
 function verifyStaffOTP(){
-  const otp=document.getElementById('staffOTPCode').value;
-  if(otp==='123456'){
-    const users=DB.get('users')||[];
-    const contact=document.getElementById('staffOTPContact').value.trim();
-    const user=users.find(u=>u.phone===contact||u.email===contact);
-    if(user)loginUser(user);
-    else showLoginMsg('No staff account found for this contact','error');
-  }else showLoginMsg('Invalid OTP','error');
+  const otp=document.getElementById('staffOTPCode').value.trim();
+  const pending=sessionStorage.getItem('pending_staff_otp');
+  if(!pending){showLoginMsg('OTP expired. Request a new one.','error');return;}
+  const {otp:correctOtp,contact,sentAt}=JSON.parse(pending);
+  // Check OTP expiry (5 minutes)
+  if(Date.now()-sentAt>300000){showLoginMsg('OTP expired (valid for 5 min). Request new one.','error');return;}
+  if(otp!==correctOtp){showLoginMsg('Invalid OTP','error');return;}
+  const users=DB.get('users')||[];
+  const user=users.find(u=>u.phone===contact||u.email===contact);
+  if(user){
+    sessionStorage.removeItem('pending_staff_otp');
+    loginUser(user);
+  }else{
+    showLoginMsg('No staff account found for this contact','error');
+  }
 }
 
 function setupApp(){
@@ -2359,19 +2399,23 @@ function approveStaff(idx){
   if(!app)return;
   const users=DB.get('users')||[];
   const pass='Staff@'+Math.random().toString(36).substr(2,6).toUpperCase();
+  // Add graceUntil: 10 days from now (staff can login without full compliance verification)
+  const graceUntil=new Date();
+  graceUntil.setDate(graceUntil.getDate()+10);
   users.push({id:'u'+Date.now(),username:app.phone,password:pass,name:app.firstName+' '+app.lastName,
-    email:app.email,phone:app.phone,role:'staff',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{}});
+    email:app.email,phone:app.phone,role:'staff',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{pending:false},graceUntil:graceUntil.getTime()});
   DB.set('users',users);
   pending.splice(idx,1);DB.set('staffPending',pending);
   renderUsers();
-  openModal('Staff Approved ✓',
+  openModal('Staff Approved ✓ (10-Day Grace Period)',
     '<div style="text-align:center;padding:20px">'+
     '<div style="font-size:48px;margin-bottom:12px">&#9989;</div>'+
     '<div style="font-size:15px;font-weight:700;margin-bottom:4px">'+app.firstName+' '+app.lastName+' approved!</div>'+
     '<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Login Username: <code>'+app.phone+'</code></div>'+
     '<div style="font-size:12px;color:var(--text3);margin-bottom:6px">Temporary Password — share securely via WhatsApp:</div>'+
     '<div style="font-size:32px;font-weight:800;font-family:monospace;letter-spacing:4px;color:var(--accent3);background:rgba(109,40,217,.1);padding:16px 24px;border-radius:12px;margin:10px 0">'+pass+'</div>'+
-    '<div style="font-size:11px;color:var(--text3)">Staff must change this on first login: Profile &gt; Change Password</div>'+
+    '<div style="font-size:12px;color:var(--green);margin:12px 0;padding:8px;background:rgba(16,185,129,.15);border-radius:6px"><strong>✓ Grace Period Active:</strong> Staff can login & use POS for 10 days while documents are being verified.</div>'+
+    '<div style="font-size:11px;color:var(--text3)">Staff must change password on first login: Profile &gt; Change Password</div>'+
     '</div>',
     '<button class="btn btn-accent" onclick="closeModal()">Noted &#128076;</button>');
 }
@@ -3999,34 +4043,42 @@ function showLogin(){
   const appEl=document.getElementById('app');
   if(appEl)appEl.classList.remove('visible');
   currentSession=null;
-  DB.remove('session');
-  sessionStorage.removeItem('arama_session');
+  sessionStorage.removeItem('arama_sess');
+  sessionStorage.removeItem('pending_cust_otp');
+  sessionStorage.removeItem('pending_staff_otp');
 }
 
 function checkSession(){
-  // Try sessionStorage first (tab-level)
-  const ss=sessionStorage.getItem('arama_session');
+  // Use sessionStorage ONLY (tab-level, cleared when browser closes)
+  const ss=sessionStorage.getItem('arama_sess');
   if(ss){
     try{
       const s=JSON.parse(ss);
-      // Verify user still exists and is active
+      // Check session timeout (30 minutes of inactivity)
+      const idle = Date.now() - (s.lastActivity || Date.now());
+      if(idle > SESSION_TIMEOUT_MS){
+        sessionStorage.removeItem('arama_sess');
+        showLogin();
+        return;
+      }
+      // Verify user still exists, is active, and check grace period
       const users=DB.get('users')||[];
       const stillValid=users.find(u=>u.id===s.id&&u.active!==false);
-      if(stillValid){loginUser({...stillValid,loginAt:s.loginAt});return;}
-    }catch(e){}
-  }
-  // Try localStorage session
-  const ls=DB.get('session');
-  if(ls){
-    const idle = Date.now() - (ls.lastActivity || Date.now());
-    if(idle > SESSION_TIMEOUT_MS){
-      DB.remove('session');
-      showLogin();
-      return;
+      if(stillValid){
+        // Check grace period for compliance
+        const now=Date.now();
+        const gracePeriod=stillValid.graceUntil ? (stillValid.graceUntil > now) : false;
+        if(!gracePeriod && stillValid.compliance && stillValid.compliance.pending===true){
+          sessionStorage.removeItem('arama_sess');
+          showLogin();
+          return;
+        }
+        loginUser({...stillValid,loginAt:s.loginAt,lastActivity:s.lastActivity});
+        return;
+      }
+    }catch(e){
+      console.error('Session restore error:',e);
     }
-    const users=DB.get('users')||[];
-    const stillValid=users.find(u=>u.id===ls.id&&u.active!==false);
-    if(stillValid){loginUser({...stillValid,loginAt:ls.loginAt,lastActivity:ls.lastActivity});return;}
   }
   showLogin();
 }
