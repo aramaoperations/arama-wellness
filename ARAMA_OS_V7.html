@@ -604,18 +604,28 @@ textarea.form-control{resize:vertical;min-height:80px}
 // DB LAYER
 // ═══════════════════════════════════════════════
 // ═══════════════════════════════════════════════
-// GOOGLE DRIVE CONFIG — paste your Client ID in Admin → Config → Drive tab
+// GOOGLE DRIVE + SHEETS CONFIG
 // ═══════════════════════════════════════════════
 let GOOGLE_CLIENT_ID = localStorage.getItem('arama_gclientid') || '';
-const DRIVE_SCOPE     = 'https://www.googleapis.com/auth/drive.appdata';
+// Combined scope: Drive appData (private backup) + Sheets (location-wise log)
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/spreadsheets';
 const DRIVE_FILENAME  = 'arama_os_data.json';
 let gTokenClient  = null;
 let gAccessToken  = null;
 let driveFileId   = localStorage.getItem('arama_driveFileId') || null;
+let sheetsId      = localStorage.getItem('arama_sheetsId') || null;
 let syncDirty     = false;
 let syncTimer     = null;
 let syncState     = 'offline'; // offline | syncing | synced | pending | error
 let currentPage   = 'dashboard';
+
+// Location-partitioned keys — each kiosk only writes its own location's data
+// Global keys are written by admin from any device
+const LOC_PART_KEYS  = ['transactions','tokens','crmLeads','dailyReports','feedbacks','esp32Logs','hrmsData'];
+const GLOBAL_DB_KEYS = ['users','locations','services','config','loyaltyConfig','brandConfig',
+                         'customers','loyalty','b2bLeads','staffPending','seeded_v83','inventory',
+                         'locationRemarks','locationStock','sheetsId'];
+function locPartKey(base,code){return 'LP__'+code+'__'+base;}
 
 // ── DB LAYER (localStorage L1 cache + Drive L2) ──
 const DB = {
@@ -677,6 +687,10 @@ function initGAuth(){
   gTokenClient.requestAccessToken({prompt:''});
 }
 
+function openSheetsLog(){
+  if(!sheetsId){toast('Connect Drive first to create the Sheet','info');return;}
+  window.open('https://docs.google.com/spreadsheets/d/'+sheetsId,'_blank');
+}
 function requestDriveAccess(){
   if(!GOOGLE_CLIENT_ID){
     // Show setup instructions
@@ -749,11 +763,31 @@ async function loadFromDrive(){
     );
     if(!r.ok)return false;
     const data=await r.json();
-    // Restore all keys to localStorage
+    // ── Merge location-partitioned arrays into combined local keys ──
+    const merged={};
+    LOC_PART_KEYS.forEach(k=>{merged[k]=[];});
     for(const[k,v]of Object.entries(data)){
       if(k==='driveFileId'||k==='gclientid')continue;
-      localStorage.setItem('arama_'+k,JSON.stringify(v));
+      if(k.startsWith('LP__')){
+        // format: LP__{locCode}__{baseKey}
+        const parts=k.split('__');
+        if(parts.length===3){
+          const baseKey=parts[2];
+          if(LOC_PART_KEYS.includes(baseKey)&&Array.isArray(v)){
+            merged[baseKey].push(...v);
+          }
+        }
+      } else {
+        // Global key — restore directly
+        localStorage.setItem('arama_'+k,JSON.stringify(v));
+      }
     }
+    // Save merged location arrays to localStorage
+    LOC_PART_KEYS.forEach(k=>{
+      if(merged[k].length>0){
+        localStorage.setItem('arama_'+k,JSON.stringify(merged[k]));
+      }
+    });
     syncDirty=false;
     return true;
   }catch(e){console.warn('Drive load error',e);return false;}
@@ -763,36 +797,46 @@ async function saveToDrive(){
   if(!gAccessToken||!GOOGLE_CLIENT_ID){return;}
   updateSyncStatus('syncing');
   try{
-    // Collect all arama_ keys from localStorage
-    const data={};
-    for(let i=0;i<localStorage.length;i++){
-      const key=localStorage.key(i);
-      if(key.startsWith('arama_')&&key!=='arama_driveFileId'&&key!=='arama_gclientid'){
-        const k=key.replace('arama_','');
-        try{data[k]=JSON.parse(localStorage.getItem(key));}catch(e){data[k]=localStorage.getItem(key);}
-      }
-    }
-    const body=JSON.stringify(data);
+    const locCode=activeLocation?.code||'GLOBAL';
+    // ── Step 1: Load existing Drive JSON (to preserve other locations) ──
+    let driveData={};
     let fid=await findDriveFile();
     if(fid){
-      // Update existing
+      try{
+        const rr=await fetch(`https://www.googleapis.com/drive/v3/files/${fid}?alt=media`,
+          {headers:{Authorization:'Bearer '+gAccessToken}});
+        if(rr.ok)driveData=await rr.json();
+      }catch(e){console.warn('Drive pre-load error',e);}
+    }
+    // ── Step 2: Write THIS location's partitioned keys ──
+    LOC_PART_KEYS.forEach(baseKey=>{
+      const local=DB.get(baseKey);
+      if(local===null)return;
+      // Only store items belonging to this location (or untagged items)
+      const filtered=Array.isArray(local)
+        ?local.filter(item=>{
+            const ic=item.locCode||item.locationCode||item.loc;
+            return !ic||ic===locCode;
+          })
+        :local;
+      driveData[locPartKey(baseKey,locCode)]=filtered;
+    });
+    // ── Step 3: Update global keys ──
+    GLOBAL_DB_KEYS.forEach(key=>{
+      const local=DB.get(key);
+      if(local!==null)driveData[key]=local;
+    });
+    // ── Step 4: Upload merged data ──
+    const body=JSON.stringify(driveData);
+    if(fid){
       await fetch(
         `https://www.googleapis.com/upload/drive/v3/files/${fid}?uploadType=media`,
         {method:'PATCH',headers:{Authorization:'Bearer '+gAccessToken,'Content-Type':'application/json'},body}
       );
     } else {
-      // Create new in appDataFolder
       const boundary='arama_bnd_'+Date.now();
       const meta=JSON.stringify({name:DRIVE_FILENAME,parents:['appDataFolder']});
-      const multipart=`--${boundary}
-Content-Type: application/json; charset=UTF-8
-
-${meta}
---${boundary}
-Content-Type: application/json
-
-${body}
---${boundary}--`;
+      const multipart='--'+boundary+'\nContent-Type: application/json; charset=UTF-8\n\n'+meta+'\n--'+boundary+'\nContent-Type: application/json\n\n'+body+'\n--'+boundary+'--';
       const r=await fetch(
         'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
         {method:'POST',headers:{Authorization:'Bearer '+gAccessToken,'Content-Type':`multipart/related; boundary=${boundary}`},body:multipart}
@@ -808,6 +852,77 @@ ${body}
     updateSyncStatus('error');
     toast('Drive sync failed — data saved locally','error');
   }
+}
+
+// ── GOOGLE SHEETS — Location-wise append log ──
+async function getSheetsId(){
+  if(sheetsId)return sheetsId;
+  // Create new spreadsheet
+  try{
+    const r=await fetch('https://sheets.googleapis.com/v4/spreadsheets',
+      {method:'POST',headers:{Authorization:'Bearer '+gAccessToken,'Content-Type':'application/json'},
+       body:JSON.stringify({properties:{title:'ārāma Wellness Data Log — All Locations'},
+         sheets:[{properties:{title:'_Index'}}]})});
+    const d=await r.json();
+    if(d.spreadsheetId){
+      sheetsId=d.spreadsheetId;
+      localStorage.setItem('arama_sheetsId',sheetsId);
+      DB.set('sheetsId',sheetsId);
+      // Write index header
+      await sheetsAppend('_Index',[['Location Code','Location Name','First Entry','Spreadsheet Created'],
+        ['ALL','ārāma Wellness OS',new Date().toLocaleString('en-IN'),'Auto-created by OS']]);
+      toast('☁️ Google Sheet created! Check Drive for "ārāma Wellness Data Log"','success');
+    }
+    return sheetsId;
+  }catch(e){console.warn('Sheets create error',e);return null;}
+}
+async function sheetsEnsureTab(locCode,locName){
+  if(!sheetsId||!gAccessToken)return;
+  try{
+    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetsId}`,
+      {headers:{Authorization:'Bearer '+gAccessToken}});
+    const d=await r.json();
+    const exists=d.sheets?.some(s=>s.properties.title===locCode);
+    if(!exists){
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetsId}:batchUpdate`,
+        {method:'POST',headers:{Authorization:'Bearer '+gAccessToken,'Content-Type':'application/json'},
+         body:JSON.stringify({requests:[{addSheet:{properties:{title:locCode}}}]})});
+      // Header row
+      await sheetsAppend(locCode,[['Date','Time','Location','Location Name','Transaction ID',
+        'Services','Amount (₹)','Payment Mode','Staff','Customer Phone','Token(s)','Notes']]);
+    }
+  }catch(e){console.warn('Sheets tab error',e);}
+}
+async function sheetsAppend(tab,rows){
+  if(!sheetsId||!gAccessToken)return;
+  try{
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetsId}/values/${encodeURIComponent(tab)}:append?valueInputOption=USER_ENTERED`,
+      {method:'POST',headers:{Authorization:'Bearer '+gAccessToken,'Content-Type':'application/json'},
+       body:JSON.stringify({values:rows})});
+  }catch(e){console.warn('Sheets append error',e);}
+}
+async function logTransactionToSheets(txn){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();
+  if(!sid)return;
+  const locCode=txn.locCode||activeLocation?.code||'UNKNOWN';
+  const locName=txn.locName||activeLocation?.name||locCode;
+  await sheetsEnsureTab(locCode,locName);
+  const d=new Date(txn.createdAt||Date.now());
+  const services=(txn.items||[]).map(i=>i.name+(i.qty>1?' x'+i.qty:'')).join(', ')||txn.service||'-';
+  await sheetsAppend(locCode,[[
+    d.toLocaleDateString('en-IN'),
+    d.toLocaleTimeString('en-IN'),
+    locCode,locName,
+    txn.id||'-',
+    services,
+    txn.total||txn.amount||0,
+    txn.payMode||txn.payMethod||'-',
+    txn.createdBy||currentSession?.name||'-',
+    txn.customerPhone||'-',
+    (txn.tokens||[]).join(', ')||'-',
+    txn.notes||''
+  ]]);
 }
 
 
@@ -892,14 +1007,12 @@ let activeLocation = null;
 let posCart = [];
 
 function seedIfEmpty(){
-  if(!DB.get('seeded_v83')){
+  if(!DB.get('seeded_v83')||(DB.get('users')||[]).length===0){
     DB.set('locations',DEFAULT_LOCATIONS);
     DB.set('config',DEFAULT_CONFIG);
     const users=[
       {id:'u1',username:'superadmin',password:'Arama@2026!',name:'Super Admin',email:'aramakiosks@gmail.com',phone:'7090090100',role:'superadmin',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{aadhaar:true,pv:true,medical:true,uniform:true,icard:true}},
-      {id:'u2',username:'admin',password:'Admin@123',name:'Admin User',email:'admin@arama.asia',phone:'8866666687',role:'admin',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{aadhaar:true,pv:true,medical:true,uniform:true,icard:true}},
-      {id:'u3',username:'manager1',password:'Manager@123',name:'Demo Manager',email:'manager@arama.asia',phone:'9000000001',role:'manager',active:true,locations:['ST-P1','ST-CL'],createdAt:new Date().toISOString(),compliance:{aadhaar:true,pv:true,medical:true,uniform:true,icard:true}},
-      {id:'u4',username:'staff1',password:'Staff@123',name:'Demo Staff',email:'staff@arama.asia',phone:'9000000002',role:'staff',active:true,locations:['ST-P1'],createdAt:new Date().toISOString(),compliance:{aadhaar:true,pv:true,medical:false,uniform:true,icard:false}}
+      {id:'u2',username:'admin',password:'Admin@123',name:'Admin User',email:'admin@arama.asia',phone:'8866666687',role:'admin',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{aadhaar:true,pv:true,medical:true,uniform:true,icard:true}}
     ];
     DB.set('users',users);
     DB.set('transactions',[]);
@@ -929,13 +1042,22 @@ function switchLoginTab(tab){
   document.getElementById('tabOTP').style.display=tab==='otp'?'block':'none';
 }
 function doLogin(){
-  const u=document.getElementById('lUsername').value.trim();
-  const p=document.getElementById('lPassword').value;
-  if(!u||!p){showLoginMsg('Enter username and password','error');return;}
-  const users=DB.get('users')||[];
-  const user=users.find(x=>(x.username===u||x.email===u)&&x.password===p&&x.active);
-  if(!user){showLoginMsg('Invalid credentials. Try superadmin / Arama@2026!','error');return;}
-  loginUser(user);
+  try{
+    const u=(document.getElementById('lUsername')?.value||'').trim();
+    const p=document.getElementById('lPassword')?.value||'';
+    if(!u||!p){showLoginMsg('Enter username and password','error');return;}
+    let users=DB.get('users')||[];
+    if(!users.length){seedIfEmpty();users=DB.get('users')||[];}
+    const user=users.find(x=>(x.username===u||x.email===u)&&x.password===p&&x.active!==false);
+    if(!user){
+      showLoginMsg('Invalid credentials. Default: superadmin / Arama@2026!','error');
+      return;
+    }
+    loginUser(user);
+  }catch(err){
+    console.error('doLogin error:',err);
+    alert('Login error: '+err.message+'\nPlease press F5 to refresh the page and try again.');
+  }
 }
 function loginUser(user){
   const session={...user,loginAt:new Date().toISOString()};
@@ -1017,6 +1139,10 @@ function setupApp(){
     const myLocs=s.role==='superadmin'||s.role==='admin'?locs:locs.filter(l=>s.locations.includes(l.code));
     activeLocation=myLocs.length>0?myLocs[0]:locs[0];
   }
+  // Vendor-specific dashboard
+  if(s.role==='vendor')setTimeout(renderVendorDashboard,100);
+  // Update attendance button state
+  setTimeout(updateAttendanceBtn,200);
 }
 function buildLocationSelector(){
   const sel=document.getElementById('headerLocSelect');
@@ -1109,7 +1235,7 @@ function renderDashboard(){
   const isFiltered=!!(fromEl&&fromEl.value||toEl&&toEl.value);
   const todayTxns=isFiltered?filteredTxns:txns.filter(t=>new Date(t.createdAt).toDateString()===today);
   const displayTxns=isFiltered?filteredTxns:todayTxns;
-  const totalRevToday=displayTxns.reduce((s,t)=>s+t.amount,0);
+  const totalRevToday=displayTxns.reduce((s,t)=>s+(t.total||t.amount||0),0);
   const totalRevAll=locs.reduce((s,l)=>s+l.phonepeTotal,0);
   const activeLocs=locs.filter(l=>l.active).length;
   const totalChairs=locs.reduce((s,l)=>s+l.chairs,0);
@@ -1122,7 +1248,7 @@ function renderDashboard(){
   allTxns.forEach(t=>{
     const d=new Date(t.createdAt);
     const key=d.getFullYear()+'-'+(d.getMonth()+1);
-    monthMap[key]=(monthMap[key]||0)+(t.amount||0);
+    monthMap[key]=(monthMap[key]||0)+(t.total||t.amount||0);
   });
   const sortedKeys=Object.keys(monthMap).sort().slice(-6);
   const MNAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1251,6 +1377,7 @@ function renderPOS(){
       <div class="cart-items" id="cartItems">
         <div style="text-align:center;color:var(--text3);padding:30px;font-size:13px">Select services above</div>
       </div>
+      <div id="cartSavingsBox" style="display:none;padding:0 10px 8px"></div>
       <div class="cart-summary" id="cartSummary">
         <div class="summary-row"><span>Subtotal</span><span id="cartSubtotal">₹0</span></div>
         <div class="summary-row"><span>Loyalty Discount</span><span id="cartDiscount" style="color:var(--green)">-₹0</span></div>
@@ -1313,6 +1440,7 @@ function renderCart(){
     </div>
   </div>`).join('');
   updateCartTotals();
+  if(typeof renderCartSavings==="function")renderCartSavings();
 }
 function changeQty(idx,delta){
   posCart[idx].qty+=delta;
@@ -1360,6 +1488,8 @@ function processPayment(){
     type:posCart.some(i=>i.duration>0)?'service':'product'
   };
   DB.push('transactions',txn);
+  // Log to Google Sheets (location-wise)
+  logTransactionToSheets(txn).catch(e=>console.warn('Sheet log:',e));
   // Show receipt
   const tokenHTML=tokens.length>0?`<div style="margin:12px 0;padding:10px;background:var(--bg3);border-radius:8px;border:2px dashed var(--accent)">
     <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px">SESSION TOKEN(S)</div>
@@ -1731,62 +1861,329 @@ async function testESP32(code){
 // ═══════════════════════════════════════════════
 // USERS & ROLES
 // ═══════════════════════════════════════════════
+
+// ══════════════════════════════════════════════
+// ATTENDANCE LOG RENDERING
+// ══════════════════════════════════════════════
+function renderAttendanceLog(){
+  const logs=DB.get('attendanceLog')||[];
+  const users=DB.get('users')||[];
+  const dateF=document.getElementById('attDateFilter')?.value||'';
+  const staffF=document.getElementById('attStaffFilter')?.value||'';
+  // Populate staff dropdown
+  const sel=document.getElementById('attStaffFilter');
+  if(sel&&sel.options.length<=1){
+    users.filter(u=>['staff','supervisor','manager'].includes(u.role)).forEach(u=>{
+      const o=document.createElement('option');o.value=u.id;o.textContent=u.name;sel.appendChild(o);
+    });
+  }
+  let filtered=logs;
+  if(dateF)filtered=filtered.filter(l=>l.clockIn?.startsWith(dateF)||l.clockOut?.startsWith(dateF));
+  if(staffF)filtered=filtered.filter(l=>l.userId===staffF);
+  filtered=filtered.slice(-200).reverse();
+  const el=document.getElementById('attLogTable');
+  if(!el)return;
+  if(!filtered.length){el.innerHTML='<div style="text-align:center;color:var(--text3);padding:20px">No attendance records found</div>';return;}
+  el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Staff</th><th>Location</th><th>Clock In</th><th>Clock Out</th><th>Hours</th><th>Status</th></tr></thead><tbody>
+  ${filtered.map(l=>{
+    const u=users.find(x=>x.id===l.userId);
+    const cin=l.clockIn?new Date(l.clockIn):null;
+    const cout=l.clockOut?new Date(l.clockOut):null;
+    const hrs=cin&&cout?((cout-cin)/3600000).toFixed(1):'-';
+    const status=l.clockOut?'<span class="badge badge-green">Complete</span>':'<span class="badge badge-orange">In Progress</span>';
+    return `<tr><td style="font-weight:700">${u?.name||l.userId}</td><td style="font-size:11px">${l.locCode||'-'}</td><td style="font-size:12px">${cin?cin.toLocaleString('en-IN',{hour12:true,hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'}):'-'}</td><td style="font-size:12px">${cout?cout.toLocaleString('en-IN',{hour12:true,hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'}):'-'}</td><td style="font-weight:700;color:var(--gold)">${hrs}</td><td>${status}</td></tr>`;
+  }).join('')}</tbody></table></div>`;
+  // Today summary
+  const today=new Date().toISOString().slice(0,10);
+  const todayLogs=logs.filter(l=>l.clockIn?.startsWith(today));
+  const sumEl=document.getElementById('attSummaryToday');
+  if(sumEl)sumEl.innerHTML=`Clocked in today: <strong>${todayLogs.length}</strong> sessions &nbsp;|&nbsp; Active now: <strong>${todayLogs.filter(l=>!l.clockOut).length}</strong> &nbsp;|&nbsp; Completed: <strong>${todayLogs.filter(l=>l.clockOut).length}</strong>`;
+}
+function exportAttendanceCSV(){
+  const logs=DB.get('attendanceLog')||[];
+  const users=DB.get('users')||[];
+  const rows=[['Staff','UserID','Location','Clock In','Clock Out','Hours','Status']];
+  logs.forEach(l=>{
+    const u=users.find(x=>x.id===l.userId);
+    const cin=l.clockIn?new Date(l.clockIn):null;
+    const cout=l.clockOut?new Date(l.clockOut):null;
+    const hrs=cin&&cout?((cout-cin)/3600000).toFixed(1):'';
+    rows.push([u?.name||l.userId,l.userId,l.locCode||'',l.clockIn||'',l.clockOut||'',hrs,l.clockOut?'Complete':'In Progress']);
+  });
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='arama_attendance_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+// ══════════════════════════════════════════════
+// ADD SERVICE MODAL (for Services config tab)
+// ══════════════════════════════════════════════
+function openAddServiceModal(){
+  openModal('Add New Service',`
+  <div class="form-group"><label>Service Name</label><input class="form-control" id="ns_name" placeholder="e.g. Neck & Shoulder Massage"></div>
+  <div class="form-group"><label>Type</label><select class="form-control" id="ns_type"><option value="service">Service</option><option value="combo">Combo</option><option value="pass">Pass</option><option value="product">Product</option></select></div>
+  <div class="form-group"><label>Equipment ID (e.g. 1A, 1B)</label><input class="form-control" id="ns_equip" placeholder="1A"></div>
+  <div class="form-group"><label>Base Price (₹ for 30 min or flat)</label><input type="number" class="form-control" id="ns_price" placeholder="299"></div>
+  <div class="form-group"><label>Image URL (optional)</label><input class="form-control" id="ns_img" placeholder="https://..."></div>
+  <div class="form-group"><label>Active</label><input type="checkbox" id="ns_active" checked style="width:18px;height:18px;margin-top:4px"></div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+   <button class="btn btn-accent" onclick="saveNewService()">Add Service</button>`);
+}
+function saveNewService(){
+  const name=(document.getElementById('ns_name')?.value||'').trim();
+  const type=document.getElementById('ns_type')?.value||'service';
+  const equip=document.getElementById('ns_equip')?.value||'';
+  const price=parseInt(document.getElementById('ns_price')?.value||0);
+  const img=(document.getElementById('ns_img')?.value||'').trim();
+  const active=document.getElementById('ns_active')?.checked!==false;
+  if(!name){toast('Enter service name','error');return;}
+  const services=DB.get('services')||[];
+  const id='svc_'+Date.now();
+  const durations=[{min:10,price:Math.round(price*0.4)},{min:15,price:Math.round(price*0.55)},{min:20,price:Math.round(price*0.7)},{min:30,price}];
+  services.push({id,name,type,equipment:equip,durations,price,active,imageUrl:img||undefined});
+  DB.set('services',services);
+  closeModal();toast('Service "'+name+'" added','success');
+  renderConfig();
+}
+function exportServicesCSV(){
+  const services=DB.get('services')||[];
+  const rows=[['ID','Name','Type','Equipment','Price 10min','Price 15min','Price 20min','Price 30min','Active','Image URL']];
+  services.forEach(s=>{
+    const d=s.durations||[];
+    rows.push([s.id,s.name,s.type||'service',s.equipment||'',...[10,15,20,30].map(m=>{const dd=d.find(x=>x.min===m);return dd?dd.price:''}),s.active?'Yes':'No',s.imageUrl||'']);
+  });
+  const csv=rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='arama_services_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+// ══════════════════════════════════════════════
+// ADMIN — VENDOR REQUESTS PANEL
+// ══════════════════════════════════════════════
+function renderVendorRequests(){
+  const reqs=DB.get('vendorRequests')||[];
+  if(!reqs.length){return '<div class="alert alert-info">No vendor requests yet.</div>';}
+  return `<div class="table-wrap"><table><thead><tr><th>Vendor</th><th>Item/Service</th><th>Amount</th><th>Invoice#</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+  ${reqs.slice().reverse().map(r=>`<tr>
+    <td style="font-weight:700">${r.vendorName||r.vendorId}</td>
+    <td>${r.item}</td>
+    <td style="font-weight:700;color:var(--gold)">₹${r.amount?.toLocaleString('en-IN')||0}</td>
+    <td style="font-size:11px">${r.invNo||'-'}</td>
+    <td style="font-size:11px">${r.createdAt?new Date(r.createdAt).toLocaleDateString('en-IN'):'-'}</td>
+    <td><span class="badge ${r.status==='approved'?'badge-green':r.status==='rejected'?'badge-red':'badge-orange'}">${r.status}</span></td>
+    <td style="display:flex;gap:4px">
+      ${r.status==='pending'?`<button class="btn btn-green btn-sm" onclick="approveVendorReq('${r.id}')">✓ Approve</button><button class="btn btn-red btn-sm" onclick="rejectVendorReq('${r.id}')">✗ Reject</button>`:'<span style="color:var(--text3);font-size:11px">Processed</span>'}
+    </td>
+  </tr>`).join('')}</tbody></table></div>`;
+}
+function approveVendorReq(id){
+  const reqs=DB.get('vendorRequests')||[];
+  const r=reqs.find(x=>x.id===id);if(!r)return;
+  r.status='approved';r.processedAt=new Date().toISOString();r.processedBy=currentSession?.name||'Admin';
+  DB.set('vendorRequests',reqs);
+  toast('Vendor request approved','success');
+  // Refresh vendor panel if open
+  const el=document.getElementById('vendorReqPanel');if(el)el.innerHTML=renderVendorRequests();
+}
+function rejectVendorReq(id){
+  const reason=prompt('Reason for rejection (optional):');
+  const reqs=DB.get('vendorRequests')||[];
+  const r=reqs.find(x=>x.id===id);if(!r)return;
+  r.status='rejected';r.processedAt=new Date().toISOString();r.processedBy=currentSession?.name||'Admin';
+  if(reason)r.rejectReason=reason;
+  DB.set('vendorRequests',reqs);
+  toast('Vendor request rejected','error');
+  const el=document.getElementById('vendorReqPanel');if(el)el.innerHTML=renderVendorRequests();
+}
+
+
 function renderUsers(){
   const users=DB.get('users')||[];
   const pending=DB.get('staffPending')||[];
+  const isSA=hasRole('superadmin');
+  const isAdmin=hasRole('superadmin','admin');
   document.getElementById('usersContent').innerHTML=`
-  <div class="tabs"><button class="tab-btn active" onclick="switchUsersTab(this,'uActive')">Active Users (${users.filter(u=>u.active).length})</button>
-    <button class="tab-btn" onclick="switchUsersTab(this,'uInactive')">Inactive (${users.filter(u=>!u.active).length})</button>
-    <button class="tab-btn" onclick="switchUsersTab(this,'uPending')">Pending Approval (${pending.length})</button>
-  </div>
-  <div id="uActive">
-  <div class="search-bar"><input type="text" class="search-input" id="userSearch" placeholder="Search users..." oninput="filterUsers()">
-    <select class="search-input" id="roleFilter" style="max-width:140px" onchange="filterUsers()">
-      <option value="">All Roles</option>
+  <!-- BULK ACTION BAR -->
+  <div id="bulkBar" style="display:none;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;flex-wrap:wrap;align-items:center;gap:8px">
+    <span id="bulkCount" style="font-weight:700;color:#a78bfa;font-size:13px;min-width:80px">0 selected</span>
+    <button class="btn btn-green btn-sm" onclick="bulkUserAction('activate')">✓ Activate</button>
+    <button class="btn btn-red btn-sm" onclick="bulkUserAction('deactivate')">✗ Deactivate</button>
+    <select id="bulkRoleSel" style="padding:4px 8px;border-radius:6px;background:var(--card2);color:var(--text);border:1px solid rgba(255,255,255,.1);font-size:12px">
       ${ROLES.filter(r=>r!=='customer').map(r=>`<option value="${r}">${ROLE_LABELS[r]}</option>`).join('')}
     </select>
+    <button class="btn btn-outline btn-sm" onclick="bulkUserAction('role')">→ Set Role</button>
+    <select id="bulkLocSel" style="padding:4px 8px;border-radius:6px;background:var(--card2);color:var(--text);border:1px solid rgba(255,255,255,.1);font-size:12px">
+      <option value="">Assign Location…</option>
+      ${(DB.get('locations')||[]).map(l=>`<option value="${l.code}">${l.name}</option>`).join('')}
+    </select>
+    <button class="btn btn-outline btn-sm" onclick="bulkUserAction('location')">→ Assign</button>
+    ${isSA?`<button class="btn btn-red btn-sm" style="opacity:.8" onclick="bulkUserAction('delete')">🗑 Delete All</button>`:''}
+    <button class="btn btn-outline btn-sm" onclick="clearBulkSel()">✕ Clear</button>
   </div>
-  <div class="table-wrap card">
-    <table id="usersTable"><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Phone</th><th>Locations</th><th>Status</th><th>Actions</th></tr></thead>
-    <tbody>${users.filter(u=>u.active).map(u=>`<tr>
-      <td><div style="font-weight:700">${u.name}</div><div style="font-size:11px;color:var(--text3)">${u.email||'-'}</div></td>
-      <td><code>${u.username}</code></td>
-      <td><span class="badge badge-purple">${ROLE_LABELS[u.role]}</span></td>
-      <td>${u.phone||'-'}</td>
-      <td style="font-size:11px">${u.locations?.length>0?u.locations.join(', '):'All'}</td>
-      <td><span class="badge ${u.active?'badge-green':'badge-red'}">${u.active?'Active':'Inactive'}</span></td>
-      <td><div style="display:flex;gap:4px">
-        <button class="btn btn-outline btn-sm" onclick="openEditUser('${u.id}')">Edit</button>
-        <button class="btn btn-accent btn-sm" onclick="resetUserPassword('${u.id}')">Reset Pwd</button>
-        <button class="btn btn-red btn-sm" onclick="deactivateUser('${u.id}')">Deactivate</button>
-        ${hasRole('superadmin')?`<button class="btn btn-red btn-sm" style="opacity:.7" onclick="deleteUser('${u.id}')">Delete</button>`:""}
-      </div></td>
-    </tr>`).join('')}</tbody></table>
-  </div></div>
+
+  <!-- TABS + ADD BUTTON -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchUsersTab(this,'uActive')">Active (${users.filter(u=>u.active).length})</button>
+      <button class="tab-btn" onclick="switchUsersTab(this,'uInactive')">Inactive (${users.filter(u=>!u.active).length})</button>
+      <button class="tab-btn" onclick="switchUsersTab(this,'uPending')">Pending (${pending.length}${pending.length>0?' 🔴':''})</button>
+      <button class="tab-btn" onclick="switchUsersTab(this,'uVendorReqs');document.getElementById('vendorReqPanel').innerHTML=renderVendorRequests()">Vendor Requests ${(DB.get('vendorRequests')||[]).filter(r=>r.status==='pending').length>0?'🔴':''}</button>
+    </div>
+    ${isAdmin?`<div style="display:flex;gap:6px">
+      <button class="btn btn-outline btn-sm" onclick="openBulkAddUsers()">⬆ Import Users</button>
+      <button class="btn btn-accent btn-sm" onclick="openAddUser()">+ Add User</button>
+    </div>`:''}
+  </div>
+
+  <!-- ACTIVE TAB -->
+  <div id="uActive">
+    <div class="search-bar" style="margin-bottom:10px">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2)">
+        <input type="checkbox" id="selAllActive" onchange="toggleSelectAll('u-cb',this.checked)" style="width:15px;height:15px"> Select All
+      </label>
+      <input type="text" class="search-input" id="userSearch" placeholder="Search users..." oninput="filterUsers()">
+      <select class="search-input" id="roleFilter" style="max-width:140px" onchange="filterUsers()">
+        <option value="">All Roles</option>
+        ${ROLES.filter(r=>r!=='customer').map(r=>`<option value="${r}">${ROLE_LABELS[r]}</option>`).join('')}
+      </select>
+    </div>
+    <div class="table-wrap card">
+      <table id="usersTable">
+        <thead><tr><th style="width:30px"></th><th>Name</th><th>Username</th><th>Role</th><th>Phone</th><th>Locations</th><th>Actions</th></tr></thead>
+        <tbody>${users.filter(u=>u.active).map(u=>`<tr>
+          <td><input type="checkbox" class="u-cb" value="${u.id}" onchange="updateBulkBar()"></td>
+          <td><div style="font-weight:700">${u.name}</div><div style="font-size:11px;color:var(--text3)">${u.email||'-'}</div></td>
+          <td><code>${u.username}</code></td>
+          <td><span class="badge badge-purple">${ROLE_LABELS[u.role]}</span></td>
+          <td>${u.phone||'-'}</td>
+          <td style="font-size:11px">${u.locations?.length>0?u.locations.slice(0,3).join(', ')+(u.locations.length>3?' +'+(u.locations.length-3)+'…':''):'All'}</td>
+          <td><div style="display:flex;gap:3px;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" onclick="openEditUser('${u.id}')">Edit</button>
+            <button class="btn btn-accent btn-sm" onclick="resetUserPassword('${u.id}')">Pwd</button>
+            <button class="btn btn-red btn-sm" onclick="deactivateUser('${u.id}')">Deactivate</button>
+            ${isSA?`<button class="btn btn-red btn-sm" style="opacity:.6" onclick="deleteUser('${u.id}')">Del</button>`:''}
+          </div></td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- INACTIVE TAB -->
   <div id="uInactive" style="display:none">
-    <div class="table-wrap card"><table><thead><tr><th>Name</th><th>Role</th><th>Reason</th><th>Actions</th></tr></thead>
-    <tbody>${users.filter(u=>!u.active).map(u=>`<tr>
-      <td>${u.name}</td><td>${ROLE_LABELS[u.role]}</td><td>${u.deactivateReason||'-'}</td>
-      <td><div style="display:flex;gap:4px"><button class="btn btn-green btn-sm" onclick="reactivateUser('${u.id}')">Reactivate</button>${hasRole('superadmin')?`<button class="btn btn-red btn-sm" style="opacity:.7" onclick="deleteUser('${u.id}')">Delete</button>`:""}</div></td>
-    </tr>`).join('')}</tbody></table></div>
+    <div class="table-wrap card">
+      <table><thead><tr><th style="width:30px"></th><th>Name</th><th>Role</th><th>Reason</th><th>Actions</th></tr></thead>
+      <tbody>${users.filter(u=>!u.active).map(u=>`<tr>
+        <td><input type="checkbox" class="u-cb" value="${u.id}" onchange="updateBulkBar()"></td>
+        <td>${u.name}<br><span style="font-size:11px;color:var(--text3)">${u.phone||''}</span></td>
+        <td>${ROLE_LABELS[u.role]}</td>
+        <td style="font-size:12px">${u.deactivateReason||'-'}</td>
+        <td><div style="display:flex;gap:4px">
+          <button class="btn btn-green btn-sm" onclick="reactivateUser('${u.id}')">Reactivate</button>
+          ${isSA?`<button class="btn btn-red btn-sm" onclick="deleteUser('${u.id}')">Delete</button>`:''}
+        </div></td>
+      </tr>`).join('')}</tbody>
+      </table>
+    </div>
   </div>
+
+  <!-- PENDING TAB -->
   <div id="uPending" style="display:none">
-    ${pending.length===0?'<div class="alert alert-info">No pending applications</div>':''}
+    ${pending.length===0?'<div class="alert alert-info">No pending staff registrations</div>':''}
     ${pending.map((p,i)=>`<div class="card" style="margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <div><div style="font-weight:700">${p.firstName} ${p.lastName}</div>
-          <div style="font-size:12px;color:var(--text2)">${p.phone} · ${p.email} · Applied for: ${p.position||'Staff'}</div>
+        <div>
+          <div style="font-weight:700;font-size:15px">${p.firstName} ${p.lastName}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">📱 ${p.phone} · 📧 ${p.email}</div>
+          <div style="font-size:12px;color:var(--text2)">Position: ${p.position||'Staff'} · Applied: ${p.createdAt?new Date(p.createdAt).toLocaleDateString('en-IN'):'-'}</div>
         </div>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;gap:8px;align-items:flex-start">
           <button class="btn btn-green btn-sm" onclick="approveStaff(${i})">✓ Approve</button>
           <button class="btn btn-red btn-sm" onclick="rejectStaff(${i})">✕ Reject</button>
         </div>
       </div>
     </div>`).join('')}
+  </div>
+
+  <!-- VENDOR REQUESTS TAB -->
+  <div id="uVendorReqs" style="display:none">
+    <div class="card" style="margin-bottom:10px">
+      <div style="font-weight:700;margin-bottom:8px">📋 Vendor Invoice Requests</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Review and approve/reject vendor invoice submissions from franchise kiosks.</div>
+      <div id="vendorReqPanel">${renderVendorRequests()}</div>
+    </div>
   </div>`;
 }
+// Bulk user helpers
+function updateBulkBar(){
+  const sel=document.querySelectorAll('.u-cb:checked');
+  const bar=document.getElementById('bulkBar');
+  const cnt=document.getElementById('bulkCount');
+  if(!bar)return;
+  bar.style.display=sel.length?'flex':'none';
+  if(cnt)cnt.textContent=sel.length+' selected';
+}
+function toggleSelectAll(cls,checked){
+  document.querySelectorAll('.'+cls).forEach(cb=>{cb.checked=checked;});
+  updateBulkBar();
+}
+function clearBulkSel(){
+  document.querySelectorAll('.u-cb').forEach(cb=>{cb.checked=false;});
+  const sa=document.getElementById('selAllActive');if(sa)sa.checked=false;
+  updateBulkBar();
+}
+function bulkUserAction(action){
+  const ids=[...document.querySelectorAll('.u-cb:checked')].map(cb=>cb.value);
+  if(!ids.length){toast('Select at least one user','error');return;}
+  const users=DB.get('users')||[];
+  if(action==='delete'){
+    if(!confirm('PERMANENTLY DELETE '+ids.length+' users? Cannot be undone!'))return;
+    DB.set('users',users.filter(u=>!ids.includes(u.id)));
+    renderUsers();toast(ids.length+' users deleted','error');return;
+  }
+  if(action==='activate'){
+    ids.forEach(id=>{const i=users.findIndex(u=>u.id===id);if(i>=0){users[i].active=true;delete users[i].deactivateReason;}});
+    DB.set('users',users);renderUsers();toast(ids.length+' users activated','success');return;
+  }
+  if(action==='deactivate'){
+    if(!confirm('Deactivate '+ids.length+' users?'))return;
+    ids.forEach(id=>{const i=users.findIndex(u=>u.id===id);if(i>=0){users[i].active=false;users[i].deactivateReason='Bulk deactivation';}});
+    DB.set('users',users);renderUsers();toast(ids.length+' users deactivated','success');return;
+  }
+  if(action==='role'){
+    const role=document.getElementById('bulkRoleSel')?.value;
+    if(!role)return;
+    ids.forEach(id=>{const i=users.findIndex(u=>u.id===id);if(i>=0)users[i].role=role;});
+    DB.set('users',users);renderUsers();toast('Role set to '+ROLE_LABELS[role]+' for '+ids.length+' users','success');return;
+  }
+  if(action==='location'){
+    const loc=document.getElementById('bulkLocSel')?.value;
+    if(!loc)return;
+    ids.forEach(id=>{const i=users.findIndex(u=>u.id===id);if(i>=0){if(!users[i].locations.includes(loc))users[i].locations.push(loc);}});
+    DB.set('users',users);renderUsers();toast('Location assigned to '+ids.length+' users','success');return;
+  }
+}
+function openBulkAddUsers(){
+  openModal('Bulk Import Users',`
+  <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Paste CSV data: name,username,password,role,phone,email (one per line)</div>
+  <textarea class="form-control" id="bulkUserCSV" rows="8" placeholder="John Doe,johndoe,Pass@123,staff,9000000001,john@arama.asia&#10;Jane Smith,janesmith,Pass@123,manager,9000000002,jane@arama.asia"></textarea>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+   <button class="btn btn-accent" onclick="processBulkUserImport()">Import</button>`);
+}
+function processBulkUserImport(){
+  const csv=document.getElementById('bulkUserCSV').value.trim();
+  if(!csv)return;
+  const users=DB.get('users')||[];
+  let added=0,skipped=0;
+  csv.split('\n').forEach(line=>{
+    const [name,username,password,role,phone,email]=line.split(',').map(s=>s.trim());
+    if(!name||!username||!password)return skipped++;
+    if(users.find(u=>u.username===username))return skipped++;
+    users.push({id:'u'+Date.now()+'_'+Math.random().toString(36).slice(2),username,password,name,role:role||'staff',phone:phone||'',email:email||'',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{}});
+    added++;
+  });
+  DB.set('users',users);closeModal();renderUsers();
+  toast('Imported '+added+' users'+(skipped?' ('+skipped+' skipped)':''),'success');
+}
 function switchUsersTab(btn,id){
-  ['uActive','uInactive','uPending'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
+  ['uActive','uInactive','uPending','uVendorReqs'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
   document.getElementById(id).style.display='block';
   document.querySelectorAll('.tabs .tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -1893,6 +2290,7 @@ function reactivateUser(id){
   const idx=users.findIndex(u=>u.id===id);
   if(idx>=0){users[idx].active=true;delete users[idx].deactivateReason;DB.set('users',users);renderUsers();toast('User reactivated','success');}
 }
+function viewStaffPerf(uid){renderStaffPerformance(uid);}
 function approveStaff(idx){
   const pending=DB.get('staffPending')||[];
   const app=pending[idx];
@@ -1955,6 +2353,7 @@ function renderHRMS(){
   document.getElementById('hrmsContent').innerHTML=`
   <div class="tabs"><button class="tab-btn active" onclick="hrmsTab(this,'hrmsStaff')">Staff</button>
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsPayroll')">Payroll</button>
+    <button class="tab-btn" onclick="hrmsTab(this,'hrmsAttendance');renderAttendanceLog()">Attendance</button>
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsCompliance')">Compliance</button>
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsTrainingTab')">Training</button>
   </div>
@@ -1972,8 +2371,25 @@ function renderHRMS(){
         <td>${u.phone||'-'}</td>
         <td style="font-size:11px">${u.locations?.join(', ')||'All'}</td>
         ${['aadhaar','pv','medical','uniform','icard'].map(k=>`<td>${c[k]?'<span class="badge badge-green">✓</span>':'<span class="badge badge-red">✗</span>'}`).join('')}
-        <td><button class="btn btn-accent btn-sm" onclick="openStaffCompliance('${u.id}')">Manage</button></td>
+        <td style="display:flex;gap:4px"><button class="btn btn-accent btn-sm" onclick="openStaffCompliance('${u.id}')">Compliance</button><button class="btn btn-outline btn-sm" onclick="viewStaffPerf('${u.id}')">📊 Perf</button><button class="btn btn-outline btn-sm" onclick="openEditUser('${u.id}')">✏️</button></td>
       </tr>`;}).join('')}</tbody></table>
+    </div>
+  </div>
+  <div id="hrmsAttendance" style="display:none">
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-weight:700;margin-bottom:10px">📅 Attendance Log</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <input type="date" id="attDateFilter" class="form-control" style="width:160px" oninput="renderAttendanceLog()">
+        <select id="attStaffFilter" class="form-control" style="width:200px" onchange="renderAttendanceLog()">
+          <option value="">All Staff</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="exportAttendanceCSV()">📥 Export CSV</button>
+      </div>
+      <div id="attLogTable"></div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:10px">📊 Today's Summary</div>
+      <div id="attSummaryToday" style="font-size:13px;color:var(--text2)">Loading…</div>
     </div>
   </div>
   <div id="hrmsPayroll" style="display:none">
@@ -2021,7 +2437,7 @@ function renderHRMS(){
   </div>`;
 }
 function hrmsTab(btn,id){
-  ['hrmsStaff','hrmsPayroll','hrmsCompliance','hrmsTrainingTab'].forEach(t=>{
+  ['hrmsStaff','hrmsPayroll','hrmsAttendance','hrmsCompliance','hrmsTrainingTab'].forEach(t=>{
     const e=document.getElementById(t);if(e)e.style.display='none';
   });
   document.getElementById(id).style.display='block';
@@ -2836,6 +3252,12 @@ function renderConfig(){
   </div>
 
   <div id="cfgServices" style="display:none">
+    <div class="card" style="margin-bottom:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div style="font-weight:700;font-size:15px;flex:1">🛍️ Service Management</div>
+      <button class="btn btn-accent btn-sm" onclick="openAddServiceModal()">+ Add Service</button>
+      <button class="btn btn-outline btn-sm" onclick="openFetchPrices()">🌐 Fetch Prices from arama.asia</button>
+      <button class="btn btn-outline btn-sm" onclick="exportServicesCSV()">📥 Export CSV</button>
+    </div>
     <div class="card" style="margin-bottom:12px">
       <div style="font-weight:700;margin-bottom:10px">🏷️ Bulk Discount Publisher</div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -2905,11 +3327,23 @@ function renderConfig(){
         <button class="btn btn-outline" onclick="saveToDrive().then(()=>toast('Saved to Drive','success'))">⬆️ Force Sync Now</button>
         <button class="btn btn-outline" onclick="loadFromDrive().then(r=>r?toast('Loaded from Drive','success'):toast('No Drive data found','error'))">⬇️ Load from Drive</button>
       </div>
+      <div class="card" style="margin-top:16px;border:1px solid rgba(16,185,129,.2);background:rgba(16,185,129,.05)">
+        <div style="font-weight:700;font-size:14px;margin-bottom:8px">📊 Location-wise Google Sheets Log</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:10px">
+          Every transaction from every kiosk is automatically appended to one Google Sheet — each location gets its own tab.
+          No location can ever overwrite another's data. Admin can view all 33 locations in one spreadsheet.
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-green btn-sm" onclick="openSheetsLog()">📊 Open Sheets Log</button>
+          <button class="btn btn-outline btn-sm" onclick="getSheetsId().then(id=>id?toast('Sheet ID: '+id,'success'):toast('Connect Drive first','error'))">Create Sheet (first time)</button>
+        </div>
+        <div id="sheetsStatusLine" style="margin-top:8px;font-size:12px;color:var(--text3)">Loading…</div>
+      </div>
       <div style="background:var(--bg3);border-radius:10px;padding:16px;margin-top:16px">
         <div style="font-weight:700;margin-bottom:10px;font-size:13px">📋 One-time Setup (5 min)</div>
         <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
           <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">1</span><span>Go to <a href="https://console.cloud.google.com" target="_blank" style="color:var(--accent3)">console.cloud.google.com</a> → New Project → name: <b>arama-wellness</b></span></div>
-          <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">2</span><span>APIs &amp; Services → Enable APIs → search <b>Google Drive API</b> → Enable</span></div>
+          <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">2</span><span>APIs &amp; Services → Enable APIs → enable both <b>Google Drive API</b> and <b>Google Sheets API</b></span></div>
           <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">3</span><span>OAuth consent screen → External → App name: <b>ārāma OS</b> → add <b>aramaasia@gmail.com</b> as test user</span></div>
           <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">4</span><span>Credentials → Create Credentials → <b>OAuth 2.0 Client ID</b> → Web application</span></div>
           <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">5</span><span>Authorised JS origins: <b>https://aramaoperations.github.io</b> and <b>http://localhost</b></span></div>
@@ -2928,6 +3362,8 @@ function updateDriveStatusLine(){
   el.textContent=labels[syncState]||'Unknown';
   const inp=document.getElementById('cfg_gcid');
   if(inp)inp.value=cid;
+  const sl=document.getElementById('sheetsStatusLine');
+  if(sl)sl.textContent=sheetsId?'✅ Sheet connected — ID: '+sheetsId.substring(0,20)+'…':'⚪ Not yet created — click "Create Sheet" after connecting Drive';
 }
 
 function cfgTab(btn,id){
@@ -2936,6 +3372,7 @@ function cfgTab(btn,id){
   document.querySelectorAll('#configContent .tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
+function openFetchPrices(){fetchAramaPrices();}
 function applyBulkDiscount(){
   const pct=parseFloat(document.getElementById('bulk_disc_pct').value)||0;
   if(pct<=0||pct>100){toast('Enter a valid discount % (1-100)','error');return;}
@@ -3220,7 +3657,7 @@ function renderProfile(){
       <div class="form-group"><label>Email</label><input type="email" class="form-control" id="pf_email" value="${u.email||''}"></div>
       <div class="form-group"><label>New Password (leave blank to keep)</label><input type="password" class="form-control" id="pf_pass"></div>
       <button class="btn btn-accent" onclick="saveProfile()">Save Profile</button>
-      <button id="syncBtn" class="sync-btn offline" onclick="requestDriveAccess()" title="Sync to Google Drive"><span class="dot"></span><span id="syncLabel">Drive</span></button><button class="btn btn-red" style="margin-left:8px" onclick="doLogout()">Sign Out</button>
+      <button id="attendanceBtn" onclick="clockIn()" style="margin-right:8px;padding:5px 10px;border-radius:8px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.1);color:#6ee7b7;font-size:11px;cursor:pointer;font-weight:600">⏱ Clock In</button><button id="syncBtn" class="sync-btn offline" onclick="requestDriveAccess()" title="Sync to Google Drive"><span class="dot"></span><span id="syncLabel">Drive</span></button><button class="btn btn-red" style="margin-left:8px" onclick="doLogout()">Sign Out</button>
     </div>
     <div class="card">
       <div style="font-weight:700;margin-bottom:14px">📊 My Activity</div>
@@ -3560,6 +3997,311 @@ document.addEventListener('DOMContentLoaded',()=>{
   console.log('%c ārāma Wellness OS v8.3 loaded','color:#c084fc;font-size:14px;font-weight:bold;');
   console.log('%c Build: '+new Date().toISOString().split('T')[0],'color:#a78bfa;font-size:11px;');
 });
+
+
+// ══════════════════════════════════════════════
+// STAFF ATTENDANCE & PERFORMANCE
+// ══════════════════════════════════════════════
+function clockIn(){
+  const s=currentSession;
+  if(!s)return;
+  const log=DB.get('attendanceLog')||[];
+  const today=new Date().toDateString();
+  const alreadyIn=log.find(e=>e.userId===s.id&&e.type==='in'&&new Date(e.time).toDateString()===today&&!log.find(o=>o.userId===s.id&&o.type==='out'&&new Date(o.time)>new Date(e.time)));
+  if(alreadyIn){toast('Already clocked in today. Clock out first.','info');return;}
+  log.push({id:'atd'+Date.now(),userId:s.id,userName:s.name,locCode:activeLocation?.code||'',locName:activeLocation?.name||'',type:'in',time:new Date().toISOString()});
+  DB.set('attendanceLog',log);
+  toast('✅ Clocked IN at '+new Date().toLocaleTimeString('en-IN'),'success');
+  updateAttendanceBtn();
+}
+function clockOut(){
+  const s=currentSession;
+  if(!s)return;
+  const log=DB.get('attendanceLog')||[];
+  const today=new Date().toDateString();
+  const lastIn=log.slice().reverse().find(e=>e.userId===s.id&&e.type==='in'&&new Date(e.time).toDateString()===today);
+  if(!lastIn){toast('You have not clocked in today','error');return;}
+  log.push({id:'atd'+Date.now(),userId:s.id,userName:s.name,locCode:activeLocation?.code||'',locName:activeLocation?.name||'',type:'out',time:new Date().toISOString()});
+  DB.set('attendanceLog',log);
+  const hrs=((Date.now()-new Date(lastIn.time))/3600000).toFixed(1);
+  toast('👋 Clocked OUT — '+hrs+' hrs worked','success');
+  updateAttendanceBtn();
+}
+function updateAttendanceBtn(){
+  const btn=document.getElementById('attendanceBtn');
+  if(!btn||!currentSession)return;
+  const log=DB.get('attendanceLog')||[];
+  const today=new Date().toDateString();
+  const logs=log.filter(e=>e.userId===currentSession.id&&new Date(e.time).toDateString()===today);
+  const lastEntry=logs[logs.length-1];
+  const inNow=lastEntry?.type==='in';
+  btn.textContent=inNow?'🟢 Clock Out':'⏱ Clock In';
+  btn.onclick=inNow?clockOut:clockIn;
+  btn.style.background=inNow?'rgba(239,68,68,.15)':'rgba(16,185,129,.15)';
+}
+function renderStaffPerformance(userId){
+  const u=(DB.get('users')||[]).find(x=>x.id===userId)||currentSession;
+  if(!u)return;
+  const txns=DB.get('transactions')||[];
+  const myTxns=txns.filter(t=>t.createdBy===u.name||t.createdBy===u.username);
+  const log=DB.get('attendanceLog')||[];
+  const myLog=log.filter(e=>e.userId===u.id);
+  // Calculate hours worked
+  let totalMins=0;
+  const days={};
+  myLog.filter(e=>e.type==='in').forEach(inE=>{
+    const outE=myLog.find(o=>o.type==='out'&&new Date(o.time)>new Date(inE.time)&&new Date(o.time).toDateString()===new Date(inE.time).toDateString());
+    if(outE){
+      const mins=(new Date(outE.time)-new Date(inE.time))/60000;
+      totalMins+=mins;
+      days[new Date(inE.time).toDateString()]=(days[new Date(inE.time).toDateString()]||0)+mins;
+    }
+  });
+  const daysWorked=Object.keys(days).length;
+  const totalRev=myTxns.reduce((s,t)=>s+(t.total||t.amount||0),0);
+  const sessionCount=myTxns.filter(t=>t.type==='service').length;
+  openModal('📊 Performance — '+u.name,`
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+    <div style="background:rgba(124,58,237,.1);border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:28px;font-weight:800;color:var(--accent3)">${sessionCount}</div>
+      <div style="font-size:12px;color:var(--text2)">Sessions Done</div>
+    </div>
+    <div style="background:rgba(245,158,11,.1);border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:28px;font-weight:800;color:var(--gold)">₹${(totalRev/1000).toFixed(1)}K</div>
+      <div style="font-size:12px;color:var(--text2)">Revenue Generated</div>
+    </div>
+    <div style="background:rgba(16,185,129,.1);border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:28px;font-weight:800;color:var(--green)">${daysWorked}</div>
+      <div style="font-size:12px;color:var(--text2)">Days Worked</div>
+    </div>
+    <div style="background:rgba(59,130,246,.1);border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:28px;font-weight:800;color:#60a5fa">${(totalMins/60).toFixed(1)}h</div>
+      <div style="font-size:12px;color:var(--text2)">Total Hours Logged</div>
+    </div>
+  </div>
+  <div style="font-weight:700;margin-bottom:8px;font-size:13px">Recent Attendance (last 10)</div>
+  <div style="max-height:200px;overflow-y:auto">
+    ${myLog.slice(-10).reverse().map(e=>`
+    <div style="display:flex;justify-content:space-between;padding:6px 10px;border-radius:6px;margin-bottom:4px;background:rgba(${e.type==='in'?'16,185,129':'239,68,68'},.08)">
+      <span style="font-size:12px">${e.type==='in'?'🟢 Clock In':'🔴 Clock Out'} · ${e.locName||e.locCode||'-'}</span>
+      <span style="font-size:12px;color:var(--text2)">${new Date(e.time).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</span>
+    </div>`).join('')||'<div style="color:var(--text3);font-size:13px">No attendance records yet</div>'}
+  </div>`,
+  `<button class="btn btn-accent" onclick="closeModal()">Close</button>`);
+}
+
+// ══════════════════════════════════════════════
+// VENDOR PORTAL — render when vendor logs in
+// ══════════════════════════════════════════════
+function renderVendorDashboard(){
+  const s=currentSession;
+  const locs=DB.get('locations')||[];
+  const myLocs=locs.filter(l=>s.locations.includes(l.code));
+  const stock=DB.get('locationStock')||{};
+  const txns=DB.get('transactions')||[];
+  const vendorReqs=DB.get('vendorRequests')||[];
+  const myReqs=vendorReqs.filter(r=>r.vendorId===s.id);
+  document.getElementById('dashContent').innerHTML=`
+  <div style="margin-bottom:20px">
+    <div style="font-size:18px;font-weight:700">Vendor Portal — ${s.name}</div>
+    <div style="font-size:13px;color:var(--text2)">Assigned locations: ${myLocs.map(l=>l.name).join(', ')||'None assigned'}</div>
+  </div>
+  <div class="tabs" style="margin-bottom:16px">
+    <button class="tab-btn active" onclick="vendorTab(this,'vtStock')">📦 Stock Levels</button>
+    <button class="tab-btn" onclick="vendorTab(this,'vtInvoice')">🧾 Submit Invoice</button>
+    <button class="tab-btn" onclick="vendorTab(this,'vtRequests')">📋 My Requests (${myReqs.length})</button>
+    <button class="tab-btn" onclick="vendorTab(this,'vtSales')">📊 Location Sales</button>
+  </div>
+
+  <div id="vtStock">
+    ${myLocs.length===0?'<div class="alert alert-info">No locations assigned. Contact admin.</div>':
+    myLocs.map(l=>`
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-weight:700;margin-bottom:10px">${l.name} — Stock</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+        ${Object.entries(stock[l.code]||{chairs:l.chairs,legMassagers:0,gunStations:0}).map(([item,qty])=>`
+        <div style="background:rgba(124,58,237,.08);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:20px;font-weight:800;color:${qty<2?'var(--red)':'var(--green)'}">${qty}</div>
+          <div style="font-size:11px;color:var(--text2)">${item.replace(/([A-Z])/g,' $1').trim()}</div>
+        </div>`).join('')}
+      </div>
+    </div>`).join('')}
+  </div>
+
+  <div id="vtInvoice" style="display:none">
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:14px">Submit Delivery Invoice</div>
+      <div class="form-row">
+        <div class="form-group"><label>Location</label>
+          <select class="form-control" id="vLoc">${myLocs.map(l=>`<option value="${l.code}">${l.name}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Invoice Number</label><input class="form-control" id="vInvNo" placeholder="INV-001"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Item / Description</label><input class="form-control" id="vItem" placeholder="Massage chairs x2"></div>
+        <div class="form-group"><label>Amount (₹)</label><input type="number" class="form-control" id="vAmt" placeholder="25000"></div>
+      </div>
+      <div class="form-group"><label>Notes</label><textarea class="form-control" id="vNotes" rows="2" placeholder="Delivery details, condition notes…"></textarea></div>
+      <button class="btn btn-accent" onclick="submitVendorInvoice()" style="margin-top:8px">Submit Invoice</button>
+    </div>
+  </div>
+
+  <div id="vtRequests" style="display:none">
+    ${myReqs.length===0?'<div class="alert alert-info">No requests submitted yet</div>':
+    myReqs.map(r=>`<div class="card" style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between">
+        <div><div style="font-weight:700">${r.item}</div><div style="font-size:12px;color:var(--text2)">${r.invNo||''} · ₹${(r.amount||0).toLocaleString('en-IN')} · ${r.locCode}</div></div>
+        <span class="badge ${r.status==='approved'?'badge-green':r.status==='rejected'?'badge-red':'badge-purple'}">${r.status||'pending'}</span>
+      </div>
+      ${r.notes?`<div style="font-size:12px;color:var(--text2);margin-top:4px">${r.notes}</div>`:''}
+    </div>`).join('')}
+  </div>
+
+  <div id="vtSales" style="display:none">
+    ${myLocs.map(l=>{
+      const locTxns=txns.filter(t=>t.locCode===l.code);
+      const rev=locTxns.reduce((s,t)=>s+(t.total||t.amount||0),0);
+      return `<div class="card" style="margin-bottom:12px">
+        <div style="font-weight:700;margin-bottom:8px">${l.name}</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div><div style="font-size:22px;font-weight:800;color:var(--gold)">₹${(rev/1000).toFixed(1)}K</div><div style="font-size:11px;color:var(--text2)">Total Revenue</div></div>
+          <div><div style="font-size:22px;font-weight:800;color:var(--accent3)">${locTxns.length}</div><div style="font-size:11px;color:var(--text2)">Transactions</div></div>
+        </div>
+      </div>`;
+    }).join('')||'<div class="alert alert-info">No locations assigned</div>'}
+  </div>`;
+}
+function vendorTab(btn,id){
+  ['vtStock','vtInvoice','vtRequests','vtSales'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
+  document.getElementById(id).style.display='block';
+  document.querySelectorAll('.tabs .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function submitVendorInvoice(){
+  const item=document.getElementById('vItem')?.value.trim();
+  const amt=parseFloat(document.getElementById('vAmt')?.value||0);
+  const locCode=document.getElementById('vLoc')?.value;
+  const invNo=document.getElementById('vInvNo')?.value.trim();
+  const notes=document.getElementById('vNotes')?.value.trim();
+  if(!item||!locCode){toast('Fill in item and location','error');return;}
+  const reqs=DB.get('vendorRequests')||[];
+  reqs.push({id:'vr'+Date.now(),vendorId:currentSession.id,vendorName:currentSession.name,locCode,item,amount:amt,invNo,notes,status:'pending',createdAt:new Date().toISOString()});
+  DB.set('vendorRequests',reqs);
+  toast('Invoice submitted — awaiting admin approval','success');
+  renderVendorDashboard();
+}
+
+// ══════════════════════════════════════════════
+// COMBO AUTO-CALCULATION IN POS
+// ══════════════════════════════════════════════
+function calcComboSavings(cart,services){
+  // Find all combos in service catalogue
+  const combos=(services||DB.get('services')||[]).filter(s=>s.type==='combo'||s.isCombo);
+  let totalIndividual=0;
+  let totalCombo=0;
+  let savings=[];
+  cart.forEach(item=>{
+    const svc=(services||DB.get('services')||[]).find(s=>s.id===item.id);
+    if(svc&&(svc.type==='combo'||svc.isCombo)&&svc.includes?.length){
+      // Calculate individual price of component services
+      let indivTotal=0;
+      const included=svc.includes.map(inc=>{
+        const base=(services||DB.get('services')||[]).find(s=>s.id===inc||s.name===inc);
+        const price=base?.price||0;
+        indivTotal+=price;
+        return {name:base?.name||inc,price};
+      });
+      const save=indivTotal-item.price;
+      if(save>0){
+        savings.push({combo:item.name,items:included,individual:indivTotal,combo_price:item.price,saving:save,pct:Math.round(save/indivTotal*100)});
+      }
+    }
+  });
+  return savings;
+}
+function renderCartSavings(){
+  const services=DB.get('services')||[];
+  const savings=calcComboSavings(posCart,services);
+  const el=document.getElementById('cartSavingsBox');
+  if(!el)return;
+  if(!savings.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML=savings.map(s=>`
+  <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-weight:600;color:var(--green)">🎁 ${s.combo}</span>
+      <span style="font-weight:700;color:var(--green)">Save ₹${s.saving} (${s.pct}% off)</span>
+    </div>
+    <div style="color:var(--text3);margin-top:2px">${s.items.map(i=>i.name+' ₹'+i.price).join(' + ')} = ₹${s.individual} individually → <strong>₹${s.combo_price} combo</strong></div>
+  </div>`).join('');
+}
+
+// ══════════════════════════════════════════════
+// SERVICE IMAGES & PRICE FETCH FROM ARAMA.ASIA
+// ══════════════════════════════════════════════
+async function fetchAramaPrices(){
+  toast('Fetching prices from arama.asia…','info');
+  try{
+    const r=await fetch('https://www.arama.asia',{signal:AbortSignal.timeout(8000)});
+    const html=await r.text();
+    const parser=new DOMParser();
+    const doc=parser.parseFromString(html,'text/html');
+    // Try to find price elements — common patterns: .price, [class*="price"], data-price
+    const priceEls=[...doc.querySelectorAll('[class*="price"],[class*="Price"],[data-price]')];
+    const names=[...doc.querySelectorAll('[class*="service"],[class*="Service"],[class*="product"]')];
+    if(priceEls.length===0){toast('Could not auto-detect prices from website. Enter prices manually.','info');return;}
+    const extracted=priceEls.slice(0,20).map((el,i)=>({
+      rawText:el.textContent.trim(),
+      price:parseInt((el.textContent.match(/[\d,]+/)||[])[0]?.replace(',','')||0),
+      name:names[i]?.textContent.trim()||'Service '+(i+1)
+    })).filter(x=>x.price>0);
+    if(!extracted.length){toast('Prices found but could not parse. Please enter manually.','info');return;}
+    openModal('Prices from arama.asia',`
+    <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Found ${extracted.length} price entries. Review and import:</div>
+    <div style="max-height:300px;overflow-y:auto">
+      ${extracted.map((e,i)=>`<div style="display:flex;gap:8px;margin-bottom:6px;align-items:center">
+        <input type="checkbox" id="fp_${i}" checked style="width:15px;height:15px">
+        <input class="form-control" style="flex:2;padding:4px 8px;font-size:12px" value="${e.name}" id="fn_${i}">
+        <input type="number" class="form-control" style="width:90px;padding:4px 8px;font-size:12px" value="${e.price}" id="fp2_${i}">
+      </div>`).join('')}
+    </div>`,
+    `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-accent" onclick="applyFetchedPrices(${extracted.length})">Apply Selected</button>`);
+  }catch(e){
+    toast('Could not reach arama.asia — check internet or enter prices manually','error');
+    console.warn('Fetch error:',e);
+  }
+}
+function applyFetchedPrices(count){
+  const services=DB.get('services')||[];
+  let updated=0;
+  for(let i=0;i<count;i++){
+    const checked=document.getElementById('fp_'+i)?.checked;
+    if(!checked)continue;
+    const name=document.getElementById('fn_'+i)?.value.trim();
+    const price=parseInt(document.getElementById('fp2_'+i)?.value||0);
+    if(!name||!price)continue;
+    const idx=services.findIndex(s=>s.name.toLowerCase()===name.toLowerCase());
+    if(idx>=0){services[idx].price=price;updated++;}
+    else{services.push({id:'fs_'+Date.now()+'_'+i,name,price,type:'service',duration:30,active:true});updated++;}
+  }
+  DB.set('services',services);closeModal();
+  toast(updated+' service prices updated','success');
+}
+
+// Render service card with image in POS
+function renderServiceCard(s){
+  const img=s.imageUrl?`<img src="${s.imageUrl}" style="width:100%;height:60px;object-fit:cover;border-radius:6px 6px 0 0" onerror="this.style.display='none'" loading="lazy">`:'';
+  return `<div class="service-card" onclick="addToCart('${s.id}')">
+    ${img}
+    <div style="padding:${s.imageUrl?'6px 8px':'10px 8px'}">
+      <div style="font-weight:600;font-size:13px;margin-bottom:2px">${s.name}</div>
+      ${s.duration?`<div style="font-size:11px;color:var(--text3)">${s.duration} min</div>`:''}
+      <div style="font-weight:800;color:var(--gold);font-size:15px;margin-top:4px">₹${s.price}</div>
+      ${s.originalPrice&&s.originalPrice>s.price?`<div style="font-size:10px;color:var(--text3);text-decoration:line-through">₹${s.originalPrice}</div>`:''}
+    </div>
+  </div>`;
+}
 
 </script>
 </body>
