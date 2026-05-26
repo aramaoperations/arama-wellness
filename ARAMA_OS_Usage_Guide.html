@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ārāma Wellness OS — System Usage Guide</title>
+<style>
+  :root{--accent:#7c3aed;--gold:#f59e0b;--bg:#0f0820;--card:#1e1b4b;--text:#e2e8f0;--text2:#94a3b8;--green:#10b981;--red:#ef4444}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0}
+  header{background:linear-gradient(135deg,#1e1b4b,#0f0820);border-bottom:1px solid rgba(124,58,237,.3);padding:24px 40px;display:flex;align-items:center;gap:16px}
+  .brand{font-size:32px;font-weight:800;font-family:Georgia,serif;background:linear-gradient(135deg,#a78bfa,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .subtitle{color:var(--text2);font-size:13px;margin-top:2px}
+  .container{max-width:960px;margin:0 auto;padding:40px 24px}
+  .toc{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:12px;padding:20px 28px;margin-bottom:40px}
+  .toc h3{color:#a78bfa;margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:1px}
+  .toc ol{padding-left:18px}
+  .toc li{margin-bottom:4px;font-size:13px}
+  .toc a{color:#c4b5fd;text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  section{margin-bottom:48px}
+  h2{font-size:22px;font-weight:700;color:#e2e8f0;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(124,58,237,.2);display:flex;align-items:center;gap:10px}
+  h2 .num{width:32px;height:32px;background:var(--accent);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
+  h3{font-size:15px;font-weight:600;color:#c4b5fd;margin:20px 0 10px}
+  p{color:var(--text2);font-size:14px;margin-bottom:12px}
+  .card{background:rgba(30,27,75,.6);border:1px solid rgba(124,58,237,.15);border-radius:12px;padding:20px;margin-bottom:16px}
+  .cred-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+  .cred-table th{background:rgba(124,58,237,.15);padding:10px 14px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#a78bfa}
+  .cred-table td{padding:10px 14px;font-size:13px;border-top:1px solid rgba(124,58,237,.1)}
+  .cred-table tr:hover td{background:rgba(124,58,237,.05)}
+  code{background:rgba(124,58,237,.15);color:#c4b5fd;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge-purple{background:rgba(124,58,237,.2);color:#a78bfa}
+  .badge-green{background:rgba(16,185,129,.2);color:#6ee7b7}
+  .badge-gold{background:rgba(245,158,11,.2);color:#fcd34d}
+  .badge-red{background:rgba(239,68,68,.2);color:#fca5a5}
+  .step{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+  .step-num{width:28px;height:28px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+  .step-body{flex:1}
+  .step-body strong{display:block;font-size:14px;color:#e2e8f0;margin-bottom:2px}
+  .step-body span{font-size:13px;color:var(--text2)}
+  .alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:12px}
+  .alert-info{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
+  .alert-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#fcd34d}
+  .flow{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:16px 0}
+  .flow-box{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:#c4b5fd}
+  .flow-arrow{color:var(--text2);font-size:18px}
+  ul{padding-left:18px;margin-bottom:12px}
+  ul li{font-size:13px;color:var(--text2);margin-bottom:4px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:600px){.two-col{grid-template-columns:1fr}}
+  footer{text-align:center;padding:32px;color:var(--text2);font-size:12px;border-top:1px solid rgba(124,58,237,.2)}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">ārāma</div>
+    <div class="subtitle">Wellness OS v7.0 — Complete System Usage Guide</div>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="toc">
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#s1">Login & Access Control</a></li>
+    <li><a href="#s2">Staff Registration & Approval</a></li>
+    <li><a href="#s3">Dashboard & Reports</a></li>
+    <li><a href="#s4">POS — Point of Sale</a></li>
+    <li><a href="#s5">Token Queue System</a></li>
+    <li><a href="#s6">Locations Management</a></li>
+    <li><a href="#s7">Users & Roles Management</a></li>
+    <li><a href="#s8">HRMS — Staff Compliance</a></li>
+    <li><a href="#s9">Inventory / ERP</a></li>
+    <li><a href="#s10">Config — Services, Loyalty, Branding</a></li>
+    <li><a href="#s11">Google Drive Sync</a></li>
+    <li><a href="#s12">Quick Reference — All Default Passwords</a></li>
+  </ol>
+</div>
+
+<!-- ─────────────── S1 LOGIN ─────────────── -->
+<section id="s1">
+<h2><span class="num">1</span> Login & Access Control</h2>
+
+<h3>Logging In — Staff & Admin</h3>
+<div class="step"><div class="step-num">1</div><div class="step-body"><strong>Open ARAMA_OS_V7.html</strong><span>Double-click the file. It opens in your browser (Chrome recommended).</span></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body"><strong>Staff / Admin tab is selected by default</strong><span>Enter your username and password, then click "Sign In to Ops Portal".</span></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body"><strong>OTP Login (optional)</strong><span>Click the phone icon in "or continue with" to log in via mobile OTP instead of password.</span></div></div>
+
+<h3>Default Login Credentials</h3>
+<table class="cred-table">
+  <tr><th>Role</th><th>Username</th><th>Password</th><th>Access Level</th></tr>
+  <tr><td><span class="badge badge-red">Superadmin</span></td><td><code>superadmin</code></td><td><code>Arama@2026!</code></td><td>Full system — including delete user</td></tr>
+  <tr><td><span class="badge badge-purple">Admin</span></td><td><code>admin</code></td><td><code>Admin@123</code></td><td>All ops, users, config, reports</td></tr>
+  <tr><td><span class="badge badge-gold">Manager</span></td><td>Set by admin</td><td>Set at creation</td><td>Locations assigned, no user mgmt</td></tr>
+  <tr><td><span class="badge badge-green">Staff</span></td><td>Phone number</td><td>Temp password (from approval)</td><td>POS, queue, daily report, leads</td></tr>
+</table>
+
+<div class="alert alert-warn">⚠ Change the default admin password immediately after first login: Profile → Change Password.</div>
+
+<h3>Customer Login</h3>
+<p>Click the <strong>Customer</strong> tab. Enter mobile number → send OTP → enter OTP → access loyalty portal.</p>
+
+<h3>What Each Role Can Do</h3>
+<div class="two-col">
+  <div class="card">
+    <strong style="color:#a78bfa">Superadmin / Admin</strong>
+    <ul style="margin-top:8px">
+      <li>All pages including Config</li>
+      <li>Add / Edit / Reset Pwd / Deactivate users</li>
+      <li>Superadmin: also permanently Delete users</li>
+      <li>Approve/reject staff registrations</li>
+      <li>Bulk discount, Excel import</li>
+      <li>Google Drive sync setup</li>
+      <li>All locations</li>
+    </ul>
+  </div>
+  <div class="card">
+    <strong style="color:#fcd34d">Manager / Supervisor</strong>
+    <ul style="margin-top:8px">
+      <li>Dashboard, POS, Queue</li>
+      <li>Daily report for assigned locations</li>
+      <li>Leads management</li>
+      <li>View inventory</li>
+      <li>HRMS compliance for their team</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ─────────────── S2 STAFF REGISTRATION ─────────────── -->
+<section id="s2">
+<h2><span class="num">2</span> Staff Registration & Approval</h2>
+
+<h3>How a New Staff Member Registers</h3>
+<div class="flow">
+  <div class="flow-box">staff-register.html</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box">Fills registration form</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box">Saved to pending queue</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box">Admin approves in OS</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box">Password shown in modal</div>
+</div>
+
+<div class="step"><div class="step-num">1</div><div class="step-body"><strong>Staff opens staff-register.html</strong><span>This is a separate file. You can share the link or put it on the kiosk. On the main login screen there is also a "Register here" link.</span></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body"><strong>Staff fills in details</strong><span>Name, phone, email, position, location preference, ID proof, emergency contact.</span></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body"><strong>Admin reviews in OS → Users & Roles → Pending Approval tab</strong><span>Each application shows name, phone, email, position. Click ✓ Approve or ✕ Reject.</span></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body"><strong>Approval generates a temporary password</strong><span>A modal pops up showing the password clearly (e.g. <code>Staff@A1B2C3</code>). The username is the staff's phone number. Share via WhatsApp.</span></div></div>
+<div class="step"><div class="step-num">5</div><div class="step-body"><strong>Staff logs in</strong><span>Staff opens ARAMA_OS_V7.html → Staff/Admin tab → enter phone as username and temp password → go to Profile → Change Password.</span></div></div>
+
+<div class="alert alert-info">ℹ Staff see only: Dashboard (filtered to their location), POS, Token Queue, Daily Report, Leads, Profile.</div>
+</section>
+
+<!-- ─────────────── S3 DASHBOARD ─────────────── -->
+<section id="s3">
+<h2><span class="num">3</span> Dashboard & Reports</h2>
+<h3>Dashboard</h3>
+<p>Shows real-time KPIs pulled from actual transaction data — not hardcoded numbers.</p>
+<ul>
+  <li><strong>Today Revenue:</strong> Sum of all transactions created today</li>
+  <li><strong>Monthly trend chart:</strong> Last 6 months of transaction revenue, grouped by month</li>
+  <li><strong>Date filter:</strong> Use the "From" and "To" date pickers in the top-right to filter the chart. Click Clear to reset.</li>
+  <li><strong>Active Locations / Queue Waiting / Loyalty Members:</strong> Live counts from DB</li>
+</ul>
+
+<h3>Daily Report</h3>
+<p>Go to Daily Report in the left sidebar. Select a location and date. Shows POS sessions, revenue, therapist activity, and service breakdown for that day.</p>
+
+<h3>Data History</h3>
+<p>Under Config → Data History. Export any module to Excel, or import historical Excel data. Use the provided <code>historical_data.json</code> for initial seeding.</p>
+</section>
+
+<!-- ─────────────── S4 POS ─────────────── -->
+<section id="s4">
+<h2><span class="num">4</span> POS — Point of Sale</h2>
+<div class="step"><div class="step-num">1</div><div class="step-body"><strong>Select Location</strong><span>Use the dropdown at the top of the screen. Your assigned locations appear here.</span></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body"><strong>Open a Session</strong><span>Click "New POS Session" and select the therapist on duty.</span></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body"><strong>Add Services</strong><span>Browse the service catalog. Click a service to add it to the cart. Services come from Config → Services.</span></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body"><strong>Apply Discount (if any)</strong><span>Bulk discounts set by admin auto-apply. Manual discount can be entered in the cart.</span></div></div>
+<div class="step"><div class="step-num">5</div><div class="step-body"><strong>Select Payment Method</strong><span>Cash / UPI / Card / Wallet. UPI shows QR code. Enter amount received.</span></div></div>
+<div class="step"><div class="step-num">6</div><div class="step-body"><strong>Complete Transaction</strong><span>Click "Complete Sale". Transaction is saved to DB and synced to Drive.</span></div></div>
+
+<h3>Loyalty Redemption in POS</h3>
+<p>If customer's mobile is entered, their loyalty points appear. Click "Redeem Points" to apply as discount. Redemption rate is set in Config → Loyalty.</p>
+</section>
+
+<!-- ─────────────── S5 TOKEN QUEUE ─────────────── -->
+<section id="s5">
+<h2><span class="num">5</span> Token Queue System</h2>
+<p>Manages walk-in queues at each kiosk location.</p>
+<ul>
+  <li><strong>Issue Token:</strong> Click "+ New Token" → select service → assign therapist → print/display token number</li>
+  <li><strong>Call Next:</strong> Click "Call Next" to advance the queue. The ESP32 display updates if connected.</li>
+  <li><strong>Mark Complete:</strong> Click ✓ on a token when service is done</li>
+  <li><strong>arama-qr.html:</strong> Customer-facing QR page. Customer scans QR at kiosk, joins queue on their phone, and gets real-time wait time.</li>
+</ul>
+</section>
+
+<!-- ─────────────── S6 LOCATIONS ─────────────── -->
+<section id="s6">
+<h2><span class="num">6</span> Locations Management</h2>
+<p>Admin can manage all 33 locations (14 Gujarat + 16 Mumbai WR + 3 Vendor).</p>
+<h3>Actions in Locations page</h3>
+<ul>
+  <li><strong>View Details:</strong> Click on any location row to see full info</li>
+  <li><strong>Edit:</strong> Update name, address, manager, contact, capacity, ESP32 IP</li>
+  <li><strong>Activate / Deactivate:</strong> The red "Deactivate" or green "Activate" toggle button switches location status. Inactive locations do not appear in POS dropdown.</li>
+  <li><strong>Add Location:</strong> Click "+ Add Location" to add a new kiosk</li>
+</ul>
+<div class="alert alert-info">ℹ Location data includes: code, name, city, address, manager, phone, capacity, ESP32 IP, and active status.</div>
+</section>
+
+<!-- ─────────────── S7 USERS ─────────────── -->
+<section id="s7">
+<h2><span class="num">7</span> Users & Roles Management</h2>
+<h3>Active Users Tab</h3>
+<ul>
+  <li><strong>Edit:</strong> Update name, role, phone, email, locations, and password</li>
+  <li><strong>Reset Pwd:</strong> Enter a new password — it shows in a modal for you to share</li>
+  <li><strong>Deactivate:</strong> Soft-deactivates user (data preserved). Moves to Inactive tab.</li>
+  <li><strong>Delete (Superadmin only):</strong> Permanently removes user. Cannot be undone.</li>
+</ul>
+<h3>Inactive Users Tab</h3>
+<ul>
+  <li><strong>Reactivate:</strong> Restores the user's access</li>
+  <li><strong>Delete (Superadmin only):</strong> Permanently removes</li>
+</ul>
+<h3>Pending Approval Tab</h3>
+<ul>
+  <li>Shows staff who registered via staff-register.html</li>
+  <li><strong>Approve:</strong> Creates user account, shows temp password in modal</li>
+  <li><strong>Reject:</strong> Removes from queue</li>
+</ul>
+<h3>Add User Manually</h3>
+<p>Click "+ Add User" at top. Fill name, username, password, role, phone, email, and assigned locations. Click Add User.</p>
+<div class="alert alert-warn">⚠ Roles higher than your own cannot be assigned. Only superadmin can create other superadmins.</div>
+</section>
+
+<!-- ─────────────── S8 HRMS ─────────────── -->
+<section id="s8">
+<h2><span class="num">8</span> HRMS — Staff Compliance</h2>
+<p>Track health certifications, training, and compliance for each staff member.</p>
+<ul>
+  <li><strong>Health Card:</strong> Mark as valid / expired. Set expiry date.</li>
+  <li><strong>First Aid Training:</strong> Track completion status</li>
+  <li><strong>Hygiene Certification:</strong> Track status</li>
+  <li><strong>Alerts:</strong> Expired or missing compliance items are highlighted in red</li>
+</ul>
+<p>Go to HRMS → select a staff member → update their compliance record → Save.</p>
+</section>
+
+<!-- ─────────────── S9 INVENTORY ─────────────── -->
+<section id="s9">
+<h2><span class="num">9</span> Inventory / ERP</h2>
+<ul>
+  <li><strong>Products:</strong> Add consumables, oils, towels etc. with quantity and unit cost</li>
+  <li><strong>Low Stock Alert:</strong> Items below minimum quantity are flagged</li>
+  <li><strong>Purchase Orders:</strong> Create PO for vendor restocking</li>
+  <li><strong>Vendor tab:</strong> List of approved vendors with contact info</li>
+</ul>
+<p>All inventory data syncs to Google Drive with the rest of the DB.</p>
+</section>
+
+<!-- ─────────────── S10 CONFIG ─────────────── -->
+<section id="s10">
+<h2><span class="num">10</span> Config — Services, Loyalty, Branding</h2>
+<h3>Services & Pricing</h3>
+<ul>
+  <li>Edit price, duration, description of each service</li>
+  <li><strong>Bulk Discount Publisher:</strong> Set a % discount across all services for a date range. Click Preview → Confirm to apply.</li>
+  <li>Remove bulk discount with "Remove Discount" button</li>
+</ul>
+<h3>Loyalty Settings</h3>
+<ul>
+  <li>Points per rupee spent (e.g. 1 point per ₹10)</li>
+  <li>Redemption rate (e.g. 100 points = ₹10 off)</li>
+  <li>Min points to redeem</li>
+  <li>Expiry period in months</li>
+</ul>
+<h3>Brand Config</h3>
+<ul>
+  <li>Business name, tagline, support email/phone</li>
+  <li>App accent color</li>
+  <li>GST number, address</li>
+</ul>
+<h3>Drive Sync</h3>
+<ul>
+  <li>Paste your Google Client ID (from GCP setup)</li>
+  <li>Click "Connect Google Drive" → authorize → all data auto-syncs every 6 seconds</li>
+  <li>Use the GCP_Drive_Setup_Guide.pdf for one-time Google setup under aramaasia@gmail.com</li>
+</ul>
+<h3>Data History / Excel Import</h3>
+<ul>
+  <li>Export any module to Excel (.xlsx)</li>
+  <li>Import Excel file — preview data, then confirm import</li>
+  <li>Supported sheets: transactions, customers, services, locations, users, leads</li>
+</ul>
+</section>
+
+<!-- ─────────────── S11 DRIVE SYNC ─────────────── -->
+<section id="s11">
+<h2><span class="num">11</span> Google Drive Sync</h2>
+<div class="alert alert-info">ℹ This is a one-time setup. After setup, all data syncs automatically every 6 seconds.</div>
+<div class="step"><div class="step-num">1</div><div class="step-body"><strong>Open GCP_Drive_Setup_Guide.pdf</strong><span>Follow the 7-step guide to create a Google Cloud project under aramaasia@gmail.com.</span></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body"><strong>Get your OAuth Client ID</strong><span>From GCP Console → APIs & Services → Credentials → OAuth 2.0 Client ID. Copy the Client ID (ends in .apps.googleusercontent.com).</span></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body"><strong>In OS → Config → Drive Sync tab</strong><span>Paste Client ID into the input field. Click "Connect Google Drive".</span></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body"><strong>Authorize in the popup</strong><span>Google sign-in appears. Sign in as aramaasia@gmail.com and allow Drive appData access.</span></div></div>
+<div class="step"><div class="step-num">5</div><div class="step-body"><strong>Sync status turns green</strong><span>"Synced" badge appears at the top. All future changes auto-save to Drive. Data can be accessed from any device after connecting.</span></div></div>
+</section>
+
+<!-- ─────────────── S12 QUICK REF ─────────────── -->
+<section id="s12">
+<h2><span class="num">12</span> Quick Reference</h2>
+<h3>All System Files</h3>
+<table class="cred-table">
+  <tr><th>File</th><th>Purpose</th></tr>
+  <tr><td><code>ARAMA_OS_V7.html</code></td><td>Main Operations OS — open this every day</td></tr>
+  <tr><td><code>staff-register.html</code></td><td>Staff self-registration form (share with new hires)</td></tr>
+  <tr><td><code>customer.html</code></td><td>Customer loyalty portal</td></tr>
+  <tr><td><code>arama-qr.html</code></td><td>QR code page for kiosk queue self-join</td></tr>
+  <tr><td><code>GCP_Drive_Setup_Guide.pdf</code></td><td>One-time Google Drive setup instructions</td></tr>
+  <tr><td><code>historical_data.json</code></td><td>Historical seed data for import</td></tr>
+</table>
+
+<h3>Default Credentials Summary</h3>
+<table class="cred-table">
+  <tr><th>Login</th><th>Username</th><th>Password</th></tr>
+  <tr><td>Superadmin</td><td><code>superadmin</code></td><td><code>Arama@2026!</code></td></tr>
+  <tr><td>Admin</td><td><code>admin</code></td><td><code>Admin@123</code></td></tr>
+  <tr><td>Staff (after approval)</td><td>Phone number</td><td>Shown in approval modal (e.g. <code>Staff@A1B2C3</code>)</td></tr>
+</table>
+
+<h3>Common Actions — Where to Find Them</h3>
+<table class="cred-table">
+  <tr><th>Task</th><th>Where</th></tr>
+  <tr><td>Add new user</td><td>Users & Roles → + Add User</td></tr>
+  <tr><td>Approve staff registration</td><td>Users & Roles → Pending Approval → Approve</td></tr>
+  <tr><td>Reset a user's password</td><td>Users & Roles → Active → Reset Pwd button</td></tr>
+  <tr><td>Deactivate user</td><td>Users & Roles → Active → Deactivate</td></tr>
+  <tr><td>Delete user permanently</td><td>Users & Roles → Delete (Superadmin only)</td></tr>
+  <tr><td>Toggle location on/off</td><td>Locations → Activate / Deactivate button</td></tr>
+  <tr><td>Apply bulk discount</td><td>Config → Services → Bulk Discount section</td></tr>
+  <tr><td>Change loyalty points rate</td><td>Config → Loyalty Settings</td></tr>
+  <tr><td>Connect Google Drive</td><td>Config → Drive Sync</td></tr>
+  <tr><td>Import Excel data</td><td>Config → Data History → Import Excel</td></tr>
+  <tr><td>View transaction history</td><td>Config → Data History → Transactions</td></tr>
+  <tr><td>Change password</td><td>Profile (top right avatar) → Change Password</td></tr>
+  <tr><td>Logout</td><td>Profile → Logout</td></tr>
+</table>
+
+<div class="alert alert-warn" style="margin-top:20px">⚠ Data is stored in browser localStorage and synced to Google Drive. Do not clear browser cache/data or all local data will be lost. Always ensure Drive sync is active.</div>
+</section>
+
+</div>
+<footer>ārāma Wellness OS v7.0 &mdash; Internal Documentation &mdash; Confidential &mdash; 2026</footer>
+</body>
+</html>

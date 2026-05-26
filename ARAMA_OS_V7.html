@@ -305,6 +305,7 @@ textarea.form-control{resize:vertical;min-height:80px}
       </div>
       <button class="btn-primary" onclick="doLogin()">Sign In to Ops Portal →</button>
       <div id="loginMsg" class="login-msg error"></div>
+      <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--text3)">New staff? <a href="staff-register.html" target="_blank" style="color:var(--accent3);text-decoration:underline">Register here</a>&nbsp;&nbsp;|&nbsp;&nbsp;Forgot password? Contact Admin</div>
       <div class="social-divider">or continue with</div>
       <div class="social-btns">
         <button class="social-btn" onclick="socialLogin('google')">
@@ -360,6 +361,7 @@ textarea.form-control{resize:vertical;min-height:80px}
         <button class="btn-primary" onclick="verifyStaffOTP()">Verify →</button>
       </div>
       <div style="margin-top:14px;text-align:center"><button style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:13px" onclick="switchLoginTab('staff')">← Back to Password Login</button></div>
+      <div style="margin-top:8px;text-align:center;font-size:12px;color:var(--text3)">New staff? <a href="staff-register.html" target="_blank" style="color:var(--accent3);text-decoration:underline">Apply here →</a></div>
     </div>
   </div>
 </div>
@@ -1032,7 +1034,7 @@ function changeActiveLocation(){
   if(cur){const pg=cur.id.replace('page-','');renderPage(pg);}
 }
 function canSeeAllLocs(){return ['superadmin','admin'].includes(currentSession?.role);}
-function hasRole(...roles){return roles.includes(currentSession?.role);}
+/* hasRole defined below */
 
 function buildSidebar(){
   const r=currentSession?.role;
@@ -1072,22 +1074,13 @@ function toggleSidebar(){document.getElementById('sidebar').classList.toggle('op
 // ═══════════════════════════════════════════════
 // TOAST & MODAL
 // ═══════════════════════════════════════════════
-function toast(msg,type='info'){
-  const t=document.getElementById('toast');
-  const d=document.createElement('div');
-  d.className='toast-item '+type;d.textContent=msg;
-  t.appendChild(d);setTimeout(()=>d.remove(),3500);
-}
-function openModal(title,bodyHTML,footerHTML='',size=''){
-  document.getElementById('modalTitle').textContent=title;
-  document.getElementById('modalBody').innerHTML=bodyHTML;
-  document.getElementById('modalFooter').innerHTML=footerHTML||'';
-  const m=document.getElementById('mainModal');
-  m.className='modal'+(size?' '+size:'');
-  document.getElementById('modalOverlay').classList.add('open');
-}
-function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
-document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+/* toast defined below */
+/* openModal / closeModal defined below */
+/* ModalOverlay click handler */
+document.addEventListener('DOMContentLoaded',function(){
+  var ov=document.getElementById('modalOverlay');
+  if(ov)ov.addEventListener('click',function(e){if(e.target===this)closeModal();});
+});
 
 // ═══════════════════════════════════════════════
 // DASHBOARD
@@ -1146,11 +1139,11 @@ function renderDashboard(){
   document.getElementById('dashContent').innerHTML=`
   <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-label">Total Revenue (All Time)</div><div class="kpi-value" style="color:var(--gold)">₹${(totalRevAll/10000000).toFixed(2)}Cr</div><div class="kpi-sub">PhonePe + Cash estimated</div></div>
-    <div class="kpi-card"><div class="kpi-label">${isFiltered?'Period Revenue':'Today's Revenue'}</div><div class="kpi-value" style="color:var(--green)">₹${totalRevToday.toLocaleString('en-IN')}</div><div class="kpi-sub">${displayTxns.length} transactions${isFiltered?' (filtered)':''}</div></div>
+    <div class="kpi-card"><div class="kpi-label">${isFiltered?"Period Revenue":"Today Revenue"}</div><div class="kpi-value" style="color:var(--green)">₹${totalRevToday.toLocaleString('en-IN')}</div><div class="kpi-sub">${displayTxns.length} transactions${isFiltered?' (filtered)':''}</div></div>
     <div class="kpi-card"><div class="kpi-label">Active Locations</div><div class="kpi-value">${activeLocs}</div><div class="kpi-sub">of ${locs.length} total · ${totalChairs} chairs</div></div>
     <div class="kpi-card"><div class="kpi-label">Active Staff</div><div class="kpi-value">${activeStaff}</div><div class="kpi-sub">across all locations</div></div>
     <div class="kpi-card"><div class="kpi-label">Open Remarks</div><div class="kpi-value" style="color:${unresolved>0?'var(--orange)':'var(--green)'}">${unresolved}</div><div class="kpi-sub">unresolved location issues</div></div>
-    <div class="kpi-card"><div class="kpi-label">${isFiltered?'Sessions (period)':'Sessions Today'}</div><div class="kpi-value">${displayTxns.filter(t=>t.type==='service').length}</div><div class="kpi-sub">massage + other sessions</div></div>
+    <div class="kpi-card"><div class="kpi-label">${isFiltered?"Sessions (period)":"Sessions Today"}</div><div class="kpi-value">${displayTxns.filter(t=>t.type==='service').length}</div><div class="kpi-sub">massage + other sessions</div></div>
   </div>
   <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
@@ -1349,11 +1342,7 @@ function lookupCustomer(){
     `<span style="color:var(--green)">✓ ${c.name} · ${pts} loyalty points</span>`:
     `<span style="color:var(--text3)">New customer — will be registered on payment</span>`;
 }
-function generateToken(locCode,eqCode){
-  const ts=Date.now().toString(36).toUpperCase();
-  const rand=Math.random().toString(36).substr(2,4).toUpperCase();
-  return `${locCode}-${eqCode}-${ts}-${rand}`;
-}
+/* generateToken defined below */
 function processPayment(){
   if(posCart.length===0){toast('Cart is empty','error');return;}
   if(!selectedPayMode){toast('Select payment mode','error');return;}
@@ -1768,7 +1757,9 @@ function renderUsers(){
       <td><span class="badge ${u.active?'badge-green':'badge-red'}">${u.active?'Active':'Inactive'}</span></td>
       <td><div style="display:flex;gap:4px">
         <button class="btn btn-outline btn-sm" onclick="openEditUser('${u.id}')">Edit</button>
+        <button class="btn btn-accent btn-sm" onclick="resetUserPassword('${u.id}')">Reset Pwd</button>
         <button class="btn btn-red btn-sm" onclick="deactivateUser('${u.id}')">Deactivate</button>
+        ${hasRole('superadmin')?`<button class="btn btn-red btn-sm" style="opacity:.7" onclick="deleteUser('${u.id}')">Delete</button>`:""}
       </div></td>
     </tr>`).join('')}</tbody></table>
   </div></div>
@@ -1776,7 +1767,7 @@ function renderUsers(){
     <div class="table-wrap card"><table><thead><tr><th>Name</th><th>Role</th><th>Reason</th><th>Actions</th></tr></thead>
     <tbody>${users.filter(u=>!u.active).map(u=>`<tr>
       <td>${u.name}</td><td>${ROLE_LABELS[u.role]}</td><td>${u.deactivateReason||'-'}</td>
-      <td><button class="btn btn-green btn-sm" onclick="reactivateUser('${u.id}')">Reactivate</button></td>
+      <td><div style="display:flex;gap:4px"><button class="btn btn-green btn-sm" onclick="reactivateUser('${u.id}')">Reactivate</button>${hasRole('superadmin')?`<button class="btn btn-red btn-sm" style="opacity:.7" onclick="deleteUser('${u.id}')">Delete</button>`:""}</div></td>
     </tr>`).join('')}</tbody></table></div>
   </div>
   <div id="uPending" style="display:none">
@@ -1912,7 +1903,42 @@ function approveStaff(idx){
     email:app.email,phone:app.phone,role:'staff',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{}});
   DB.set('users',users);
   pending.splice(idx,1);DB.set('staffPending',pending);
-  renderUsers();toast(`Staff approved! Temp password: ${pass}. Share via WhatsApp.`,'success');
+  renderUsers();
+  openModal('Staff Approved ✓',
+    '<div style="text-align:center;padding:20px">'+
+    '<div style="font-size:48px;margin-bottom:12px">&#9989;</div>'+
+    '<div style="font-size:15px;font-weight:700;margin-bottom:4px">'+app.firstName+' '+app.lastName+' approved!</div>'+
+    '<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Login Username: <code>'+app.phone+'</code></div>'+
+    '<div style="font-size:12px;color:var(--text3);margin-bottom:6px">Temporary Password — share securely via WhatsApp:</div>'+
+    '<div style="font-size:32px;font-weight:800;font-family:monospace;letter-spacing:4px;color:var(--accent3);background:rgba(109,40,217,.1);padding:16px 24px;border-radius:12px;margin:10px 0">'+pass+'</div>'+
+    '<div style="font-size:11px;color:var(--text3)">Staff must change this on first login: Profile &gt; Change Password</div>'+
+    '</div>',
+    '<button class="btn btn-accent" onclick="closeModal()">Noted &#128076;</button>');
+}
+function deleteUser(id){
+  const users=DB.get('users')||[];
+  const u=users.find(x=>x.id===id);
+  if(!u)return;
+  if(!confirm('PERMANENTLY DELETE user '+u.name+'?\nThis cannot be undone!'))return;
+  DB.set('users',users.filter(x=>x.id!==id));
+  renderUsers();toast('User permanently deleted','error');
+}
+function resetUserPassword(id){
+  const users=DB.get('users')||[];
+  const u=users.find(x=>x.id===id);
+  if(!u)return;
+  const newPass=prompt('New password for '+u.name+' (min 6 chars):');
+  if(!newPass||newPass.length<6){toast('Password must be at least 6 chars','error');return;}
+  const idx=users.findIndex(x=>x.id===id);
+  users[idx].password=newPass;DB.set('users',users);
+  openModal('Password Reset Done',
+    '<div style="text-align:center;padding:20px">'+
+    '<div style="font-size:48px;margin-bottom:12px">&#128273;</div>'+
+    '<div style="font-size:14px;color:var(--text2);margin-bottom:8px">New password for <strong>'+u.name+'</strong></div>'+
+    '<div style="font-size:28px;font-weight:800;font-family:monospace;letter-spacing:3px;color:var(--accent3);background:rgba(109,40,217,.1);padding:14px 20px;border-radius:10px;margin:12px 0">'+newPass+'</div>'+
+    '<div style="font-size:12px;color:var(--text3)">Share this password securely. Staff should change it via Profile &gt; Change Password.</div>'+
+    '</div>',
+    '<button class="btn btn-accent" onclick="closeModal()">Done</button>');
 }
 function rejectStaff(idx){
   if(!confirm('Reject this application?'))return;
