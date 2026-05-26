@@ -3,14 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#6d28d9">
+<meta name="theme-color" content="#FFCC2A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>ārāma Wellness OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root{--bg:#0f172a;--bg2:#1a1040;--bg3:#1e293b;--card:#1e293b;--card2:#263148;--accent:#6d28d9;--accent2:#7c3aed;--accent3:#a78bfa;--gold:#f59e0b;--gold2:#fbbf24;--green:#10b981;--red:#ef4444;--orange:#f97316;--blue:#3b82f6;--cyan:#06b6d4;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--border:#334155;--radius:12px;--radius2:8px;--shadow:0 4px 24px rgba(0,0,0,.5);--shadow2:0 2px 8px rgba(0,0,0,.3);--sw:240px}
+:root{--bg:#0d1118;--bg2:#161b22;--bg3:#21262d;--card:#0d1118;--card2:#161b22;--accent:#FFCC2A;--accent2:#FFD966;--accent3:#FFE680;--gold:#FFCC2A;--gold2:#FFD966;--green:#10b981;--red:#ef4444;--orange:#f97316;--blue:#3b82f6;--cyan:#06b6d4;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--border:#30363d;--radius:12px;--radius2:8px;--shadow:0 4px 24px rgba(0,0,0,.5);--shadow2:0 2px 8px rgba(0,0,0,.3);--sw:240px}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}
+html,body{height:100%;font-family:'DM Sans','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
@@ -26,7 +29,7 @@ a{text-decoration:none;color:inherit}
 .login-bg-circles span:nth-child(2){width:400px;height:400px;bottom:-100px;right:-100px;background:radial-gradient(circle,rgba(245,158,11,.1),transparent 70%)}
 .login-box{position:relative;background:rgba(30,27,75,.8);backdrop-filter:blur(20px);border:1px solid rgba(109,40,217,.3);border-radius:24px;padding:40px;width:100%;max-width:420px;box-shadow:0 25px 60px rgba(0,0,0,.6)}
 .login-logo{text-align:center;margin-bottom:28px}
-.login-logo .brand{font-size:38px;font-weight:800;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;font-family:'Georgia','Palatino Linotype',serif}
+.login-logo .brand{font-size:38px;font-weight:800;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;font-family:'Alegreya',Georgia,serif}
 .login-logo .tagline{font-size:12px;color:#c4b5fd;margin-top:4px;letter-spacing:1px}
 .login-tabs{display:flex;background:rgba(0,0,0,.3);border-radius:var(--radius2);padding:3px;margin-bottom:24px}
 .login-tab{flex:1;padding:7px 4px;text-align:center;border:none;background:transparent;color:var(--text2);border-radius:6px;font-size:12px;font-weight:600;transition:.2s;letter-spacing:.2px}
@@ -55,7 +58,7 @@ a{text-decoration:none;color:inherit}
 #app.visible{display:flex}
 .app-header{height:56px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:100}
 .menu-toggle{width:36px;height:36px;display:none;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:none;border-radius:8px;color:var(--text)}
-.header-brand{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:'Georgia','Palatino Linotype',serif}
+.header-brand{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:'Alegreya',Georgia,serif}
 .header-loc-select{padding:6px 12px;background:#1e1b4b;border:1px solid rgba(167,139,250,.4);border-radius:var(--radius2);color:#f1f5f9;font-size:13px;max-width:200px;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a78bfa'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
 .header-spacer{flex:1}
 .header-badge{background:rgba(109,40,217,.2);border:1px solid rgba(109,40,217,.4);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--accent3)}
@@ -1110,7 +1113,20 @@ function doLogin(){
     if(!u||!p){showLoginMsg('Enter username and password','error');return;}
     let users=DB.get('users')||[];
     if(!users.length){seedIfEmpty();users=DB.get('users')||[];}
+    
+    // DEBUG: Log login attempt
+    console.log('Login attempt:');
+    console.log('  Username entered:', u);
+    console.log('  Total users in system:', users.length);
+    
+    // Find all users matching username/email (for debugging)
+    const matchingByName=users.filter(x=>x.username===u||x.email===u);
+    console.log('  Users matching username/email:', matchingByName);
+    
+    // Full credential check
     const user=users.find(x=>(x.username===u||x.email===u)&&x.password===p&&x.active!==false);
+    console.log('  Full match found:', !!user, user);
+    
     if(!user){
       showLoginMsg('Invalid credentials. Please check your username and password.','error');
       return;
@@ -1366,12 +1382,12 @@ function renderDashboard(){
   document.getElementById('dashSubtitle').textContent=`${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · ${activeLocs} active locations`;
   document.getElementById('dashContent').innerHTML=`
   <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label">Total Revenue (All Time)</div><div class="kpi-value" style="color:var(--gold)">₹${(totalRevAll/10000000).toFixed(2)}Cr</div><div class="kpi-sub">PhonePe + Cash estimated</div></div>
-    <div class="kpi-card"><div class="kpi-label">${isFiltered?"Period Revenue":"Today Revenue"}</div><div class="kpi-value" style="color:var(--green)">₹${totalRevToday.toLocaleString('en-IN')}</div><div class="kpi-sub">${displayTxns.length} transactions${isFiltered?' (filtered)':''}</div></div>
-    <div class="kpi-card"><div class="kpi-label">Active Locations</div><div class="kpi-value">${activeLocs}</div><div class="kpi-sub">of ${locs.length} total · ${totalChairs} chairs</div></div>
-    <div class="kpi-card"><div class="kpi-label">Active Staff</div><div class="kpi-value">${activeStaff}</div><div class="kpi-sub">across all locations</div></div>
-    <div class="kpi-card"><div class="kpi-label">Open Remarks</div><div class="kpi-value" style="color:${unresolved>0?'var(--orange)':'var(--green)'}">${unresolved}</div><div class="kpi-sub">unresolved location issues</div></div>
-    <div class="kpi-card"><div class="kpi-label">${isFiltered?"Sessions (period)":"Sessions Today"}</div><div class="kpi-value">${displayTxns.filter(t=>t.type==='service').length}</div><div class="kpi-sub">massage + other sessions</div></div>
+    <div class="kpi-card"><div class="kpi-label">💰 Total Revenue (All Time)</div><div class="kpi-value" style="color:var(--gold)">₹${(totalRevAll/10000000).toFixed(2)}Cr</div><div class="kpi-sub">PhonePe + Cash estimated</div></div>
+    <div class="kpi-card"><div class="kpi-label">${isFiltered?"📅 Period Revenue":"📊 Today Revenue"}</div><div class="kpi-value" style="color:var(--green)">₹${totalRevToday.toLocaleString('en-IN')}</div><div class="kpi-sub">${displayTxns.length} transactions${isFiltered?' (filtered)':''}</div></div>
+    <div class="kpi-card"><div class="kpi-label">📍 Active Locations</div><div class="kpi-value">${activeLocs}</div><div class="kpi-sub">of ${locs.length} total · ${totalChairs} chairs</div></div>
+    <div class="kpi-card"><div class="kpi-label">👥 Active Staff</div><div class="kpi-value">${activeStaff}</div><div class="kpi-sub">across all locations</div></div>
+    <div class="kpi-card"><div class="kpi-label">📝 Open Remarks</div><div class="kpi-value" style="color:${unresolved>0?'var(--orange)':'var(--green)'}">${unresolved}</div><div class="kpi-sub">unresolved location issues</div></div>
+    <div class="kpi-card"><div class="kpi-label">${isFiltered?"🔄 Sessions (period)":"⏱️ Sessions Today"}</div><div class="kpi-value">${displayTxns.filter(t=>t.type==='service').length}</div><div class="kpi-sub">massage + other sessions</div></div>
   </div>
   <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
@@ -2310,7 +2326,7 @@ function openAddUser(){
     <div class="form-group"><label>Password</label><input type="password" class="form-control" id="nu_pass" placeholder="Password"></div>
     <div class="form-group"><label>Role</label>
       <select class="form-control" id="nu_role">
-        ${ROLES.filter(r=>r!=='customer').map(r=>`<option value="${r}">${ROLE_LABELS[r]}</option>`).join('')}
+        ${ROLES.filter(r=>r!=='customer').map(r=>`<option value="${r}" ${r==='staff'?'selected':''}>${ROLE_LABELS[r]}</option>`).join('')}
       </select>
     </div>
   </div>
@@ -2332,13 +2348,40 @@ function saveNewUser(){
   const pass=document.getElementById('nu_pass').value;
   const role=document.getElementById('nu_role').value;
   if(!name||!uname||!pass){toast('Name, username, and password required','error');return;}
+  if(!role||role===''){toast('Please select a valid role','error');return;}
   const users=DB.get('users')||[];
   if(users.find(u=>u.username===uname)){toast('Username already exists','error');return;}
   const sel=document.getElementById('nu_locs');
   const locs=[...sel.selectedOptions].map(o=>o.value);
-  users.push({id:'u'+Date.now(),username:uname,password:pass,name,email:document.getElementById('nu_email').value,
-    phone:document.getElementById('nu_phone').value,role,active:true,locations:locs,createdAt:new Date().toISOString(),compliance:{}});
-  DB.set('users',users);closeModal();renderUsers();toast('User created: '+name,'success');
+  
+  // Create new user object
+  const newUser={
+    id:'u'+Date.now(),
+    username:uname,
+    password:pass,
+    name,
+    email:document.getElementById('nu_email').value,
+    phone:document.getElementById('nu_phone').value,
+    role:role,  // Explicit role assignment
+    active:true,  // MUST be true for login to work
+    locations:locs,
+    createdAt:new Date().toISOString(),
+    compliance:{}
+  };
+  
+  // DEBUG: Log to console
+  console.log('Creating new user:', newUser);
+  
+  users.push(newUser);
+  DB.set('users',users);
+  
+  // Verify it was saved
+  const saved=DB.get('users').find(u=>u.username===uname);
+  console.log('Verified saved user:', saved);
+  
+  closeModal();
+  renderUsers();
+  toast('✓ User created: '+name+' ('+role+'). They can now login with username: '+uname,'success');
 }
 function openEditUser(id){
   const users=DB.get('users')||[];
