@@ -273,6 +273,8 @@ textarea.form-control{resize:vertical;min-height:80px}
   .social-btns{flex-direction:column}
 }
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -424,7 +426,15 @@ textarea.form-control{resize:vertical;min-height:80px}
       <div class="page active" id="page-dashboard">
         <div class="page-header">
           <div><div class="page-title">📊 Dashboard</div><div class="page-subtitle" id="dashSubtitle">Loading...</div></div>
-          <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px">
+              <label style="color:var(--text2)">From</label>
+              <input type="date" id="dashFrom" class="form-control" style="width:130px;padding:5px 8px;font-size:12px">
+              <label style="color:var(--text2)">To</label>
+              <input type="date" id="dashTo" class="form-control" style="width:130px;padding:5px 8px;font-size:12px">
+              <button class="btn btn-outline btn-sm" onclick="renderDashboard()">Filter</button>
+              <button class="btn btn-outline btn-sm" onclick="clearDashFilter()">All</button>
+            </div>
             <button class="btn btn-outline btn-sm" onclick="exportDashboard()">Export</button>
             <button class="btn btn-accent btn-sm" onclick="renderDashboard()">Refresh</button>
           </div>
@@ -591,12 +601,213 @@ textarea.form-control{resize:vertical;min-height:80px}
 // ═══════════════════════════════════════════════
 // DB LAYER
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// GOOGLE DRIVE CONFIG — paste your Client ID in Admin → Config → Drive tab
+// ═══════════════════════════════════════════════
+let GOOGLE_CLIENT_ID = localStorage.getItem('arama_gclientid') || '';
+const DRIVE_SCOPE     = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILENAME  = 'arama_os_data.json';
+let gTokenClient  = null;
+let gAccessToken  = null;
+let driveFileId   = localStorage.getItem('arama_driveFileId') || null;
+let syncDirty     = false;
+let syncTimer     = null;
+let syncState     = 'offline'; // offline | syncing | synced | pending | error
+let currentPage   = 'dashboard';
+
+// ── DB LAYER (localStorage L1 cache + Drive L2) ──
 const DB = {
   get(k){try{return JSON.parse(localStorage.getItem('arama_'+k))}catch(e){return null}},
-  set(k,v){try{localStorage.setItem('arama_'+k,JSON.stringify(v))}catch(e){toast('Storage full — clear old data','error')}},
+  set(k,v){
+    try{localStorage.setItem('arama_'+k,JSON.stringify(v))}
+    catch(e){toast('Storage full','error');}
+    this._dirty();
+  },
   push(k,item){const a=this.get(k)||[];a.push(item);this.set(k,a)},
-  remove(k){localStorage.removeItem('arama_'+k)}
+  remove(k){localStorage.removeItem('arama_'+k);this._dirty();},
+  _dirty(){
+    syncDirty=true;
+    updateSyncStatus('pending');
+    clearTimeout(syncTimer);
+    syncTimer=setTimeout(()=>saveToDrive(),6000);
+  }
 };
+
+// ── SYNC UI ──
+function updateSyncStatus(state){
+  syncState=state;
+  const btn=document.getElementById('syncBtn');
+  const lbl=document.getElementById('syncLabel');
+  if(!btn)return;
+  btn.className='sync-btn '+state;
+  const labels={synced:'Synced',syncing:'Syncing…',pending:'Unsaved',offline:'Drive',error:'Sync Error'};
+  if(lbl)lbl.textContent=labels[state]||'Drive';
+}
+
+// ── GOOGLE AUTH ──
+function initGAuth(){
+  GOOGLE_CLIENT_ID=localStorage.getItem('arama_gclientid')||'';
+  if(!GOOGLE_CLIENT_ID||!window.google?.accounts?.oauth2){
+    updateSyncStatus('offline');
+    return;
+  }
+  gTokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:DRIVE_SCOPE,
+    callback:async(resp)=>{
+      if(resp.error){updateSyncStatus('error');toast('Drive auth failed: '+resp.error,'error');return;}
+      gAccessToken=resp.access_token;
+      updateSyncStatus('syncing');
+      toast('Connecting to Google Drive…','info');
+      const loaded=await loadFromDrive();
+      if(loaded){
+        updateSyncStatus('synced');
+        toast('☁️ Data loaded from Google Drive','success');
+        if(currentSession)navigate(currentPage);
+      } else {
+        await saveToDrive();
+        updateSyncStatus('synced');
+        toast('☁️ Drive connected — data backed up','success');
+      }
+    }
+  });
+  // Try silent token refresh (no popup if already consented)
+  gTokenClient.requestAccessToken({prompt:''});
+}
+
+function requestDriveAccess(){
+  if(!GOOGLE_CLIENT_ID){
+    // Show setup instructions
+    openModal('☁️ Connect Google Drive',driveSetupHTML(),'<button class="btn btn-outline" onclick="closeModal()">Close</button><button class="btn btn-accent" onclick="saveDriveClientId()">Save & Connect</button>');
+    return;
+  }
+  if(!window.google?.accounts?.oauth2){
+    toast('Google Identity Services not loaded — check internet','error');return;
+  }
+  if(!gTokenClient)initGAuth();
+  if(gTokenClient)gTokenClient.requestAccessToken({prompt:'consent'});
+}
+
+function driveSetupHTML(){
+  return `
+  <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Store all ārāma OS data securely in your Google Drive. Works across all devices and browsers.</div>
+  <div class="drive-setup-box">
+    <div style="font-weight:700;margin-bottom:10px;font-size:13px">📋 One-time Google Cloud Setup</div>
+    <div class="drive-step"><div class="drive-step-num">1</div><div>Go to <a href="https://console.cloud.google.com" target="_blank" style="color:var(--accent3)">console.cloud.google.com</a> → New Project → name it <b>arama-wellness</b></div></div>
+    <div class="drive-step"><div class="drive-step-num">2</div><div>APIs & Services → Enable APIs → search <b>Google Drive API</b> → Enable</div></div>
+    <div class="drive-step"><div class="drive-step-num">3</div><div>APIs & Services → OAuth consent screen → External → App name: <b>ārāma OS</b> → add your email → Save</div></div>
+    <div class="drive-step"><div class="drive-step-num">4</div><div>Credentials → Create Credentials → <b>OAuth 2.0 Client ID</b> → Web application</div></div>
+    <div class="drive-step"><div class="drive-step-num">5</div><div>Authorised JS origins: add <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-size:11px">${location.origin||location.href.split('/').slice(0,3).join('/')}</code></div></div>
+    <div class="drive-step"><div class="drive-step-num">6</div><div>Copy the <b>Client ID</b> (ends in .apps.googleusercontent.com) and paste below</div></div>
+  </div>
+  <div class="form-group" style="margin-top:14px">
+    <label>Your Google OAuth Client ID</label>
+    <input class="form-control" id="gcid_input" placeholder="xxxx.apps.googleusercontent.com" value="${GOOGLE_CLIENT_ID}">
+  </div>`;
+}
+
+function saveDriveClientId(){
+  const v=document.getElementById('gcid_input').value.trim();
+  if(!v||!v.includes('.apps.googleusercontent.com')){toast('Invalid Client ID format','error');return;}
+  GOOGLE_CLIENT_ID=v;
+  localStorage.setItem('arama_gclientid',v);
+  DB.set('gclientid',v);
+  closeModal();
+  toast('Client ID saved — connecting…','success');
+  initGAuth();
+  if(gTokenClient)gTokenClient.requestAccessToken({prompt:'consent'});
+}
+
+// ── DRIVE FILE OPS ──
+async function findDriveFile(){
+  if(driveFileId)return driveFileId;
+  try{
+    const r=await fetch(
+      `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D'${DRIVE_FILENAME}'&fields=files(id)`,
+      {headers:{Authorization:'Bearer '+gAccessToken}}
+    );
+    const d=await r.json();
+    if(d.files&&d.files.length>0){
+      driveFileId=d.files[0].id;
+      localStorage.setItem('arama_driveFileId',driveFileId);
+      return driveFileId;
+    }
+  }catch(e){console.warn('Drive find error',e);}
+  return null;
+}
+
+async function loadFromDrive(){
+  if(!gAccessToken)return false;
+  try{
+    const fid=await findDriveFile();
+    if(!fid)return false;
+    const r=await fetch(
+      `https://www.googleapis.com/drive/v3/files/${fid}?alt=media`,
+      {headers:{Authorization:'Bearer '+gAccessToken}}
+    );
+    if(!r.ok)return false;
+    const data=await r.json();
+    // Restore all keys to localStorage
+    for(const[k,v]of Object.entries(data)){
+      if(k==='driveFileId'||k==='gclientid')continue;
+      localStorage.setItem('arama_'+k,JSON.stringify(v));
+    }
+    syncDirty=false;
+    return true;
+  }catch(e){console.warn('Drive load error',e);return false;}
+}
+
+async function saveToDrive(){
+  if(!gAccessToken||!GOOGLE_CLIENT_ID){return;}
+  updateSyncStatus('syncing');
+  try{
+    // Collect all arama_ keys from localStorage
+    const data={};
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(key.startsWith('arama_')&&key!=='arama_driveFileId'&&key!=='arama_gclientid'){
+        const k=key.replace('arama_','');
+        try{data[k]=JSON.parse(localStorage.getItem(key));}catch(e){data[k]=localStorage.getItem(key);}
+      }
+    }
+    const body=JSON.stringify(data);
+    let fid=await findDriveFile();
+    if(fid){
+      // Update existing
+      await fetch(
+        `https://www.googleapis.com/upload/drive/v3/files/${fid}?uploadType=media`,
+        {method:'PATCH',headers:{Authorization:'Bearer '+gAccessToken,'Content-Type':'application/json'},body}
+      );
+    } else {
+      // Create new in appDataFolder
+      const boundary='arama_bnd_'+Date.now();
+      const meta=JSON.stringify({name:DRIVE_FILENAME,parents:['appDataFolder']});
+      const multipart=`--${boundary}
+Content-Type: application/json; charset=UTF-8
+
+${meta}
+--${boundary}
+Content-Type: application/json
+
+${body}
+--${boundary}--`;
+      const r=await fetch(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+        {method:'POST',headers:{Authorization:'Bearer '+gAccessToken,'Content-Type':`multipart/related; boundary=${boundary}`},body:multipart}
+      );
+      const res=await r.json();
+      driveFileId=res.id;
+      localStorage.setItem('arama_driveFileId',driveFileId);
+    }
+    syncDirty=false;
+    updateSyncStatus('synced');
+  }catch(e){
+    console.warn('Drive save error',e);
+    updateSyncStatus('error');
+    toast('Drive sync failed — data saved locally','error');
+  }
+}
+
 
 // ═══════════════════════════════════════════════
 // ALL 33 LOCATIONS (v8.3 corrected)
@@ -835,6 +1046,7 @@ function buildSidebar(){
 }
 
 function navigate(page){
+  currentPage=page;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const pg=document.getElementById('page-'+page);
@@ -880,24 +1092,51 @@ document.getElementById('modalOverlay').addEventListener('click',function(e){if(
 // ═══════════════════════════════════════════════
 // DASHBOARD
 // ═══════════════════════════════════════════════
+function clearDashFilter(){
+  const f=document.getElementById('dashFrom');
+  const t=document.getElementById('dashTo');
+  if(f)f.value='';if(t)t.value='';
+  renderDashboard();
+}
 function renderDashboard(){
   const locs=DB.get('locations')||[];
   const txns=DB.get('transactions')||[];
   const users=DB.get('users')||[];
+  const fromEl=document.getElementById('dashFrom');
+  const toEl=document.getElementById('dashTo');
+  const fromD=fromEl&&fromEl.value?new Date(fromEl.value+' 00:00:00'):null;
+  const toD=toEl&&toEl.value?new Date(toEl.value+' 23:59:59'):null;
   const today=new Date().toDateString();
-  const todayTxns=txns.filter(t=>new Date(t.createdAt).toDateString()===today);
-  const totalRevToday=todayTxns.reduce((s,t)=>s+t.amount,0);
+  const filteredTxns=txns.filter(t=>{
+    const d=new Date(t.createdAt);
+    if(fromD&&d<fromD)return false;
+    if(toD&&d>toD)return false;
+    return true;
+  });
+  const isFiltered=!!(fromEl&&fromEl.value||toEl&&toEl.value);
+  const todayTxns=isFiltered?filteredTxns:txns.filter(t=>new Date(t.createdAt).toDateString()===today);
+  const displayTxns=isFiltered?filteredTxns:todayTxns;
+  const totalRevToday=displayTxns.reduce((s,t)=>s+t.amount,0);
   const totalRevAll=locs.reduce((s,l)=>s+l.phonepeTotal,0);
   const activeLocs=locs.filter(l=>l.active).length;
   const totalChairs=locs.reduce((s,l)=>s+l.chairs,0);
   const activeStaff=users.filter(u=>u.role==='staff'&&u.active).length;
   const unresolved=Object.values(DB.get('locationRemarks')||{}).flat().filter(r=>!r.resolved).length;
 
-  // Monthly mock data for chart
-  const months=['Dec','Jan','Feb','Mar','Apr','May'];
-  const vals=[1800000,2100000,1950000,2400000,2200000,2600000];
-  const maxVal=Math.max(...vals);
-  const bars=vals.map((v,i)=>`<div class="chart-bar" style="height:${Math.round(v/maxVal*100)}%" data-val="₹${(v/100000).toFixed(1)}L"></div>`).join('');
+  // Real monthly revenue from transactions
+  const allTxns=DB.get('transactions')||[];
+  const monthMap={};
+  allTxns.forEach(t=>{
+    const d=new Date(t.createdAt);
+    const key=d.getFullYear()+'-'+(d.getMonth()+1);
+    monthMap[key]=(monthMap[key]||0)+(t.amount||0);
+  });
+  const sortedKeys=Object.keys(monthMap).sort().slice(-6);
+  const MNAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const months=sortedKeys.length?sortedKeys.map(k=>{const[y,m]=k.split('-');return MNAMES[parseInt(m)-1]+' '+y.slice(2);}):[];
+  const vals=sortedKeys.map(k=>monthMap[k]);
+  const maxVal=vals.length?Math.max(...vals):1;
+  const bars=vals.length?vals.map((v,i)=>`<div class="chart-bar" style="height:${Math.round(v/maxVal*100)}%" data-val="₹${(v/100000).toFixed(2)}L"></div>`).join(''):'<div style="color:var(--text3);font-size:12px;padding:20px 0">No transactions recorded yet — data will appear after first POS sale</div>';
   const lbls=months.map(m=>`<div class="chart-label">${m}</div>`).join('');
 
   // Top locations by revenue
@@ -907,11 +1146,11 @@ function renderDashboard(){
   document.getElementById('dashContent').innerHTML=`
   <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-label">Total Revenue (All Time)</div><div class="kpi-value" style="color:var(--gold)">₹${(totalRevAll/10000000).toFixed(2)}Cr</div><div class="kpi-sub">PhonePe + Cash estimated</div></div>
-    <div class="kpi-card"><div class="kpi-label">Today's Revenue</div><div class="kpi-value" style="color:var(--green)">₹${totalRevToday.toLocaleString('en-IN')}</div><div class="kpi-sub">${todayTxns.length} transactions</div></div>
+    <div class="kpi-card"><div class="kpi-label">${isFiltered?'Period Revenue':'Today's Revenue'}</div><div class="kpi-value" style="color:var(--green)">₹${totalRevToday.toLocaleString('en-IN')}</div><div class="kpi-sub">${displayTxns.length} transactions${isFiltered?' (filtered)':''}</div></div>
     <div class="kpi-card"><div class="kpi-label">Active Locations</div><div class="kpi-value">${activeLocs}</div><div class="kpi-sub">of ${locs.length} total · ${totalChairs} chairs</div></div>
     <div class="kpi-card"><div class="kpi-label">Active Staff</div><div class="kpi-value">${activeStaff}</div><div class="kpi-sub">across all locations</div></div>
     <div class="kpi-card"><div class="kpi-label">Open Remarks</div><div class="kpi-value" style="color:${unresolved>0?'var(--orange)':'var(--green)'}">${unresolved}</div><div class="kpi-sub">unresolved location issues</div></div>
-    <div class="kpi-card"><div class="kpi-label">Sessions Today</div><div class="kpi-value">${todayTxns.filter(t=>t.type==='service').length}</div><div class="kpi-sub">massage + other sessions</div></div>
+    <div class="kpi-card"><div class="kpi-label">${isFiltered?'Sessions (period)':'Sessions Today'}</div><div class="kpi-value">${displayTxns.filter(t=>t.type==='service').length}</div><div class="kpi-sub">massage + other sessions</div></div>
   </div>
   <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
@@ -2353,6 +2592,7 @@ function renderDataHistory(){
     <button class="tab-btn" onclick="dhTab(this,'dhMaster')">B2B Master (78)</button>
     <button class="tab-btn" onclick="dhTab(this,'dhGun')">Gun Sales (899)</button>
     <button class="tab-btn" onclick="dhTab(this,'dhImport')">Import JSON</button>
+    <button class="tab-btn" onclick="dhTab(this,'dhExcel')">📊 Import Excel</button>
   </div>
   <div id="dhPhonePe">
     ${!ppData?'<div class="alert alert-info">No PhonePe history imported yet. Use Import JSON tab to load historical_data.json</div>':
@@ -2380,10 +2620,35 @@ function renderDataHistory(){
         <input type="file" accept=".json" class="form-control" id="importFile" onchange="importHistoricalData()">
       </div>
     </div>
+  </div>
+  <div id="dhExcel" style="display:none">
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:12px">📊 Import Excel / CSV Operational Data</div>
+      <div class="alert alert-info">Upload any .xlsx or .csv file with operational data. Supported formats: Daily Reports, Transaction logs, PhonePe exports, Custom tables.</div>
+      <div class="grid-2" style="margin-bottom:14px">
+        <div class="form-group"><label>Select Excel / CSV File</label>
+          <input type="file" accept=".xlsx,.xls,.csv" class="form-control" id="excelFile" onchange="previewExcelFile()">
+        </div>
+        <div class="form-group"><label>Import As</label>
+          <select class="form-control" id="excelImportType">
+            <option value="transactions">Transactions</option>
+            <option value="historicalPhonePe">PhonePe History</option>
+            <option value="customers">Customers</option>
+            <option value="inventory">Inventory</option>
+            <option value="custom">Custom (raw)</option>
+          </select>
+        </div>
+      </div>
+      <div id="excelPreview" style="margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-accent" onclick="importExcelData()">📥 Import Data</button>
+        <button class="btn btn-outline" onclick="exportAllJSON()">📤 Export Backup First</button>
+      </div>
+    </div>
   </div>`;
 }
 function dhTab(btn,id){
-  ['dhPhonePe','dhMaster','dhGun','dhImport'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
+  ['dhPhonePe','dhMaster','dhGun','dhImport','dhExcel'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
   document.getElementById(id).style.display='block';
   document.querySelectorAll('#datahistoryContent .tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -2517,7 +2782,7 @@ function renderConfig(){
     <button class="tab-btn active" onclick="cfgTab(this,'cfgBrand')">Brand</button>
     <button class="tab-btn" onclick="cfgTab(this,'cfgServices')">Services</button>
     <button class="tab-btn" onclick="cfgTab(this,'cfgWhatsApp')">WhatsApp API</button>
-    <button class="tab-btn" onclick="cfgTab(this,'cfgDanger')">Danger Zone</button>
+    <button class="tab-btn" onclick="cfgTab(this,'cfgDanger')">Danger Zone</button><button class="tab-btn" onclick="cfgTab(this,'cfgDrive');updateDriveStatusLine()">☁️ Drive Sync</button>
   </div>
 
   <div id="cfgBrand">
@@ -2545,6 +2810,19 @@ function renderConfig(){
   </div>
 
   <div id="cfgServices" style="display:none">
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-weight:700;margin-bottom:10px">🏷️ Bulk Discount Publisher</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" id="bulk_disc_pct" class="form-control" style="width:90px" placeholder="%" min="0" max="100" step="1">
+          <span style="color:var(--text2);font-size:13px">% off all active services</span>
+        </div>
+        <button class="btn btn-gold" onclick="applyBulkDiscount()">Apply Discount</button>
+        <button class="btn btn-outline" onclick="removeBulkDiscount()">Remove Discount</button>
+        <button class="btn btn-outline btn-sm" onclick="previewDiscount()">Preview</button>
+      </div>
+      <div id="discPreview" style="margin-top:10px;font-size:12px;color:var(--text3)"></div>
+    </div>
     <div class="card">
       <div style="font-weight:700;margin-bottom:14px">💆 Service Pricing</div>
       <div class="alert alert-info">Edit prices below. All POS sessions will reflect updated prices immediately.</div>
@@ -2584,13 +2862,167 @@ function renderConfig(){
         <button class="btn btn-outline" onclick="exportAllJSON()">📥 Export Full Backup Before Reset</button>
       </div>
     </div>
+  </div>
+  <div id="cfgDrive" style="display:none">
+    <div class="card">
+      <div style="font-weight:700;font-size:15px;margin-bottom:6px">☁️ Google Drive Sync</div>
+      <div style="color:var(--text2);font-size:13px;margin-bottom:16px">All ārāma OS data stored in a private hidden folder in your Google Drive. Works offline — auto-syncs when online.</div>
+      <div class="form-group"><label>Sync Status</label><div id="driveStatusLine" style="padding:10px;background:var(--bg3);border-radius:8px;font-size:13px">Loading…</div></div>
+      <div class="form-group">
+        <label>Google OAuth Client ID</label>
+        <input class="form-control" id="cfg_gcid" placeholder="xxxx.apps.googleusercontent.com">
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">From Google Cloud Console → APIs &amp; Services → Credentials</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-accent" onclick="saveDriveClientId()">💾 Save &amp; Connect</button>
+        <button class="btn btn-outline" onclick="requestDriveAccess()">🔄 Re-authenticate</button>
+        <button class="btn btn-outline" onclick="saveToDrive().then(()=>toast('Saved to Drive','success'))">⬆️ Force Sync Now</button>
+        <button class="btn btn-outline" onclick="loadFromDrive().then(r=>r?toast('Loaded from Drive','success'):toast('No Drive data found','error'))">⬇️ Load from Drive</button>
+      </div>
+      <div style="background:var(--bg3);border-radius:10px;padding:16px;margin-top:16px">
+        <div style="font-weight:700;margin-bottom:10px;font-size:13px">📋 One-time Setup (5 min)</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+          <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">1</span><span>Go to <a href="https://console.cloud.google.com" target="_blank" style="color:var(--accent3)">console.cloud.google.com</a> → New Project → name: <b>arama-wellness</b></span></div>
+          <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">2</span><span>APIs &amp; Services → Enable APIs → search <b>Google Drive API</b> → Enable</span></div>
+          <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">3</span><span>OAuth consent screen → External → App name: <b>ārāma OS</b> → add <b>aramaasia@gmail.com</b> as test user</span></div>
+          <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">4</span><span>Credentials → Create Credentials → <b>OAuth 2.0 Client ID</b> → Web application</span></div>
+          <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">5</span><span>Authorised JS origins: <b>https://aramaoperations.github.io</b> and <b>http://localhost</b></span></div>
+          <div style="display:flex;gap:10px"><span style="min-width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">6</span><span>Copy Client ID → paste above → Save &amp; Connect</span></div>
+        </div>
+      </div>
+    </div>
   </div>`;
 }
+
+function updateDriveStatusLine(){
+  const el=document.getElementById('driveStatusLine');
+  if(!el)return;
+  const cid=localStorage.getItem('arama_gclientid')||'';
+  const labels={synced:'✅ Synced to Google Drive',syncing:'🔄 Syncing…',pending:'🟡 Changes pending sync',offline:cid?'🔴 Not authenticated — click Re-authenticate':'⚪ Not configured — add Client ID below',error:'❌ Sync error'};
+  el.textContent=labels[syncState]||'Unknown';
+  const inp=document.getElementById('cfg_gcid');
+  if(inp)inp.value=cid;
+}
+
 function cfgTab(btn,id){
-  ['cfgBrand','cfgServices','cfgWhatsApp','cfgDanger'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
+  ['cfgBrand','cfgServices','cfgWhatsApp','cfgDanger','cfgDrive'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
   document.getElementById(id).style.display='block';
   document.querySelectorAll('#configContent .tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+}
+function applyBulkDiscount(){
+  const pct=parseFloat(document.getElementById('bulk_disc_pct').value)||0;
+  if(pct<=0||pct>100){toast('Enter a valid discount % (1-100)','error');return;}
+  if(!confirm('Apply '+pct+'% discount to all active service prices? This will overwrite current prices.'))return;
+  const cfg=DB.get('config')||DEFAULT_CONFIG;
+  cfg.services=(cfg.services||[]).map(s=>{
+    if(!s.active)return s;
+    s.durations=(s.durations||[]).map(d=>({...d,price:Math.round(d.price*(1-pct/100))}));
+    return s;
+  });
+  cfg._lastDiscount=pct;
+  DB.set('config',cfg);
+  toast(pct+'% discount applied to all active services','success');
+  renderConfig();
+}
+function removeBulkDiscount(){
+  const cfg=DB.get('config')||DEFAULT_CONFIG;
+  const pct=cfg._lastDiscount||0;
+  if(!pct){toast('No recorded discount to remove','error');return;}
+  if(!confirm('Remove '+pct+'% discount and restore original prices?'))return;
+  cfg.services=(cfg.services||[]).map(s=>{
+    s.durations=(s.durations||[]).map(d=>({...d,price:Math.round(d.price/(1-pct/100))}));
+    return s;
+  });
+  cfg._lastDiscount=0;
+  DB.set('config',cfg);
+  toast('Discount removed — prices restored','success');
+  renderConfig();
+}
+function previewDiscount(){
+  const pct=parseFloat(document.getElementById('bulk_disc_pct').value)||0;
+  const cfg=DB.get('config')||DEFAULT_CONFIG;
+  if(!pct){document.getElementById('discPreview').textContent='';return;}
+  const sample=(cfg.services||[]).filter(s=>s.active).slice(0,3).map(s=>{
+    const d30=s.durations?.find(d=>d.min===30);
+    const orig=d30?d30.price:0;
+    return s.name+': ₹'+orig+' → ₹'+Math.round(orig*(1-pct/100));
+  });
+  document.getElementById('discPreview').innerHTML='Preview: '+sample.join(' &nbsp;|&nbsp; ')+(cfg.services.filter(s=>s.active).length>3?' … and more':'');
+}
+function previewExcelFile(){
+  const file=document.getElementById('excelFile').files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      let rows=[];
+      if(file.name.endsWith('.csv')){
+        const text=new TextDecoder().decode(e.target.result);
+        rows=text.split('\n').slice(0,6).map(r=>r.split(','));
+      } else {
+        const wb=XLSX.read(e.target.result,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        const data=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+        rows=data.slice(0,6);
+      }
+      const html='<div class="table-wrap" style="max-height:160px;overflow:auto"><table style="font-size:11px"><tbody>'+
+        rows.map(r=>'<tr>'+r.slice(0,8).map(c=>'<td style="padding:3px 6px;border:1px solid var(--border)">'+String(c).slice(0,30)+'</td>').join('')+'</tr>').join('')+
+        '</tbody></table></div><div style="font-size:11px;color:var(--text3);margin-top:6px">Showing first 5 rows — select Import As type then click Import</div>';
+      document.getElementById('excelPreview').innerHTML=html;
+    }catch(err){document.getElementById('excelPreview').innerHTML='<div class="alert alert-error">Cannot read file: '+err.message+'</div>';}
+  };
+  if(file.name.endsWith('.csv'))reader.readAsArrayBuffer(file);
+  else reader.readAsArrayBuffer(file);
+}
+function importExcelData(){
+  const file=document.getElementById('excelFile').files[0];
+  if(!file){toast('Select a file first','error');return;}
+  const type=document.getElementById('excelImportType').value;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      let rows;
+      if(file.name.endsWith('.csv')){
+        const text=new TextDecoder().decode(e.target.result);
+        const lines=text.trim().split('\n');
+        const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+        rows=lines.slice(1).map(l=>{
+          const vals=l.split(',').map(v=>v.trim().replace(/"/g,''));
+          const obj={};headers.forEach((h,i)=>obj[h]=vals[i]||'');return obj;
+        });
+      } else {
+        const wb=XLSX.read(e.target.result,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+      }
+      if(!rows.length){toast('No data rows found in file','error');return;}
+      if(type==='custom'){
+        DB.set('excelImport_'+Date.now(),rows);
+        toast('Imported '+rows.length+' rows as custom dataset','success');
+      } else if(type==='transactions'){
+        const existing=DB.get('transactions')||[];
+        const mapped=rows.map(r=>({id:'imp_'+Date.now()+'_'+Math.random().toString(36).slice(2),amount:parseFloat(r.amount||r.Amount||r.total||0),type:r.type||r.Type||'service',location:r.location||r.Location||'',createdAt:r.date||r.Date||new Date().toISOString(),note:'Imported from Excel'}));
+        DB.set('transactions',[...existing,...mapped]);
+        toast('Imported '+mapped.length+' transactions','success');
+      } else if(type==='customers'){
+        const existing=DB.get('customers')||[];
+        const mapped=rows.map(r=>({id:'cust_'+Date.now()+'_'+Math.random().toString(36).slice(2),name:r.name||r.Name||'',phone:r.phone||r.Phone||r.mobile||'',email:r.email||r.Email||'',createdAt:new Date().toISOString()}));
+        DB.set('customers',[...existing,...mapped]);
+        toast('Imported '+mapped.length+' customers','success');
+      } else if(type==='inventory'){
+        DB.set('importedInventory',rows);
+        toast('Imported '+rows.length+' inventory rows','success');
+      } else if(type==='historicalPhonePe'){
+        const summary=rows.map(r=>({store:r.store||r.Store||r.location||'',revenue:parseFloat(r.revenue||r.Revenue||r.amount||0)}));
+        const grand=summary.reduce((s,r)=>s+r.revenue,0);
+        DB.set('historicalPhonePe',{summary,grandTotal:grand,monthly:[]});
+        toast('Imported PhonePe data: '+rows.length+' locations, ₹'+(grand/100000).toFixed(1)+'L total','success');
+      }
+      renderDataHistory();
+    }catch(err){toast('Import failed: '+err.message,'error');}
+  };
+  reader.readAsArrayBuffer(file);
 }
 function saveBrandConfig(){
   const cfg=DB.get('config')||DEFAULT_CONFIG;
@@ -2762,7 +3194,7 @@ function renderProfile(){
       <div class="form-group"><label>Email</label><input type="email" class="form-control" id="pf_email" value="${u.email||''}"></div>
       <div class="form-group"><label>New Password (leave blank to keep)</label><input type="password" class="form-control" id="pf_pass"></div>
       <button class="btn btn-accent" onclick="saveProfile()">Save Profile</button>
-      <button class="btn btn-red" style="margin-left:8px" onclick="doLogout()">Sign Out</button>
+      <button id="syncBtn" class="sync-btn offline" onclick="requestDriveAccess()" title="Sync to Google Drive"><span class="dot"></span><span id="syncLabel">Drive</span></button><button class="btn btn-red" style="margin-left:8px" onclick="doLogout()">Sign Out</button>
     </div>
     <div class="card">
       <div style="font-weight:700;margin-bottom:14px">📊 My Activity</div>
@@ -3071,6 +3503,9 @@ function checkSession(){
 document.addEventListener('DOMContentLoaded',()=>{
   // Seed initial data if first run
   seedIfEmpty();
+
+  // Init Google Drive sync
+  setTimeout(initGAuth, 1500); // after GIS lib loads
 
   // Restore session
   checkSession();
