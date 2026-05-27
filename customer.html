@@ -306,6 +306,14 @@ header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:
 .info-box{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);border-radius:var(--radius);padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.6}
 .success-box{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:var(--radius2);padding:28px 20px;text-align:center}
 
+/* ── PAY OPTION CARDS ── */
+.pay-opt{border:2px solid var(--border2);border-radius:14px;padding:18px;cursor:pointer;text-align:center;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.pay-opt:active{transform:scale(.97)}
+.pay-opt.sel-online{border-color:var(--green);background:rgba(16,185,129,.08)}
+.pay-opt.sel-kiosk{border-color:var(--gold);background:rgba(245,158,11,.07)}
+.upi-app-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;min-height:44px;transition:border-color .15s}
+.upi-app-btn:hover{border-color:var(--accent)}
+
 /* ── BOOKING WIZARD ── */
 .book-steps{display:flex;gap:0;margin-bottom:28px;position:relative}
 .book-steps::before{content:'';position:absolute;top:20px;left:10%;right:10%;height:2px;background:var(--border);z-index:0}
@@ -723,14 +731,15 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
 <div id="tab-book" class="hidden fade-up">
   <div class="container section">
     <div class="section-title">📅 Book a Session</div>
-    <div class="section-sub">Reserve your slot in advance. Pay at the kiosk when you arrive — no upfront payment needed.</div>
+    <div class="section-sub">Verify your number via WhatsApp. Pay online for instant confirmation — or pay cash/UPI at the kiosk.</div>
 
-    <!-- Step indicator -->
+    <!-- 5-step indicator -->
     <div class="book-steps">
       <div class="book-step active" data-step="1"><div class="step-num">1</div><div class="step-label">Choose</div></div>
       <div class="book-step" data-step="2"><div class="step-num">2</div><div class="step-label">Time</div></div>
-      <div class="book-step" data-step="3"><div class="step-num">3</div><div class="step-label">Confirm</div></div>
-      <div class="book-step" data-step="4"><div class="step-num">✓</div><div class="step-label">Done</div></div>
+      <div class="book-step" data-step="3"><div class="step-num">🔐</div><div class="step-label">Verify</div></div>
+      <div class="book-step" data-step="4"><div class="step-num">💳</div><div class="step-label">Pay</div></div>
+      <div class="book-step" data-step="5"><div class="step-num">✓</div><div class="step-label">Done</div></div>
     </div>
 
     <!-- Step 1: Location + Service -->
@@ -745,7 +754,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
           <label>Select Service *</label>
           <select id="bk-svc" style="font-size:15px"><option value="">Choose a service…</option></select>
         </div>
-        <div class="info-box mt8 mb16" style="font-size:13px">💡 Walk-ins always welcome too — no booking required. Reserve when you want a guaranteed slot.</div>
+        <div class="info-box mt8 mb16" style="font-size:13px">💡 Walk-ins always welcome — no booking required. Reserve a slot when you want a guaranteed time.</div>
         <button class="btn btn-primary w100 btn-lg" onclick="bkNext1()">Next: Choose Time →</button>
       </div>
     </div>
@@ -758,40 +767,106 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16p
         <div class="cat-tabs mb20" id="bk-date-tabs" style="flex-wrap:wrap;gap:8px"></div>
         <label style="display:block;margin-bottom:10px;color:var(--text2);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Available Slots — <span id="bk-dur-lbl" style="font-weight:500;color:var(--text3)">15 min per slot</span></label>
         <div class="slot-grid" id="bk-slots"></div>
-        <div style="display:flex;gap:8px;font-size:12px;color:var(--text3);margin-bottom:16px">
+        <div style="display:flex;gap:12px;font-size:12px;color:var(--text3);margin-bottom:16px">
           <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--accent);display:inline-block"></span>Selected</span>
           <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--bg4);border:1px solid var(--border);display:inline-block"></span>Full</span>
         </div>
         <div class="flex gap8">
           <button class="btn btn-secondary" style="flex:1" onclick="showBookStep(1)">← Back</button>
-          <button class="btn btn-primary" style="flex:2" onclick="bkNext2()">Next: Confirm →</button>
+          <button class="btn btn-primary" style="flex:2" onclick="bkNext2()">Next: Verify →</button>
         </div>
       </div>
     </div>
 
-    <!-- Step 3: Contact + Confirm -->
+    <!-- Step 3: Phone Verification via WhatsApp OTP -->
     <div class="step-panel" id="bk-panel-3">
       <div class="card">
-        <h3 style="font-size:17px;margin-bottom:16px">✅ Confirm Your Booking</h3>
-        <div id="bk-summary"></div>
-        <div class="form-group">
-          <label>Your Name *</label>
-          <input type="text" id="bk-name" placeholder="Full name" autocomplete="name">
-        </div>
+        <h3 style="font-size:17px;margin-bottom:6px">🔐 Verify Your Number</h3>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:18px">A 6-digit code is generated for you. Send it from your WhatsApp to confirm you own this number — prevents anyone booking with your number.</p>
+        <div class="form-group"><label>Your Name *</label><input type="text" id="bk-name" placeholder="Full name" autocomplete="name"></div>
         <div class="form-group">
           <label>Phone Number *</label>
-          <input type="tel" id="bk-phone" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel">
-          <div style="font-size:12px;color:var(--text3);margin-top:5px">📌 Booking + loyalty points linked to this number</div>
+          <input type="tel" id="bk-phone" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" oninput="bkPhoneChanged()">
+          <div style="font-size:12px;color:var(--text3);margin-top:5px">Booking + loyalty points linked to this number</div>
         </div>
-        <div class="flex gap8 mt8">
-          <button class="btn btn-secondary" style="flex:1" onclick="showBookStep(2)">← Back</button>
-          <button class="btn btn-gold" style="flex:2" onclick="bkConfirm()">Confirm Booking →</button>
+        <!-- OTP box shown after Get Code -->
+        <div id="bk-otp-wrap" class="hidden">
+          <div style="background:linear-gradient(140deg,#1c1008,#2a1e06);border:2px solid var(--gold);border-radius:16px;padding:22px;text-align:center;margin-bottom:16px">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px">Your Verification Code</div>
+            <div id="bk-otp-display" style="font-size:40px;font-weight:900;color:var(--gold);letter-spacing:.25em;margin-bottom:14px">──────</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Send this code from WhatsApp to <strong style="color:#fff">+91 80808 08080</strong></div>
+            <button class="btn btn-whatsapp w100 btn-lg" id="bk-wa-btn" onclick="sendOTPWA()">💬 Open WhatsApp &amp; Send Code</button>
+          </div>
+          <div style="text-align:center;font-size:13px;color:var(--text3);margin-bottom:16px">Sent your code? Choose how to pay below.</div>
+          <button class="btn btn-primary w100 btn-lg" onclick="bkProceedPay()">Next: Choose Payment →</button>
+        </div>
+        <!-- Get code trigger -->
+        <div id="bk-get-otp-wrap">
+          <div class="flex gap8 mt8">
+            <button class="btn btn-secondary" style="flex:1" onclick="showBookStep(2)">← Back</button>
+            <button class="btn btn-gold" style="flex:2" onclick="bkGetOTP()">🔐 Get Verification Code →</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Step 4: Success (populated by JS) -->
-    <div class="step-panel" id="bk-panel-4"></div>
+    <!-- Step 4: Payment -->
+    <div class="step-panel" id="bk-panel-4">
+      <div class="card">
+        <h3 style="font-size:17px;margin-bottom:16px">💳 Choose Payment</h3>
+        <div id="bk-pay-summary"></div>
+        <!-- Option cards -->
+        <div class="grid2" style="gap:12px;margin-bottom:20px">
+          <div class="pay-opt" id="bk-po-online" onclick="selectPayOpt('online')">
+            <div style="font-size:28px;margin-bottom:6px">💳</div>
+            <div style="font-weight:800;font-size:15px;margin-bottom:4px">Pay Online</div>
+            <div style="font-size:12px;color:var(--text2)">UPI / PhonePe / GPay</div>
+            <div style="font-size:11px;color:var(--green2);margin-top:8px;font-weight:700">✅ Confirmed Instantly</div>
+          </div>
+          <div class="pay-opt" id="bk-po-kiosk" onclick="selectPayOpt('kiosk')">
+            <div style="font-size:28px;margin-bottom:6px">🏪</div>
+            <div style="font-weight:800;font-size:15px;margin-bottom:4px">Pay at Kiosk</div>
+            <div style="font-size:12px;color:var(--text2)">Cash / UPI at counter</div>
+            <div style="font-size:11px;color:var(--gold2);margin-top:8px;font-weight:700">⏳ Staff Confirms Arrival</div>
+          </div>
+        </div>
+        <!-- UPI Payment section -->
+        <div id="bk-upi-sec" class="hidden">
+          <div style="background:var(--bg3);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px">
+            <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Scan with any UPI app</div>
+            <img id="bk-qr-img" style="width:200px;height:200px;border-radius:10px;border:3px solid #fff;display:block;margin:0 auto 14px;background:var(--border2)" alt="UPI QR">
+            <div style="font-size:14px;font-weight:700;margin-bottom:4px">UPI ID: <span id="bk-upi-id-lbl" style="color:var(--accent3)">arama@ybl</span></div>
+            <div style="font-size:24px;font-weight:900;color:var(--gold);margin-bottom:14px" id="bk-upi-amt-lbl"></div>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+              <a id="lnk-phonepe" class="upi-app-btn" href="#">📱 PhonePe</a>
+              <a id="lnk-gpay" class="upi-app-btn" href="#">💚 GPay</a>
+              <a id="lnk-upi" class="upi-app-btn" href="#">⚡ Any UPI</a>
+            </div>
+          </div>
+          <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:14px;padding:18px">
+            <div style="font-weight:700;color:var(--green2);margin-bottom:10px;font-size:14px">✅ After Paying — Enter Transaction ID</div>
+            <div class="form-group mb12">
+              <label>UTR / Transaction Reference *</label>
+              <input type="text" id="bk-utr" placeholder="e.g. 123456789012" style="letter-spacing:.04em">
+              <div style="font-size:11px;color:var(--text3);margin-top:4px">Find in your UPI app → Payment History</div>
+            </div>
+            <button class="btn btn-success w100 btn-lg" onclick="submitUTR()">✅ Confirm Payment &amp; Book →</button>
+          </div>
+        </div>
+        <!-- Kiosk Payment section -->
+        <div id="bk-kiosk-sec" class="hidden">
+          <div class="info-box mb16">🏪 Walk to the ārāma counter at your selected location. Staff will take payment and start your session. Show your Booking ID.</div>
+          <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px">⚠️ Slot is held for <strong style="color:var(--gold)">15 minutes</strong> from booking time. Staff must confirm before session can start.</div>
+          <button class="btn btn-gold w100 btn-lg" onclick="confirmKioskBooking()">Reserve Slot (Pay at Kiosk) →</button>
+        </div>
+        <div class="mt12">
+          <button class="btn btn-secondary btn-sm" onclick="showBookStep(3)">← Back</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: Done (populated by JS) -->
+    <div class="step-panel" id="bk-panel-5"></div>
 
   </div>
 </div>
@@ -1192,7 +1267,16 @@ function resetB2B(){
 }
 
 // ── BOOKING ─────────────────────────────────────────────────
-let bookState={step:1,locCode:'',locName:'',station:'',city:'',svcId:'',svcName:'',duration:15,price:0,date:'',slot:'',phone:'',name:''};
+const UPI_ID='arama.pay@ybl';
+const UPI_NAME='arama Wellness';
+const ARAMA_WA='918080808080';
+
+let bookState={
+  step:1,locCode:'',locName:'',station:'',city:'',
+  svcId:'',svcName:'',duration:15,price:0,
+  date:'',slot:'',phone:'',name:'',
+  bookingId:'',payMode:''
+};
 
 function initBooking(){
   // Reset state
@@ -1221,7 +1305,7 @@ function initBooking(){
 
 function showBookStep(n){
   bookState.step=n;
-  for(let i=1;i<=4;i++){
+  for(let i=1;i<=5;i++){
     const p=document.getElementById('bk-panel-'+i);
     if(p){p.classList.toggle('active',i===n);}
     const s=document.querySelector('.book-step[data-step="'+i+'"]');
@@ -1307,73 +1391,192 @@ function selectBkSlot(val,el){
 
 function bkNext2(){
   if(!bookState.slot){toast('Please select a time slot','error');return;}
-  // Build summary
-  const su=document.getElementById('bk-summary');
-  if(su){
-    const sp=bookState.slot.split(':');const sh=parseInt(sp[0]);const sm=parseInt(sp[1]);
-    const slotLbl=(sh%12||12)+':'+(sm===0?'00':String(sm).padStart(2,'0'))+(sh<12?' AM':' PM');
-    const dateLbl=new Date(bookState.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    su.innerHTML=`<div style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:16px">
-      <div style="font-size:13px;font-weight:700;color:var(--accent3);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">Booking Summary</div>
-      <div style="display:flex;flex-direction:column;gap:9px;font-size:14px">
-        <div class="flex jb"><span style="color:var(--text2)">Location</span><span style="font-weight:700;text-align:right;max-width:58%">${bookState.locName}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Station</span><span style="font-weight:600;text-align:right;max-width:58%;font-size:13px;color:var(--text2)">${bookState.station}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Service</span><span style="font-weight:700">${bookState.svcName}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Date</span><span style="font-weight:700">${dateLbl}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Time</span><span style="font-weight:700">${slotLbl}</span></div>
-        <div class="flex jb" style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
-          <span style="font-weight:700;font-size:15px">Total to Pay</span>
-          <span style="font-weight:900;font-size:20px;color:var(--gold)">${fc(bookState.price)}</span>
-        </div>
-      </div>
-    </div>
-    <div class="info-box mb16">💡 <strong>Pay at the kiosk</strong> when you arrive. Show your Booking ID at the counter. Slot is held for 15 min from your booking time.</div>`;
-  }
+  // Pre-fill if logged in
+  const sp=localStorage.getItem('arama_cust_phone');
+  const sn=localStorage.getItem('arama_cust_name');
+  const phEl=document.getElementById('bk-phone');const nmEl=document.getElementById('bk-name');
+  if(sp&&phEl&&!phEl.value)phEl.value=sp;
+  if(sn&&nmEl&&!nmEl.value)nmEl.value=sn;
+  // Hide OTP in case of back-navigation
+  const ow=document.getElementById('bk-otp-wrap');if(ow)ow.classList.add('hidden');
   showBookStep(3);
 }
 
-function bkConfirm(){
-  const phone=(document.getElementById('bk-phone')?.value||'').trim();
+// Reset OTP when phone number changes
+function bkPhoneChanged(){
+  bookState.phone='';
+  const ow=document.getElementById('bk-otp-wrap');if(ow)ow.classList.add('hidden');
+  const d=document.getElementById('bk-otp-display');if(d)d.textContent='──────';
+}
+
+// Generate 6-digit OTP, show on screen, user WhatsApps it to prove they own the number
+function bkGetOTP(){
   const name=(document.getElementById('bk-name')?.value||'').trim();
-  if(!phone||phone.length!==10){toast('Enter your 10-digit phone number','error');return;}
-  if(!name){toast('Enter your full name','error');return;}
-  bookState.phone=phone;bookState.name=name;
-  const bkId='BK-'+Math.random().toString(36).slice(2,8).toUpperCase();
-  const booking={id:bkId,phone,name,locCode:bookState.locCode,locName:bookState.locName,station:bookState.station,city:bookState.city,svcId:bookState.svcId,svcName:bookState.svcName,duration:bookState.duration,price:bookState.price,date:bookState.date,slot:bookState.slot,status:'upcoming',ts:new Date().toISOString()};
+  const phone=(document.getElementById('bk-phone')?.value||'').trim();
+  if(!name){toast('Please enter your full name','error');return;}
+  if(!phone||phone.length!==10||!/^\d{10}$/.test(phone)){toast('Enter a valid 10-digit phone number','error');return;}
+  bookState.name=name;bookState.phone=phone;
+  const otp=String(Math.floor(100000+Math.random()*900000));
+  localStorage.setItem('arama_otp_'+phone,JSON.stringify({otp,phone,name,ts:new Date().toISOString(),expires:Date.now()+30*60*1000}));
+  const d=document.getElementById('bk-otp-display');if(d)d.textContent=otp;
+  const ow=document.getElementById('bk-otp-wrap');if(ow)ow.classList.remove('hidden');
+  setTimeout(()=>ow?.scrollIntoView({behavior:'smooth',block:'center'}),100);
+  toast('Code generated! Send it on WhatsApp to prove you own this number','success');
+}
+
+function sendOTPWA(){
+  const otp=document.getElementById('bk-otp-display')?.textContent||'';
+  const phone=bookState.phone||document.getElementById('bk-phone')?.value?.trim()||'';
+  window.open(`https://wa.me/${ARAMA_WA}?text=${encodeURIComponent('OTP '+otp+' for ārāma booking from +91'+phone)}`,'_blank');
+}
+
+// Create the booking record, build payment summary, go to step 4
+function bkProceedPay(){
+  const name=(document.getElementById('bk-name')?.value||'').trim();
+  const phone=(document.getElementById('bk-phone')?.value||'').trim();
+  if(!name){toast('Please enter your full name','error');return;}
+  if(!phone||phone.length!==10){toast('Enter a valid 10-digit phone number','error');return;}
+  const otpData=JSON.parse(localStorage.getItem('arama_otp_'+phone)||'null');
+  if(!otpData){toast('Please generate your verification code first','error');return;}
+  bookState.name=name;bookState.phone=phone;
+  // Create booking
+  const bkId='BK-'+Date.now().toString(36).slice(-4).toUpperCase()+Math.random().toString(36).slice(2,4).toUpperCase();
+  bookState.bookingId=bkId;
+  const sp=bookState.slot.split(':');const sh=parseInt(sp[0]);const sm=parseInt(sp[1]);
+  const slotLbl=(sh%12||12)+':'+(sm===0?'00':String(sm).padStart(2,'0'))+(sh<12?' AM':' PM');
+  const dateLbl=new Date(bookState.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const booking={
+    id:bkId,phone,name,
+    locCode:bookState.locCode,locName:bookState.locName,station:bookState.station,city:bookState.city,
+    svcId:bookState.svcId,svcName:bookState.svcName,duration:bookState.duration,price:bookState.price,
+    date:bookState.date,slot:bookState.slot,
+    status:'pending_otp',payMode:'',utr:'',otp:otpData.otp,
+    ts:new Date().toISOString()
+  };
   const all=JSON.parse(localStorage.getItem('arama_bookings')||'[]');
   all.push(booking);localStorage.setItem('arama_bookings',JSON.stringify(all));
   localStorage.setItem('arama_cust_phone',phone);localStorage.setItem('arama_cust_name',name);
-  // Sign-up loyalty bonus if new
-  if(!DB.get('loyalty_'+phone)){DB.set('loyalty_'+phone,{phone,name,points:50,history:[{ts:new Date().toISOString(),pts:50,note:'Welcome bonus (first booking)'}]});}
-  // Render success panel
-  const sp=bookState.slot.split(':');const sh=parseInt(sp[0]);const sm=parseInt(sp[1]);
-  const slotLbl=(sh%12||12)+':'+(sm===0?'00':String(sm).padStart(2,'0'))+(sh<12?' AM':' PM');
-  const dateLbl=new Date(bookState.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
-  const p4=document.getElementById('bk-panel-4');
-  if(p4)p4.innerHTML=`<div style="text-align:center;padding:8px 0 24px">
-    <div style="font-size:56px;margin-bottom:14px;animation:float 3s ease-in-out infinite">✅</div>
-    <h2 style="font-size:22px;font-weight:800;margin-bottom:6px">Slot Reserved!</h2>
-    <p style="color:var(--text2);margin-bottom:22px;font-size:14px">Show this ID at the counter — then pay and relax.</p>
-    <div style="background:linear-gradient(140deg,var(--bg3),var(--bg4));border:2px solid var(--accent);border-radius:16px;padding:24px 20px;margin-bottom:20px">
-      <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Booking ID</div>
-      <div style="font-size:32px;font-weight:900;color:var(--accent3);letter-spacing:.12em;margin-bottom:18px">${bkId}</div>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;text-align:left">
-        <div class="flex jb"><span style="color:var(--text2)">Name</span><span style="font-weight:700">${name}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Location</span><span style="font-weight:700;text-align:right;max-width:60%">${bookState.locName}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Service</span><span style="font-weight:700">${bookState.svcName}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Date & Time</span><span style="font-weight:700">${dateLbl} · ${slotLbl}</span></div>
-        <div class="flex jb" style="border-top:1px solid var(--border);padding-top:10px;margin-top:2px"><span style="color:var(--text2)">Pay at Kiosk</span><span style="font-weight:900;color:var(--gold);font-size:17px">${fc(bookState.price)}</span></div>
+  if(!DB.get('loyalty_'+phone)){DB.set('loyalty_'+phone,{phone,name,points:50,history:[{ts:new Date().toISOString(),pts:50,note:'Welcome bonus'}]});}
+  // Build pay summary
+  const su=document.getElementById('bk-pay-summary');
+  if(su)su.innerHTML=`<div style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:16px">
+    <div style="font-size:12px;font-weight:700;color:var(--accent3);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">📋 ${bkId}</div>
+    <div style="display:flex;flex-direction:column;gap:9px;font-size:14px">
+      <div class="flex jb"><span style="color:var(--text2)">Location</span><span style="font-weight:700;text-align:right;max-width:58%">${bookState.locName}</span></div>
+      <div class="flex jb"><span style="color:var(--text2)">Service</span><span style="font-weight:700">${bookState.svcName}</span></div>
+      <div class="flex jb"><span style="color:var(--text2)">Date</span><span style="font-weight:700">${dateLbl}</span></div>
+      <div class="flex jb"><span style="color:var(--text2)">Time</span><span style="font-weight:700">${slotLbl}</span></div>
+      <div class="flex jb" style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
+        <span style="font-weight:700;font-size:15px">Amount</span>
+        <span style="font-weight:900;font-size:22px;color:var(--gold)">${fc(bookState.price)}</span>
       </div>
     </div>
-    <div class="info-box mb20" style="text-align:left;font-size:13px">📌 Arrive 5 min early. Slot held for 15 min from booking time. Payment accepted: UPI / PhonePe / Cash.</div>
+  </div>`;
+  // Reset pay option cards
+  ['bk-po-online','bk-po-kiosk'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('sel-online','sel-kiosk');}});
+  ['bk-upi-sec','bk-kiosk-sec'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
+  showBookStep(4);
+}
+
+function selectPayOpt(opt){
+  const onCard=document.getElementById('bk-po-online');
+  const kiCard=document.getElementById('bk-po-kiosk');
+  const upiSec=document.getElementById('bk-upi-sec');
+  const kiSec=document.getElementById('bk-kiosk-sec');
+  if(opt==='online'){
+    onCard?.classList.add('sel-online');onCard?.classList.remove('sel-kiosk');
+    kiCard?.classList.remove('sel-kiosk','sel-online');
+    upiSec?.classList.remove('hidden');kiSec?.classList.add('hidden');
+    bookState.payMode='online';
+    // Build UPI QR + deeplinks
+    const amt=bookState.price;
+    const tn=encodeURIComponent('arama '+bookState.bookingId);
+    const pa=encodeURIComponent(UPI_ID);
+    const pn=encodeURIComponent(UPI_NAME);
+    const upiStr=`upi://pay?pa=${pa}&pn=${pn}&am=${amt}&tn=${tn}&cu=INR`;
+    const qr=document.getElementById('bk-qr-img');
+    if(qr)qr.src=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiStr)}`;
+    const amtLbl=document.getElementById('bk-upi-amt-lbl');if(amtLbl)amtLbl.textContent=fc(amt);
+    const ppL=document.getElementById('lnk-phonepe');if(ppL)ppL.href=`phonepe://pay?pa=${pa}&pn=${pn}&am=${amt}&tn=${tn}&cu=INR`;
+    const gpL=document.getElementById('lnk-gpay');if(gpL)gpL.href=`gpay://upi/pay?pa=${pa}&pn=${pn}&am=${amt}&tn=${tn}&cu=INR`;
+    const uL=document.getElementById('lnk-upi');if(uL)uL.href=upiStr;
+    setTimeout(()=>upiSec?.scrollIntoView({behavior:'smooth',block:'start'}),100);
+  } else {
+    kiCard?.classList.add('sel-kiosk');kiCard?.classList.remove('sel-online');
+    onCard?.classList.remove('sel-online','sel-kiosk');
+    kiSec?.classList.remove('hidden');upiSec?.classList.add('hidden');
+    bookState.payMode='kiosk';
+    setTimeout(()=>kiSec?.scrollIntoView({behavior:'smooth',block:'start'}),100);
+  }
+}
+
+// UTR submitted → booking instantly confirmed (paid_online)
+function submitUTR(){
+  const utr=(document.getElementById('bk-utr')?.value||'').trim();
+  if(!utr||utr.length<8){toast('Enter your UTR / Transaction ID (min 8 characters)','error');return;}
+  if(!bookState.bookingId){toast('Session expired — please restart booking','error');return;}
+  const all=JSON.parse(localStorage.getItem('arama_bookings')||'[]');
+  const idx=all.findIndex(b=>b.id===bookState.bookingId);
+  if(idx!==-1){all[idx].status='paid_online';all[idx].payMode='online';all[idx].utr=utr;all[idx].paidAt=new Date().toISOString();localStorage.setItem('arama_bookings',JSON.stringify(all));}
+  // Loyalty points
+  const pts=Math.floor(bookState.price/10);
+  const loy=DB.get('loyalty_'+bookState.phone)||{phone:bookState.phone,name:bookState.name,points:0,history:[]};
+  loy.points=(loy.points||0)+pts;
+  loy.history.push({ts:new Date().toISOString(),pts,note:'Online pay '+bookState.bookingId});
+  DB.set('loyalty_'+bookState.phone,loy);
+  _buildStep5(true,utr);
+  showBookStep(5);
+  toast('Payment confirmed! Booking '+bookState.bookingId+' locked in 🎉','success');
+}
+
+// Kiosk reserve → pending_staff (staff must confirm at counter)
+function confirmKioskBooking(){
+  if(!bookState.bookingId){toast('Session expired — please restart booking','error');return;}
+  const all=JSON.parse(localStorage.getItem('arama_bookings')||'[]');
+  const idx=all.findIndex(b=>b.id===bookState.bookingId);
+  if(idx!==-1){all[idx].status='pending_staff';all[idx].payMode='kiosk';localStorage.setItem('arama_bookings',JSON.stringify(all));}
+  _buildStep5(false,'');
+  showBookStep(5);
+  toast('Slot reserved! Show your Booking ID at the counter','info');
+}
+
+function _buildStep5(isPaid,utr){
+  const sp2=bookState.slot.split(':');const sh2=parseInt(sp2[0]);const sm2=parseInt(sp2[1]);
+  const slotLbl=(sh2%12||12)+':'+(sm2===0?'00':String(sm2).padStart(2,'0'))+(sh2<12?' AM':' PM');
+  const dateLbl=new Date(bookState.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+  const bkId=bookState.bookingId;
+  const p5=document.getElementById('bk-panel-5');if(!p5)return;
+  const waText=isPaid
+    ?encodeURIComponent('Hi ārāma! Paid online. Booking '+bkId+' at '+bookState.locName+' on '+bookState.date+' at '+bookState.slot+'. UTR: '+utr)
+    :encodeURIComponent('Hi ārāma! Kiosk booking '+bkId+' at '+bookState.locName+' on '+bookState.date+' at '+bookState.slot+'. Please confirm.');
+  p5.innerHTML=`<div style="text-align:center;padding:8px 0 24px">
+    <div style="font-size:56px;margin-bottom:14px;animation:float 3s ease-in-out infinite">${isPaid?'🎉':'🏪'}</div>
+    <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;color:${isPaid?'var(--green2)':'var(--gold2)'}">${isPaid?'Booking Confirmed!':'Slot Reserved!'}</h2>
+    <p style="color:var(--text2);margin-bottom:22px;font-size:14px">${isPaid?'Payment received. Your slot is locked — just show this ID at the kiosk.':'Walk to the counter, show this ID, pay &amp; enjoy your session.'}</p>
+    <div style="background:linear-gradient(140deg,var(--bg3),var(--bg4));border:2px solid ${isPaid?'var(--green)':'var(--gold)'};border-radius:16px;padding:24px 20px;margin-bottom:20px">
+      <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Booking ID</div>
+      <div style="font-size:32px;font-weight:900;color:${isPaid?'var(--green2)':'var(--gold)'};letter-spacing:.12em;margin-bottom:18px">${bkId}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;text-align:left">
+        <div class="flex jb"><span style="color:var(--text2)">Name</span><span style="font-weight:700">${bookState.name}</span></div>
+        <div class="flex jb"><span style="color:var(--text2)">Location</span><span style="font-weight:700;text-align:right;max-width:60%">${bookState.locName}</span></div>
+        <div class="flex jb"><span style="color:var(--text2)">Service</span><span style="font-weight:700">${bookState.svcName}</span></div>
+        <div class="flex jb"><span style="color:var(--text2)">Date &amp; Time</span><span style="font-weight:700">${dateLbl} · ${slotLbl}</span></div>
+        <div class="flex jb" style="border-top:1px solid var(--border);padding-top:10px;margin-top:2px">
+          <span style="font-weight:700;color:${isPaid?'var(--green2)':'var(--gold)'}">${isPaid?'✅ Paid Online':'⏳ Pay at Kiosk'}</span>
+          <span style="font-weight:900;color:var(--gold);font-size:17px">${fc(bookState.price)}</span>
+        </div>
+        ${utr?`<div class="flex jb"><span style="color:var(--text3);font-size:12px">UTR Ref</span><span style="font-size:12px;color:var(--text3)">${utr}</span></div>`:''}
+      </div>
+    </div>
+    <div class="info-box mb16" style="text-align:left;font-size:13px;border-color:${isPaid?'rgba(16,185,129,.4)':'rgba(245,158,11,.4)'}">
+      ${isPaid?'✅ No payment needed at the kiosk — just show your Booking ID and sit down.':'⏳ Slot held for <strong>15 minutes</strong>. Pay at the counter (UPI / Cash). Staff must confirm to start your session.'}
+    </div>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <a href="https://wa.me/918080808080?text=Hi%20ārāma!%20My%20booking%20ID%20is%20${bkId}%20at%20${encodeURIComponent(bookState.locName)}%20on%20${bookState.date}%20at%20${bookState.slot}" target="_blank" class="btn btn-whatsapp w100 btn-lg">💬 Send to WhatsApp</a>
+      <a href="https://wa.me/${ARAMA_WA}?text=${waText}" target="_blank" class="btn btn-whatsapp w100 btn-lg">💬 ${isPaid?'Share on WhatsApp':'Notify on WhatsApp'}</a>
       <button class="btn btn-secondary w100" onclick="showTab('account')">📋 View All My Bookings</button>
       <button class="btn btn-primary w100" onclick="initBooking()">📅 Book Another Session</button>
     </div>
   </div>`;
-  showBookStep(4);
-  toast('Booking confirmed — '+bkId,'success');
 }
 
 // ── ACCOUNT ─────────────────────────────────────────────────
@@ -1398,10 +1601,11 @@ function acctLogout(){
 function getMyBookings(phone){
   const all=JSON.parse(localStorage.getItem('arama_bookings')||'[]');
   const now=new Date();
+  const activeStatuses=['upcoming','pending_otp','pending_staff','paid_online','confirmed'];
   return all.filter(b=>b.phone===phone).map(b=>{
-    if(b.status==='upcoming'){
+    if(activeStatuses.includes(b.status)){
       const bDt=new Date(b.date+'T'+b.slot+':00');
-      if(bDt<now)b.status='past';
+      if(bDt<now)b.status='completed'; // auto-expire to completed
     }
     return b;
   }).sort((a,z)=>new Date(z.date+'T'+z.slot)-new Date(a.date+'T'+a.slot));
@@ -1417,8 +1621,8 @@ function renderAccount(){
   loginEl.classList.add('hidden');dashEl.classList.remove('hidden');
   const loy=DB.get('loyalty_'+phone)||{points:0,history:[]};
   const bks=getMyBookings(phone);
-  const upcoming=bks.filter(b=>b.status==='upcoming').length;
-  const past=bks.filter(b=>b.status==='past').length;
+  const activeCount=bks.filter(b=>['pending_otp','pending_staff','paid_online','confirmed','upcoming'].includes(b.status)).length;
+  const doneCount=bks.filter(b=>['completed','past'].includes(b.status)).length;
   const initials=(name||phone.slice(-4)).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   const hdr=document.getElementById('acct-hdr');
   if(hdr)hdr.innerHTML=`
@@ -1427,8 +1631,8 @@ function renderAccount(){
     <div style="font-size:14px;color:rgba(255,255,255,.6);margin-bottom:18px">📱 +91 ${phone}</div>
     <div class="stat-row">
       <div class="stat-box"><div class="sv text-gold">${(loy.points||0).toLocaleString('en-IN')}</div><div class="sl">Points</div></div>
-      <div class="stat-box"><div class="sv text-green">${upcoming}</div><div class="sl">Upcoming</div></div>
-      <div class="stat-box"><div class="sv" style="color:var(--accent3)">${past}</div><div class="sl">Past</div></div>
+      <div class="stat-box"><div class="sv text-green">${activeCount}</div><div class="sl">Active</div></div>
+      <div class="stat-box"><div class="sv" style="color:var(--accent3)">${doneCount}</div><div class="sl">Past</div></div>
     </div>`;
   renderMyBookings(phone);
   // Update header badges
@@ -1441,29 +1645,51 @@ function renderAccount(){
 
 function renderMyBookings(phone){
   const bks=getMyBookings(phone);
-  const upcoming=bks.filter(b=>b.status==='upcoming');
-  const past=bks.filter(b=>b.status!=='upcoming').slice(0,8);
+  const activeStatuses=['pending_otp','pending_staff','paid_online','confirmed','upcoming'];
+  const active=bks.filter(b=>activeStatuses.includes(b.status));
+  const past=bks.filter(b=>!activeStatuses.includes(b.status)).slice(0,8);
   const wrap=document.getElementById('acct-bookings');if(!wrap)return;
-  const stClr={upcoming:'badge-green',past:'badge-grey',cancelled:'badge-red'};
+  const stClr={
+    upcoming:'badge-green',pending_otp:'badge-gold',pending_staff:'badge-gold',
+    paid_online:'badge-green',confirmed:'badge-green',completed:'badge-grey',
+    past:'badge-grey',cancelled:'badge-red'
+  };
+  const stLbl={
+    upcoming:'Upcoming',pending_otp:'OTP Verify',pending_staff:'Kiosk Pending',
+    paid_online:'Paid ✅',confirmed:'Confirmed',completed:'Completed',
+    past:'Past',cancelled:'Cancelled'
+  };
+  const payLbl={
+    pending_otp:'⏳ OTP verification pending — send WhatsApp code',
+    pending_staff:'⏳ Pay at kiosk — staff will confirm',
+    paid_online:'✅ Paid online',
+    confirmed:'✅ Confirmed by staff',
+    completed:'✅ Session completed',
+    upcoming:'Pay at kiosk when you arrive',
+    past:'Past session',
+    cancelled:'Booking cancelled'
+  };
   function bkHtml(b){
     const sp=b.slot.split(':');const sh=parseInt(sp[0]);const sm=parseInt(sp[1]);
     const slotLbl=(sh%12||12)+':'+(sm===0?'00':String(sm).padStart(2,'0'))+(sh<12?' AM':' PM');
     const dateLbl=new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
-    const stLbl=b.status.charAt(0).toUpperCase()+b.status.slice(1);
-    return `<div class="bk-card ${b.status}">
+    const canCancel=['pending_otp','pending_staff','upcoming'].includes(b.status);
+    const cardCls=(['paid_online','confirmed','upcoming'].includes(b.status))?'upcoming':(['cancelled'].includes(b.status)?'cancelled':'past');
+    return `<div class="bk-card ${cardCls}">
       <div class="flex jb ac mb8">
         <div class="bk-id">${b.id}</div>
-        <span class="badge ${stClr[b.status]||'badge-grey'}" style="font-size:11px">${stLbl}</span>
+        <span class="badge ${stClr[b.status]||'badge-grey'}" style="font-size:11px">${stLbl[b.status]||b.status}</span>
       </div>
       <div class="bk-title">${b.svcName}</div>
       <div class="bk-meta">
         <div>📍 ${b.locName}</div>
         <div>📅 ${dateLbl} · ⏰ ${slotLbl}</div>
-        <div style="margin-top:4px;font-weight:700;color:var(--gold)">Pay ${fc(b.price)} at kiosk</div>
+        <div style="margin-top:4px;font-size:12px;color:var(--text2)">${payLbl[b.status]||''} · ${fc(b.price)}</div>
+        ${b.utr?`<div style="font-size:11px;color:var(--text3);margin-top:2px">UTR: ${b.utr}</div>`:''}
       </div>
-      ${b.status==='upcoming'?`<div class="flex gap8 mt12">
+      ${canCancel?`<div class="flex gap8 mt12">
         <button class="btn btn-secondary btn-sm" style="flex:1;color:var(--red2);border-color:rgba(239,68,68,.25)" onclick="cancelBooking('${b.id}')">Cancel</button>
-        <a href="https://wa.me/918080808080?text=Booking%20${b.id}%20query" target="_blank" class="btn btn-whatsapp btn-sm" style="flex:1">💬 WhatsApp</a>
+        <a href="https://wa.me/${ARAMA_WA}?text=${encodeURIComponent('Hi ārāma! Query about booking '+b.id)}" target="_blank" class="btn btn-whatsapp btn-sm" style="flex:1">💬 Help</a>
       </div>`:''}
     </div>`;
   }
@@ -1476,8 +1702,8 @@ function renderMyBookings(phone){
     </div>`;return;
   }
   wrap.innerHTML=
-    (upcoming.length?`<div style="font-size:15px;font-weight:700;margin-bottom:12px">📅 Upcoming (${upcoming.length})</div>${upcoming.map(bkHtml).join('')}`:'<div class="card" style="text-align:center;padding:20px;margin-bottom:16px;border-style:dashed"><div style="font-size:14px;color:var(--text2)">No upcoming bookings</div><button class="btn btn-primary btn-sm mt8" onclick="showTab(\'book\')">Book Now</button></div>')+
-    (past.length?`<div style="font-size:15px;font-weight:700;margin-bottom:12px;margin-top:${upcoming.length?'16px':'0'}">🕐 Past Sessions</div>${past.map(bkHtml).join('')}`:'');
+    (active.length?`<div style="font-size:15px;font-weight:700;margin-bottom:12px">📅 Active Bookings (${active.length})</div>${active.map(bkHtml).join('')}`:'<div class="card" style="text-align:center;padding:20px;margin-bottom:16px;border-style:dashed"><div style="font-size:14px;color:var(--text2)">No active bookings</div><button class="btn btn-primary btn-sm mt8" onclick="showTab(\'book\')">Book Now</button></div>')+
+    (past.length?`<div style="font-size:15px;font-weight:700;margin-bottom:12px;margin-top:${active.length?'16px':'0'}">🕐 Past Sessions</div>${past.map(bkHtml).join('')}`:'');
 }
 
 function cancelBooking(bkId){
