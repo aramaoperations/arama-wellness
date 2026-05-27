@@ -308,7 +308,7 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
     <div class="login-logo">
       <div class="brand">ārāma</div>
       <div class="tagline">FROM LUXURY TO EVERYDAY WELLNESS</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:2px">पहले luxury था, अब ज़रूरी है</div>
+      <div style="font-size:15px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:4px;letter-spacing:0.5px">पहले luxury था, अब ज़रूरी है</div>
     </div>
     <div class="login-tabs">
       <button class="login-tab active" onclick="switchLoginTab('staff')" id="ltab-staff">Staff</button>
@@ -326,7 +326,11 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       <button class="btn-primary" onclick="doLogin()">Sign In to Ops Portal →</button>
       <div id="loginMsg" class="login-msg error"></div>
       <div id="loginAdminHint" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:12px;color:#fde68a;text-align:center">🔐 Admin access restricted to authorised personnel only.</div>
-      <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--text3)">New staff? <a href="staff-register.html" target="_blank" style="color:var(--accent3);text-decoration:underline">Register here</a>&nbsp;&nbsp;|&nbsp;&nbsp;Forgot password? Contact Admin</div>
+      <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--text3)">
+        New staff? <a href="staff-register.html" target="_blank" style="color:var(--accent3);text-decoration:underline">Register here</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a href="javascript:openPasswordResetModal()" style="color:var(--accent2);text-decoration:underline;font-weight:600">Forgot password?</a>
+      </div>
       <div class="social-divider">or continue with</div>
       <div class="social-btns">
         <button class="social-btn" onclick="socialLogin('google')">
@@ -348,16 +352,24 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       Are you a customer? <a href="customer.html" target="_blank" style="color:var(--accent3);font-weight:600;text-decoration:none">Book a session →</a>
     </div>
     <div id="tabOTP" style="display:none">
+      <div style="text-align:center;margin-bottom:14px;font-size:12px;color:var(--text3)">OTP will appear on screen instantly — no SMS needed yet</div>
       <div class="form-group">
-        <label>Mobile / Email</label>
+        <label>Registered Phone or Email</label>
         <div class="otp-row">
-          <input type="text" id="staffOTPContact" placeholder="Mobile or email">
-          <button onclick="sendStaffOTP()">Send OTP</button>
+          <input type="text" id="staffOTPContact" placeholder="10-digit mobile or email" inputmode="tel">
+          <button onclick="sendStaffOTP()" style="white-space:nowrap">Get OTP</button>
         </div>
       </div>
       <div id="staffOTPSection" style="display:none">
-        <div class="form-group"><label>OTP</label><input type="text" id="staffOTPCode" placeholder="6-digit code" maxlength="6"></div>
-        <button class="btn-primary" onclick="verifyStaffOTP()">Verify →</button>
+        <div style="background:rgba(201,150,10,.08);border:1px solid rgba(201,150,10,.25);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--accent3);text-align:center">
+          👀 Check the OTP popup window that just appeared on screen
+        </div>
+        <div class="form-group">
+          <label>Enter OTP</label>
+          <input type="text" class="form-control" id="staffOTPCode" placeholder="6-digit code" maxlength="6" inputmode="numeric" onkeydown="if(event.key==='Enter')verifyStaffOTP()" style="font-size:20px;letter-spacing:4px;text-align:center;font-family:monospace">
+        </div>
+        <button class="btn-primary" onclick="verifyStaffOTP()">Verify &amp; Sign In →</button>
+        <div style="margin-top:10px;text-align:center"><button style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px" onclick="sendStaffOTP()">↻ Resend OTP</button></div>
       </div>
       <div style="margin-top:14px;text-align:center"><button style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:13px" onclick="switchLoginTab('staff')">← Back to Password Login</button></div>
       <div style="margin-top:8px;text-align:center;font-size:12px;color:var(--text3)">New staff? <a href="staff-register.html" target="_blank" style="color:var(--accent3);text-decoration:underline">Apply here →</a></div>
@@ -1124,15 +1136,10 @@ function doLogin(){
       showLoginMsg('This account does not have admin access.','error');
       return;
     }
-    // Check compliance grace period (staff/supervisor only)
-    if(['staff','supervisor'].includes(user.role)&&user.compliancePending){
+    // Compliance: NEVER block login — just flag for in-app warning banner
+    if(['staff','supervisor','manager'].includes(user.role)&&user.compliancePending){
       const graceLeft=user.complianceDeadline?Math.ceil((user.complianceDeadline-Date.now())/(86400000)):0;
-      if(graceLeft<=0){
-        showLoginMsg('⚠️ Compliance documents overdue. Contact admin to restore access.','error');
-        return;
-      }
-      // Allow login but flag it — warning shown inside the app
-      user._complianceWarning=graceLeft;
+      user._complianceWarning=graceLeft>0?graceLeft:0; // 0 = overdue but still allowed in
     }
     loginUser(user);
   }catch(err){
@@ -1155,9 +1162,16 @@ function loginUser(user){
   setupApp();
   navigate('dashboard');
   toast('Welcome back, '+user.name+'! 👋','success');
-  // Show compliance warning if grace period active
-  if(user._complianceWarning){
-    setTimeout(()=>toast('⚠️ '+user._complianceWarning+' days left to upload compliance docs (Aadhaar, Medical). Go to HRMS → My Profile.','info'),1200);
+  // Show compliance warning — never blocks access
+  if(user._complianceWarning!==undefined){
+    const d=user._complianceWarning;
+    setTimeout(()=>{
+      if(d<=0){
+        toast('⚠️ Compliance docs overdue — please upload Aadhaar & selfie in My Profile. POS & access still active.','info');
+      } else {
+        toast('⏳ '+d+' day'+(d===1?'':'s')+' left to upload compliance docs. Go to My Profile → Documents.','info');
+      }
+    },1200);
   }
 }
 function showLoginMsg(msg,type){
@@ -1175,8 +1189,109 @@ function doLogout(){
   document.getElementById('lUsername').value='';
   document.getElementById('lPassword').value='';
 }
+// ═══════════════════════════════════════════════
+// OTP POPUP — shown on-screen until SMS/WA API integrated
+// ═══════════════════════════════════════════════
+function showOTPPopup(otp, contact, expiryMs=300000){
+  closeOTPPopup(); // remove any existing popup
+  let remaining=Math.floor(expiryMs/1000);
+  const overlay=document.createElement('div');
+  overlay.id='otpPopupOverlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+  overlay.innerHTML=`
+    <div style="background:var(--card);border:1px solid rgba(201,150,10,.4);border-radius:18px;padding:32px 36px;max-width:340px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+      <div style="font-size:36px;margin-bottom:10px">🔐</div>
+      <div style="font-size:17px;font-weight:800;font-family:'Alegreya',serif;color:var(--accent3);margin-bottom:4px">Your OTP</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:18px">Sent to: <strong style="color:var(--text2)">${contact}</strong></div>
+      <div style="font-size:46px;font-weight:900;font-family:monospace;letter-spacing:8px;color:var(--gold2);background:rgba(201,150,10,.1);border:2px dashed rgba(201,150,10,.4);border-radius:12px;padding:16px 12px;margin-bottom:14px">${otp}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Valid for <span id="otpCountdown" style="font-weight:700;color:var(--orange)">5:00</span></div>
+      <div style="font-size:11px;color:rgba(201,150,10,.7);background:rgba(201,150,10,.08);border-radius:8px;padding:8px;margin-bottom:18px">📲 Production: OTP will be sent via SMS/WhatsApp automatically</div>
+      <button onclick="closeOTPPopup()" style="background:var(--accent);border:none;border-radius:10px;color:#1a0f00;font-weight:700;padding:10px 28px;cursor:pointer;font-size:14px">Got it ✓</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  // Close on backdrop click
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeOTPPopup();});
+  // Countdown timer
+  window._otpTimer=setInterval(()=>{
+    remaining--;
+    const el=document.getElementById('otpCountdown');
+    if(el){const m=Math.floor(remaining/60),s=remaining%60;el.textContent=m+':'+(s<10?'0':'')+s;}
+    if(remaining<=0){clearInterval(window._otpTimer);closeOTPPopup();}
+  },1000);
+}
+function closeOTPPopup(){
+  clearInterval(window._otpTimer);
+  const el=document.getElementById('otpPopupOverlay');
+  if(el)el.remove();
+}
+
+// ═══════════════════════════════════════════════
+// GOOGLE SIGN-IN (GSI)
+// ═══════════════════════════════════════════════
 function socialLogin(provider){
-  toast(provider+' login coming in Phase 2. Use username/password for now.','info');
+  if(provider==='google'){initGoogleSignIn();return;}
+  if(provider==='apple'){toast('Apple Sign-In coming soon. Use phone OTP instead.','info');return;}
+  toast(provider+' login coming soon.','info');
+}
+function initGoogleSignIn(){
+  const cfg=DB.get('config')||{};
+  const clientId=cfg.googleClientId||'';
+  if(!clientId){
+    openModal('🔧 Google Sign-In Setup',`
+      <div style="padding:8px 0">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Google Sign-In requires a <strong>Google OAuth Client ID</strong>. Ask your admin to add it in Admin Config → Integrations.</div>
+        <div style="background:rgba(201,150,10,.08);border:1px solid rgba(201,150,10,.2);border-radius:10px;padding:14px;font-size:12px;color:var(--text3)">
+          <strong style="color:var(--accent3)">For admins:</strong><br>
+          1. Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--accent3)">Google Cloud Console</a><br>
+          2. Create an OAuth 2.0 Client ID (Web application)<br>
+          3. Add your site URL as an authorized origin<br>
+          4. Paste the Client ID in Admin Config → Google Client ID
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--text3)">Meanwhile, staff can use <strong>Phone OTP</strong> login below ↓</div>
+      </div>`,
+      `<button class="btn btn-outline" onclick="closeModal();switchLoginTab('otp')">Use OTP Instead</button><button class="btn btn-accent" onclick="closeModal()">OK</button>`);
+    return;
+  }
+  if(!window.google?.accounts?.id){toast('Google Sign-In loading — please try again in a moment.','info');return;}
+  google.accounts.id.initialize({
+    client_id:clientId,
+    callback:handleGoogleCredential,
+    auto_select:false,
+    cancel_on_tap_outside:true
+  });
+  google.accounts.id.prompt(notification=>{
+    if(notification.isNotDisplayed()||notification.isSkippedMoment()){
+      // Fallback: render button
+      google.accounts.id.renderButton(document.createElement('div'),{theme:'filled_black',size:'large'});
+      showLoginMsg('Check the Google popup or use Phone OTP instead','info');
+    }
+  });
+}
+function handleGoogleCredential(response){
+  try{
+    // Decode JWT payload (no verification needed — Google already verified)
+    const payload=JSON.parse(atob(response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    const email=(payload.email||'').toLowerCase();
+    const gName=payload.name||'';
+    if(!email){showLoginMsg('Could not read email from Google account','error');return;}
+    const users=DB.get('users')||[];
+    const user=users.find(u=>(u.email||'').toLowerCase()===email);
+    if(!user){
+      showLoginMsg('No ārāma staff account linked to '+email+'. Contact admin to link your Google email.','error');
+      return;
+    }
+    if(user.active===false){showLoginMsg('Account deactivated. Contact admin.','error');return;}
+    // Log google link if not already stored
+    if(!user.googleEmail){
+      user.googleEmail=email;
+      DB.set('users',users);
+    }
+    loginUser(user);
+    toast('Signed in with Google — Welcome, '+gName.split(' ')[0]+'! 👋','success');
+  }catch(err){
+    console.error('Google login error:',err);
+    showLoginMsg('Google sign-in failed. Please try password login.','error');
+  }
 }
 function sendOTP(){
   const m=document.getElementById('custMobile').value.trim();
@@ -1224,36 +1339,135 @@ function sendStaffOTP(){
   const contact=document.getElementById('staffOTPContact').value.trim();
   if(!contact){showLoginMsg('Enter your registered phone or email','error');return;}
   const users=DB.get('users')||[];
-  const user=users.find(u=>u.phone===contact||u.email===contact);
-  if(!user){showLoginMsg('No staff account found for this contact','error');return;}
+  const user=users.find(u=>u.phone===contact||(u.email||'').toLowerCase()===contact.toLowerCase());
+  if(!user){showLoginMsg('No staff account found for this phone/email. Check details or contact admin.','error');return;}
   if(user.active===false){showLoginMsg('Account deactivated. Contact admin.','error');return;}
-  // Generate real OTP
-  const otp = String(Math.floor(100000 + Math.random() * 900000));
-  sessionStorage.setItem('arama_staffOTP_'+contact, JSON.stringify({otp, userId:user.id, expires: Date.now() + 5*60*1000}));
+  const otp=String(Math.floor(100000+Math.random()*900000));
+  const expiryMs=5*60*1000;
+  sessionStorage.setItem('arama_staffOTP_'+contact,JSON.stringify({otp,userId:user.id,expires:Date.now()+expiryMs}));
   document.getElementById('staffOTPSection').style.display='block';
-  // In production replace with real SMS/WhatsApp delivery
-  console.info('[DEV] Staff OTP for '+contact+': '+otp);
-  toast('OTP sent to '+contact+'.','success');
+  document.getElementById('staffOTPCode').focus();
+  // Show OTP in popup (until SMS/WA API integrated)
+  showOTPPopup(otp,contact,expiryMs);
 }
 function verifyStaffOTP(){
   const contact=document.getElementById('staffOTPContact').value.trim();
-  const entered=document.getElementById('staffOTPCode').value.trim();
-  if(!/^\d{6}$/.test(entered)){showLoginMsg('Enter the 6-digit OTP','error');return;}
+  const entered=(document.getElementById('staffOTPCode').value||'').trim();
+  if(!/^\d{6}$/.test(entered)){showLoginMsg('Enter the 6-digit OTP shown in the popup','error');return;}
   const stored=sessionStorage.getItem('arama_staffOTP_'+contact);
-  if(!stored){showLoginMsg('No OTP requested. Click Send OTP first.','error');return;}
+  if(!stored){showLoginMsg('No OTP found. Click Send OTP first.','error');return;}
   let parsed;
   try{parsed=JSON.parse(stored);}catch(e){showLoginMsg('OTP error. Try again.','error');return;}
   if(Date.now()>parsed.expires){
     sessionStorage.removeItem('arama_staffOTP_'+contact);
     showLoginMsg('OTP expired. Request a new one.','error');return;
   }
-  if(entered!==parsed.otp){showLoginMsg('Invalid OTP','error');return;}
-  // Valid — single-use clear
+  if(entered!==parsed.otp){showLoginMsg('Incorrect OTP. Check the popup and try again.','error');return;}
   sessionStorage.removeItem('arama_staffOTP_'+contact);
+  closeOTPPopup();
   const users=DB.get('users')||[];
   const user=users.find(u=>u.id===parsed.userId);
   if(user)loginUser(user);
   else showLoginMsg('Account not found. Contact admin.','error');
+}
+
+// ═══════════════════════════════════════════════
+// PASSWORD RESET FLOW
+// ═══════════════════════════════════════════════
+function openPasswordResetModal(){
+  openModal('🔑 Reset Your Password',`
+    <div style="margin-bottom:16px;font-size:13px;color:var(--text2)">Enter your registered phone number or email. An OTP will appear on screen to verify it's you.</div>
+    <div class="form-group">
+      <label>Phone or Email</label>
+      <input class="form-control" id="rst_contact" placeholder="Registered phone or email" autocomplete="off">
+    </div>
+    <div id="rst_otpBlock" style="display:none">
+      <div class="form-group">
+        <label>OTP <small style="color:var(--text3)">(check the popup)</small></label>
+        <input class="form-control" id="rst_otp" placeholder="6-digit OTP" maxlength="6" inputmode="numeric">
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <div style="position:relative">
+          <input type="text" class="form-control" id="rst_newpass" placeholder="Min 6 characters" autocomplete="new-password" style="padding-right:80px">
+          <button type="button" onclick="document.getElementById('rst_newpass').value='Arama@'+Math.random().toString(36).substr(2,5).toUpperCase()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:1px solid var(--border);border-radius:6px;color:var(--accent3);font-size:11px;padding:3px 8px;cursor:pointer">Generate</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="text" class="form-control" id="rst_confirm" placeholder="Re-enter new password" autocomplete="new-password">
+      </div>
+    </div>`,
+    `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-accent" id="rst_btn" onclick="sendResetOTP()">Send OTP →</button>`);
+}
+
+function sendResetOTP(){
+  const contact=(document.getElementById('rst_contact').value||'').trim();
+  if(!contact){toast('Enter your phone or email','error');return;}
+  const users=DB.get('users')||[];
+  const user=users.find(u=>u.phone===contact||(u.email||'').toLowerCase()===contact.toLowerCase());
+  if(!user){toast('No account found for this contact. Check details or ask admin.','error');return;}
+  if(user.active===false){toast('Account is deactivated. Contact admin.','error');return;}
+  const otp=String(Math.floor(100000+Math.random()*900000));
+  const expiryMs=5*60*1000;
+  sessionStorage.setItem('arama_resetOTP_'+contact,JSON.stringify({otp,userId:user.id,expires:Date.now()+expiryMs}));
+  // Show OTP popup
+  showOTPPopup(otp,contact,expiryMs);
+  // Reveal OTP + new password fields
+  document.getElementById('rst_otpBlock').style.display='block';
+  document.getElementById('rst_otp').focus();
+  const btn=document.getElementById('rst_btn');
+  if(btn){btn.textContent='Reset Password ✓';btn.onclick=submitPasswordReset;}
+}
+
+function submitPasswordReset(){
+  const contact=(document.getElementById('rst_contact').value||'').trim();
+  const enteredOTP=(document.getElementById('rst_otp').value||'').trim();
+  const newPass=(document.getElementById('rst_newpass').value||'').trim();
+  const confirmPass=(document.getElementById('rst_confirm').value||'').trim();
+
+  if(!/^\d{6}$/.test(enteredOTP)){toast('Enter the 6-digit OTP from the popup','error');return;}
+  if(newPass.length<6){toast('Password must be at least 6 characters','error');return;}
+  if(newPass!==confirmPass){toast('Passwords do not match','error');return;}
+
+  const stored=sessionStorage.getItem('arama_resetOTP_'+contact);
+  if(!stored){toast('No OTP found. Click "Send OTP" first.','error');return;}
+  let parsed;
+  try{parsed=JSON.parse(stored);}catch(e){toast('OTP error. Try again.','error');return;}
+  if(Date.now()>parsed.expires){
+    sessionStorage.removeItem('arama_resetOTP_'+contact);
+    toast('OTP expired. Please restart the reset flow.','error');
+    closeModal();return;
+  }
+  if(enteredOTP!==parsed.otp){toast('Incorrect OTP. Check the popup and try again.','error');return;}
+
+  // ✅ Verified — update password, INVALIDATE old password
+  sessionStorage.removeItem('arama_resetOTP_'+contact);
+  closeOTPPopup();
+  const users=DB.get('users')||[];
+  const idx=users.findIndex(u=>u.id===parsed.userId);
+  if(idx<0){toast('User not found. Contact admin.','error');return;}
+
+  const oldPass=users[idx].password;
+  users[idx].password=newPass;
+  users[idx].passwordChangedAt=new Date().toISOString();
+  users[idx].passwordChangedFrom=oldPass; // kept for audit only — login check uses current password field
+  // If staff had compliancePending just because of default credentials, partial-clear it
+  if(users[idx].compliancePending&&users[idx].compliance){
+    // mark password step done — doesn't clear doc requirement
+  }
+  DB.set('users',users);
+
+  // Kill any active session for this user (force re-login)
+  const sess=JSON.parse(sessionStorage.getItem('arama_sess')||'null');
+  if(sess&&sess.id===users[idx].id){
+    sessionStorage.removeItem('arama_sess');
+    DB.remove('session');
+  }
+
+  closeModal();
+  toast('✅ Password reset successfully! Old password can no longer be used. Please log in with your new password.','success');
 }
 
 function setupApp(){
@@ -1346,12 +1560,23 @@ function clearDashFilter(){
 function renderDashboard(){
   const s=currentSession;
   if(!s)return;
-  const isAdmin=['superadmin','admin','manager'].includes(s.role);
+  const isAdmin=['superadmin','admin'].includes(s.role);
   const fb=document.getElementById('dashFilterBar');
   if(fb)fb.style.display=isAdmin?'flex':'none';
   const titleEl=document.querySelector('#page-dashboard .page-title');
-  if(titleEl)titleEl.textContent=isAdmin?'📊 Dashboard':'🏅 My Dashboard';
-  if(isAdmin){renderAdminDashboard();}else{renderStaffPersonalDashboard();}
+  if(s.role==='superadmin'||s.role==='admin'){
+    if(titleEl)titleEl.textContent='📊 Dashboard';
+    renderAdminDashboard();
+  } else if(s.role==='manager'){
+    if(titleEl)titleEl.textContent='📍 Manager Dashboard';
+    renderManagerDashboard();
+  } else if(s.role==='supervisor'){
+    if(titleEl)titleEl.textContent='👥 Supervisor Dashboard';
+    renderSupervisorDashboard();
+  } else {
+    if(titleEl)titleEl.textContent='🏅 My Dashboard';
+    renderStaffPersonalDashboard();
+  }
 }
 
 function renderAdminDashboard(){
@@ -1540,7 +1765,37 @@ function renderStaffPersonalDashboard(){
 
   document.getElementById('dashSubtitle').textContent=dayStr+' · '+(activeLocation?.name||s.locations?.[0]||'ārāma');
 
-  document.getElementById('dashContent').innerHTML=`
+  // ── Compliance banner ──
+  const me=DB.get('users')||[];
+  const myProfile=me.find(u=>u.id===s.id)||{};
+  let compBanner='';
+  if(myProfile.compliancePending){
+    const graceLeft=myProfile.complianceDeadline?Math.ceil((myProfile.complianceDeadline-Date.now())/(86400000)):0;
+    const docs=myProfile.compliance||{};
+    const uploaded=Object.values(docs).filter(Boolean).length;
+    const total=Object.keys(docs).length||6;
+    if(graceLeft>0){
+      compBanner=`<div style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="font-size:22px">⏳</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px;color:#fde68a">Complete your profile — ${graceLeft} day${graceLeft===1?'':'s'} remaining</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Upload your selfie &amp; Aadhaar to complete compliance. ${uploaded}/${total} documents done.</div>
+        </div>
+        <button class="btn btn-accent btn-sm" onclick="navigate('hrms')">Upload Docs →</button>
+      </div>`;
+    } else {
+      compBanner=`<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="font-size:22px">⚠️</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px;color:#fca5a5">Compliance docs overdue — please upload now</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">POS &amp; access still active. Upload selfie &amp; Aadhaar to clear this. ${uploaded}/${total} documents done.</div>
+        </div>
+        <button class="btn btn-red btn-sm" onclick="navigate('hrms')">Upload Now →</button>
+      </div>`;
+    }
+  }
+
+  document.getElementById('dashContent').innerHTML=`${compBanner}
 
   <!-- ── Shift Banner ── -->
   <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
@@ -1790,6 +2045,350 @@ function submitLeave(staffId,staffName){
   DB.set('leaveRequests',requests);
   closeModal();
   toast('Leave request submitted! Admin will approve shortly.','success');
+}
+
+// ═══════════════════════════════════════════════
+// ANNOUNCEMENTS (Samvad-inspired)
+// ═══════════════════════════════════════════════
+function getAnnouncements(locCodes){
+  const all=DB.get('announcements')||[];
+  const now=Date.now();
+  return all.filter(a=>{
+    if(a.expires&&new Date(a.expires).getTime()<now)return false;
+    if(!locCodes||!a.locations||!a.locations.length)return true;
+    return a.locations.some(l=>locCodes.includes(l));
+  }).sort((a,b)=>{
+    if(a.priority==='urgent'&&b.priority!=='urgent')return -1;
+    if(b.priority==='urgent'&&a.priority!=='urgent')return 1;
+    return new Date(b.postedAt)-new Date(a.postedAt);
+  }).slice(0,8);
+}
+function announcementsHtml(locCodes){
+  const items=getAnnouncements(locCodes);
+  if(!items.length)return '<div style="font-size:12px;color:var(--text3);padding:10px 0">No announcements. All clear! ✅</div>';
+  return items.map(a=>`
+  <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+    <span style="font-size:18px;flex-shrink:0">${a.priority==='urgent'?'🚨':a.priority==='important'?'📌':'📢'}</span>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:700;color:${a.priority==='urgent'?'var(--red)':a.priority==='important'?'var(--gold)':'var(--text1)'}">${a.title}</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:3px">${a.body}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px">${a.postedBy} · ${new Date(a.postedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+    </div>
+  </div>`).join('');
+}
+function postAnnouncementModal(){
+  const locs=DB.get('locations')||[];
+  openModal('📢 Post Announcement',`
+  <div class="form-group"><label>Title</label><input type="text" class="form-control" id="annTitle" placeholder="e.g. Monthly incentive payout on 30th"></div>
+  <div class="form-group"><label>Message</label><textarea class="form-control" id="annBody" rows="3" placeholder="Full announcement text..."></textarea></div>
+  <div class="form-group"><label>Priority</label>
+    <select class="form-control" id="annPriority">
+      <option value="normal">📢 Normal</option>
+      <option value="important">📌 Important</option>
+      <option value="urgent">🚨 Urgent</option>
+    </select>
+  </div>
+  <div class="form-group"><label>Locations (leave blank = all)</label>
+    <select class="form-control" id="annLocs" multiple style="height:100px">
+      ${locs.map(l=>`<option value="${l.code}">${l.name}</option>`).join('')}
+    </select>
+  </div>
+  <div class="form-group"><label>Expires (leave blank = no expiry)</label><input type="date" class="form-control" id="annExpires"></div>
+  <button class="btn btn-accent btn-lg" style="width:100%" onclick="saveAnnouncement()">Post Announcement →</button>`);
+}
+function saveAnnouncement(){
+  const title=document.getElementById('annTitle')?.value.trim();
+  const body=document.getElementById('annBody')?.value.trim();
+  if(!title||!body){toast('Title and message required','error');return;}
+  const locs=[...document.getElementById('annLocs')?.selectedOptions||[]].map(o=>o.value);
+  const expires=document.getElementById('annExpires')?.value;
+  const items=DB.get('announcements')||[];
+  items.unshift({id:'ann'+Date.now(),title,body,priority:document.getElementById('annPriority')?.value||'normal',locations:locs,expires:expires||null,postedBy:currentSession?.name||'Admin',postedAt:new Date().toISOString()});
+  DB.set('announcements',items);
+  closeModal();
+  toast('Announcement posted to '+(locs.length?locs.length+' locations':'all locations'),'success');
+  renderDashboard();
+}
+function deleteAnnouncement(id){
+  if(!confirm('Delete this announcement?'))return;
+  DB.set('announcements',(DB.get('announcements')||[]).filter(a=>a.id!==id));
+  renderDashboard();
+}
+
+// ═══════════════════════════════════════════════
+// SUPERVISOR DASHBOARD (TOMS-inspired)
+// ═══════════════════════════════════════════════
+function renderSupervisorDashboard(){
+  const s=currentSession;
+  const today=new Date();
+  const todayStr=today.toDateString();
+  const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
+  const weekStart=new Date(today);weekStart.setDate(today.getDate()-today.getDay());
+
+  // My location's staff
+  const users=DB.get('users')||[];
+  const myLocCodes=s.locations||[];
+  const myTeam=users.filter(u=>['staff'].includes(u.role)&&u.active!==false&&(u.locations||[]).some(l=>myLocCodes.includes(l)));
+  const locs=DB.get('locations')||[];
+  const myLoc=locs.find(l=>myLocCodes.includes(l.code));
+
+  // Attendance
+  const attLog=DB.get('attendanceLog')||[];
+  const todayLog=attLog.filter(e=>new Date(e.time).toDateString()===todayStr);
+  const clockedInIds=new Set();
+  todayLog.forEach(e=>{if(e.type==='in')clockedInIds.add(e.userId);});
+  todayLog.filter(e=>e.type==='out').forEach(e=>{
+    const others=todayLog.filter(x=>x.userId===e.userId&&x.type==='in'&&new Date(x.time)<new Date(e.time));
+    if(others.length)clockedInIds.delete(e.userId);
+  });
+  const teamIn=myTeam.filter(u=>clockedInIds.has(u.id));
+  const teamOut=myTeam.filter(u=>!clockedInIds.has(u.id));
+
+  // My personal stats
+  const allTxns=DB.get('transactions')||[];
+  const myTxns=allTxns.filter(t=>t.createdBy===s.name||t.staffId===s.id);
+  const myToday=myTxns.filter(t=>new Date(t.createdAt).toDateString()===todayStr);
+  const revToday=myToday.reduce((a,t)=>a+(t.total||t.amount||0),0);
+
+  // Team monthly revenue
+  const targets=DB.get('staffTargets')||{};
+  const cfg=DB.get('config')||{};
+  const defaultTgt=cfg.defaultStaffTargets||{month:80000};
+
+  // Pending leaves
+  const leaveReqs=(DB.get('leaveRequests')||[]).filter(r=>r.status==='pending'&&myTeam.some(u=>u.id===r.staffId));
+
+  // Attendance ─ clock-in/out for self
+  const myLog=attLog.filter(e=>e.userId===s.id);
+  const myTodayLog=myLog.filter(e=>new Date(e.time).toDateString()===todayStr);
+  const myLastIn=myTodayLog.slice().reverse().find(e=>e.type==='in');
+  const myLastOut=myTodayLog.slice().reverse().find(e=>e.type==='out'&&(!myLastIn||new Date(e.time)>new Date(myLastIn.time)));
+  const isMeClockedIn=!!(myLastIn&&!myLastOut);
+  let myShiftHrs='-';
+  if(myLastIn){const end=isMeClockedIn?Date.now():new Date(myLastOut?.time||myLastIn.time).getTime();const m=Math.max(0,(end-new Date(myLastIn.time).getTime())/60000);const h=Math.floor(m/60);myShiftHrs=h>0?h+'h '+Math.round(m%60)+'m':Math.round(m)+'m';}
+
+  const hr=today.getHours();
+  const greet=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  document.getElementById('dashSubtitle').textContent=today.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})+' · '+(myLoc?.name||myLocCodes.join(', ')||'All Locations');
+
+  document.getElementById('dashContent').innerHTML=`
+  <!-- Shift Banner -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:18px;font-weight:800;font-family:'Alegreya',Georgia,serif;color:var(--accent3)">${hr<12?'🌅':hr<17?'☀️':'🌙'} ${greet}, ${s.name.split(' ')[0]}! <span style="font-size:12px;color:var(--text3);font-family:inherit;font-weight:400">· Supervisor</span></div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px">${isMeClockedIn?'🟢 You are clocked in · '+myShiftHrs+' today':'⏱ You are not clocked in yet'}</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn ${isMeClockedIn?'btn-red':'btn-green'}" onclick="${isMeClockedIn?'clockOut':'clockIn'}();setTimeout(renderDashboard,300)">${isMeClockedIn?'🔴 Clock Out':'🟢 Clock In'}</button>
+      <button class="btn btn-accent btn-sm" onclick="navigate('pos')">🧾 POS</button>
+      <button class="btn btn-outline btn-sm" onclick="renderDashboard()">⟳</button>
+    </div>
+  </div>
+
+  <!-- KPI strip -->
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:16px">
+    <div class="kpi-card"><div class="kpi-label">My Revenue Today</div><div class="kpi-value" style="color:var(--green)">₹${revToday.toLocaleString('en-IN')}</div><div class="kpi-sub">${myToday.length} transactions</div></div>
+    <div class="kpi-card"><div class="kpi-label">Team Size</div><div class="kpi-value" style="color:var(--accent3)">${myTeam.length}</div><div class="kpi-sub">staff in my location</div></div>
+    <div class="kpi-card"><div class="kpi-label">Clocked In</div><div class="kpi-value" style="color:var(--green)">${teamIn.length}</div><div class="kpi-sub">of ${myTeam.length} · ${teamOut.length} absent/pending</div></div>
+    <div class="kpi-card"><div class="kpi-label">Leave Requests</div><div class="kpi-value" style="color:${leaveReqs.length?'var(--orange)':'var(--green)'}">${leaveReqs.length}</div><div class="kpi-sub">pending approval</div></div>
+  </div>
+
+  <!-- Team Attendance + Team Targets -->
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">👥 Team Attendance — Today</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+        ${myTeam.length?myTeam.map(u=>{
+          const inNow=clockedInIds.has(u.id);
+          const inTime=todayLog.find(e=>e.userId===u.id&&e.type==='in');
+          return '<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;border:1px solid var(--border);font-size:12px;background:'+(inNow?'rgba(16,185,129,.07)':'rgba(239,68,68,.05)')+'">'
+            +'<span>'+(inNow?'🟢':'⭕')+'</span>'
+            +'<div><div style="font-weight:600">'+u.name.split(' ')[0]+'</div>'
+            +'<div style="font-size:10px;color:var(--text3)">'+(inNow&&inTime?new Date(inTime.time).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):'Not in')+'</div></div>'
+            +'</div>';
+        }).join(''):'<div style="color:var(--text3);font-size:12px">No staff assigned to your location yet.</div>'}
+      </div>
+      <div style="display:flex;gap:8px;font-size:11px">
+        <span style="color:var(--green)">🟢 ${teamIn.length} Present</span>
+        <span style="color:var(--red)">⭕ ${teamOut.length} Absent / Not yet</span>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">🎯 Team Targets — This Month</div>
+      ${myTeam.length?myTeam.map(u=>{
+        const t=(targets[u.id]||{}).month||defaultTgt.month||80000;
+        const uTxns=allTxns.filter(x=>x.createdBy===u.name&&new Date(x.createdAt)>=monthStart);
+        const uRev=uTxns.reduce((a,x)=>a+(x.total||x.amount||0),0);
+        const pct=Math.min(100,Math.round(uRev/t*100));
+        const col=pct>=100?'var(--green)':pct>=70?'var(--gold)':pct>=40?'var(--orange)':'var(--red)';
+        return '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">'+u.name.split(' ')[0]+'</span><span style="color:'+col+'">₹'+(uRev/1000).toFixed(1)+'K / ₹'+(t/1000).toFixed(0)+'K · '+pct+'%</span></div>'
+          +'<div style="background:var(--border);border-radius:3px;height:6px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:3px"></div></div></div>';
+      }).join(''):'<div style="color:var(--text3);font-size:12px">No staff assigned yet.</div>'}
+    </div>
+  </div>
+
+  <!-- Leave Approvals + Announcements -->
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">📝 Pending Leave Approvals</div>
+      ${leaveReqs.length?leaveReqs.map(r=>`
+      <div style="border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div>
+            <span style="font-weight:700;font-size:13px">${r.staffName||r.staffId}</span>
+            <span class="badge badge-orange" style="margin-left:6px">${r.type}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text3)">${r.from}${r.from!==r.to?' → '+r.to:''}</div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px">${r.reason||'No reason given'}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-green btn-sm" style="flex:1" onclick="updateLeave('${r.id}','approved');renderDashboard()">✅ Approve</button>
+          <button class="btn btn-red btn-sm" style="flex:1" onclick="updateLeave('${r.id}','rejected');renderDashboard()">❌ Reject</button>
+        </div>
+      </div>`).join(''):'<div style="text-align:center;color:var(--text3);padding:20px;font-size:12px">✅ No pending leave requests</div>'}
+    </div>
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">📢 Announcements <span style="font-size:10px;color:var(--text3);font-weight:400">from management</span></div>
+      ${announcementsHtml(myLocCodes)}
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// MANAGER DASHBOARD (TOMS + Samvad-inspired)
+// ═══════════════════════════════════════════════
+function renderManagerDashboard(){
+  const s=currentSession;
+  const today=new Date();
+  const todayStr=today.toDateString();
+  const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
+
+  const users=DB.get('users')||[];
+  const locs=DB.get('locations')||[];
+  const myLocCodes=s.locations&&s.locations.length?s.locations:locs.map(l=>l.code);
+  const myLocs=locs.filter(l=>myLocCodes.includes(l.code));
+  const myStaff=users.filter(u=>['staff','supervisor'].includes(u.role)&&u.active!==false&&(u.locations||[]).some(l=>myLocCodes.includes(l)));
+
+  const allTxns=DB.get('transactions')||[];
+  const monthTxns=allTxns.filter(t=>new Date(t.createdAt)>=monthStart);
+  const myMonthTxns=monthTxns.filter(t=>myStaff.some(u=>u.name===t.createdBy)||myLocCodes.includes(t.locCode));
+
+  const totalRev=myMonthTxns.reduce((a,t)=>a+(t.total||t.amount||0),0);
+  const totalSessions=myMonthTxns.filter(t=>t.type==='service').length;
+  const todayTxns=allTxns.filter(t=>new Date(t.createdAt).toDateString()===todayStr&&(myLocCodes.includes(t.locCode)||myStaff.some(u=>u.name===t.createdBy)));
+  const revToday=todayTxns.reduce((a,t)=>a+(t.total||t.amount||0),0);
+
+  // Attendance today
+  const attLog=DB.get('attendanceLog')||[];
+  const todayAtt=attLog.filter(e=>new Date(e.time).toDateString()===todayStr&&myStaff.some(u=>u.id===e.userId));
+  const clockedInIds=new Set();
+  todayAtt.forEach(e=>{if(e.type==='in')clockedInIds.add(e.userId);});
+  todayAtt.filter(e=>e.type==='out').forEach(e=>{const inBefore=todayAtt.find(x=>x.userId===e.userId&&x.type==='in'&&new Date(x.time)<new Date(e.time));if(inBefore)clockedInIds.delete(e.userId);});
+  const staffIn=myStaff.filter(u=>clockedInIds.has(u.id)).length;
+
+  // Pending items
+  const pendingLeaves=(DB.get('leaveRequests')||[]).filter(r=>r.status==='pending'&&myStaff.some(u=>u.id===r.staffId)).length;
+  const openRemarks=Object.values(DB.get('locationRemarks')||{}).flat().filter(r=>!r.resolved&&myLocCodes.includes(r.locCode)).length;
+
+  // Per-location revenue
+  const targets=DB.get('staffTargets')||{};
+  const cfg=DB.get('config')||{};
+  const defTgt=cfg.defaultStaffTargets||{month:80000};
+  const locTgt=120000; // per location month target, configurable
+
+  // Top performers
+  const staffRevs={};
+  monthTxns.forEach(t=>{const k=t.createdBy||'';if(k&&myStaff.some(u=>u.name===k))staffRevs[k]=(staffRevs[k]||0)+(t.total||t.amount||0);});
+  const topPerf=Object.entries(staffRevs).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
+
+  const hr=today.getHours();
+  const greet=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  document.getElementById('dashSubtitle').textContent=today.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})+' · '+myLocs.length+' locations under management';
+
+  document.getElementById('dashContent').innerHTML=`
+  <!-- Banner -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:18px;font-weight:800;font-family:'Alegreya',Georgia,serif;color:var(--accent3)">${hr<12?'🌅':hr<17?'☀️':'🌙'} ${greet}, ${s.name.split(' ')[0]}! <span style="font-size:12px;color:var(--text3);font-family:inherit;font-weight:400">· Manager</span></div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px">${myLocs.length} locations · ${myStaff.length} staff · ${today.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-accent btn-sm" onclick="postAnnouncementModal()">📢 Post Announcement</button>
+      <button class="btn btn-outline btn-sm" onclick="navigate('reports')">📈 Reports</button>
+      <button class="btn btn-outline btn-sm" onclick="renderDashboard()">⟳</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:16px">
+    <div class="kpi-card"><div class="kpi-label">Month Revenue</div><div class="kpi-value" style="color:var(--gold)">₹${(totalRev/1000).toFixed(1)}K</div><div class="kpi-sub">${myLocs.length} locations combined</div></div>
+    <div class="kpi-card"><div class="kpi-label">Today Revenue</div><div class="kpi-value" style="color:var(--green)">₹${revToday.toLocaleString('en-IN')}</div><div class="kpi-sub">${todayTxns.length} transactions</div></div>
+    <div class="kpi-card"><div class="kpi-label">Sessions (Month)</div><div class="kpi-value" style="color:var(--accent3)">${totalSessions}</div><div class="kpi-sub">massage + wellness</div></div>
+    <div class="kpi-card"><div class="kpi-label">Staff In Today</div><div class="kpi-value" style="color:var(--green)">${staffIn}/${myStaff.length}</div><div class="kpi-sub">clocked in</div></div>
+    <div class="kpi-card"><div class="kpi-label">Pending Actions</div><div class="kpi-value" style="color:${pendingLeaves+openRemarks?'var(--orange)':'var(--green)'}">${pendingLeaves+openRemarks}</div><div class="kpi-sub">${pendingLeaves} leaves · ${openRemarks} remarks</div></div>
+  </div>
+
+  <!-- Location Revenue + Top Performers -->
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">📍 My Locations — Month Revenue</div>
+      ${myLocs.map(loc=>{
+        const locTxns=monthTxns.filter(t=>t.locCode===loc.code||myStaff.filter(u=>(u.locations||[]).includes(loc.code)).some(u=>u.name===t.createdBy));
+        const locRev=locTxns.reduce((a,t)=>a+(t.total||t.amount||0),0);
+        const locStaff=myStaff.filter(u=>(u.locations||[]).includes(loc.code));
+        const pct=Math.min(100,Math.round(locRev/locTgt*100));
+        const col=pct>=100?'var(--green)':pct>=70?'var(--gold)':pct>=40?'var(--orange)':'var(--red)';
+        return '<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><div><span style="font-weight:700">'+loc.name+'</span> <span style="font-size:10px;color:var(--text3)">'+loc.city+' · '+locStaff.length+' staff</span></div><span style="font-weight:700;color:'+col+'">₹'+(locRev/1000).toFixed(1)+'K ('+pct+'%)</span></div>'
+          +'<div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:4px;transition:.4s"></div></div>'
+          +'</div>';
+      }).join('')||'<div style="color:var(--text3);font-size:12px">No locations assigned.</div>'}
+    </div>
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">🏆 Top Performers — This Month</div>
+      ${topPerf.length?topPerf.map(([name,rev],i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;margin-bottom:5px;background:${i===0?'rgba(201,150,10,.08)':'transparent'}">
+        <span style="font-size:20px">${medals[i]}</span>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:${i===0?'700':'500'}">${name}</div>
+          <div style="font-size:10px;color:var(--text3)">₹${rev.toLocaleString('en-IN')} this month</div>
+        </div>
+        ${i===0?'<span class="badge badge-orange">Top Earner</span>':''}
+      </div>`).join(''):'<div style="color:var(--text3);font-size:12px;padding:20px 0;text-align:center">No session data yet.</div>'}
+    </div>
+  </div>
+
+  <!-- Pending Actions + Post Announcement + Notice Board -->
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">⚡ Pending Actions</div>
+      ${pendingLeaves>0?`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
+        <div><div style="font-size:13px;font-weight:600">📝 ${pendingLeaves} Leave Requests</div><div style="font-size:11px;color:var(--text3)">Waiting for your approval</div></div>
+        <button class="btn btn-accent btn-sm" onclick="navigate('hrms')">Review →</button>
+      </div>`:''}
+      ${openRemarks>0?`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
+        <div><div style="font-size:13px;font-weight:600">📍 ${openRemarks} Open Remarks</div><div style="font-size:11px;color:var(--text3)">Location issues unresolved</div></div>
+        <button class="btn btn-outline btn-sm" onclick="navigate('locations')">View →</button>
+      </div>`:''}
+      ${pendingLeaves+openRemarks===0?'<div style="text-align:center;color:var(--green);padding:16px;font-size:13px">✅ No pending actions!</div>':''}
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px">QUICK ACTIONS</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <button class="btn btn-outline btn-sm" onclick="navigate('hrms')">👥 HRMS</button>
+          <button class="btn btn-outline btn-sm" onclick="navigate('reports')">📈 Reports</button>
+          <button class="btn btn-outline btn-sm" onclick="navigate('dailyreport')">📋 Daily Log</button>
+          <button class="btn btn-accent btn-sm" onclick="postAnnouncementModal()">📢 Announce</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-weight:700;font-size:14px">📢 Notice Board</div>
+        <button class="btn btn-accent btn-sm" onclick="postAnnouncementModal()">+ Post</button>
+      </div>
+      ${announcementsHtml(myLocCodes)}
+    </div>
+  </div>`;
 }
 
 // ═══════════════════════════════════════════════
@@ -2764,44 +3363,97 @@ function filterUsers(){
 }
 function openAddUser(){
   const locs=DB.get('locations')||[];
+  // Auto-generate a strong default password
+  const defPass='Arama@'+Math.random().toString(36).substr(2,5).toUpperCase();
   openModal('+ Add User',`
   <div class="form-row">
-    <div class="form-group"><label>Full Name</label><input class="form-control" id="nu_name" placeholder="Full name"></div>
-    <div class="form-group"><label>Username</label><input class="form-control" id="nu_uname" placeholder="Username"></div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label>Password</label><input type="password" class="form-control" id="nu_pass" placeholder="Password"></div>
-    <div class="form-group"><label>Role</label>
+    <div class="form-group"><label>Full Name *</label><input class="form-control" id="nu_name" placeholder="Full name"></div>
+    <div class="form-group"><label>Role *</label>
       <select class="form-control" id="nu_role">
         ${ROLES.filter(r=>r!=='customer').map(r=>`<option value="${r}">${ROLE_LABELS[r]}</option>`).join('')}
       </select>
     </div>
   </div>
   <div class="form-row">
-    <div class="form-group"><label>Phone</label><input type="tel" class="form-control" id="nu_phone"></div>
+    <div class="form-group"><label>Phone * <small style="color:var(--text3)">(used as username)</small></label><input type="tel" class="form-control" id="nu_phone" placeholder="10-digit mobile"></div>
     <div class="form-group"><label>Email</label><input type="email" class="form-control" id="nu_email"></div>
   </div>
-  <div class="form-group"><label>Assigned Locations (leave blank for all)</label>
-    <select class="form-control" id="nu_locs" multiple style="height:100px">
+  <div class="form-row">
+    <div class="form-group"><label>Custom Username <small style="color:var(--text3)">(optional — phone used if blank)</small></label><input class="form-control" id="nu_uname" placeholder="Leave blank to use phone"></div>
+    <div class="form-group"><label>Password *</label>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="text" class="form-control" id="nu_pass" value="${defPass}" style="font-family:monospace;letter-spacing:1px;flex:1">
+        <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('nu_pass').value='Arama@'+Math.random().toString(36).substr(2,5).toUpperCase()" style="white-space:nowrap">🔄 New</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">⚠️ Copy this before saving — share with staff via WhatsApp</div>
+    </div>
+  </div>
+  <div class="form-group"><label>Assigned Locations <small style="color:var(--text3)">(leave blank for all)</small></label>
+    <select class="form-control" id="nu_locs" multiple style="height:90px">
       ${locs.map(l=>`<option value="${l.code}">${l.name}</option>`).join('')}
     </select>
+  </div>
+  <div style="background:rgba(201,150,10,.08);border:1px solid rgba(201,150,10,.25);border-radius:8px;padding:10px;font-size:12px;color:var(--accent3)">
+    ℹ️ Staff can login immediately. They get <strong>7 days</strong> to upload compliance docs (selfie, Aadhaar). POS &amp; all assigned access will work right away.
   </div>`,
   `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-   <button class="btn btn-accent" onclick="saveNewUser()">Add User</button>`);
+   <button class="btn btn-accent" onclick="saveNewUser()">Create &amp; Activate</button>`);
 }
 function saveNewUser(){
   const name=document.getElementById('nu_name').value.trim();
-  const uname=document.getElementById('nu_uname').value.trim();
-  const pass=document.getElementById('nu_pass').value;
+  const phone=(document.getElementById('nu_phone').value||'').trim();
+  const unameRaw=(document.getElementById('nu_uname').value||'').trim();
+  const uname=unameRaw||phone; // phone is fallback username
+  const pass=document.getElementById('nu_pass').value.trim();
   const role=document.getElementById('nu_role').value;
-  if(!name||!uname||!pass){toast('Name, username, and password required','error');return;}
+  if(!name){toast('Full name is required','error');return;}
+  if(!phone&&!unameRaw){toast('Phone or username is required so staff can login','error');return;}
+  if(!pass){toast('Password is required','error');return;}
   const users=DB.get('users')||[];
-  if(users.find(u=>u.username===uname)){toast('Username already exists','error');return;}
+  if(users.find(u=>(u.username||'').toLowerCase()===(uname||'').toLowerCase())){
+    toast('Username/phone already exists — edit the existing user instead','error');return;
+  }
   const sel=document.getElementById('nu_locs');
   const locs=[...sel.selectedOptions].map(o=>o.value);
-  users.push({id:'u'+Date.now(),username:uname,password:pass,name,email:document.getElementById('nu_email').value,
-    phone:document.getElementById('nu_phone').value,role,active:true,locations:locs,createdAt:new Date().toISOString(),compliance:{}});
-  DB.set('users',users);closeModal();renderUsers();toast('User created: '+name,'success');
+  const complianceDeadline=Date.now()+(7*24*60*60*1000); // 7-day grace
+  const newUser={
+    id:'u'+Date.now(),
+    username:uname,
+    password:pass,
+    name,
+    email:document.getElementById('nu_email').value.trim()||'',
+    phone,
+    role,
+    active:true,
+    locations:locs,
+    createdAt:new Date().toISOString(),
+    compliancePending:true,
+    complianceDeadline,
+    compliance:{selfie:false,aadhaar:false,pv:false,medical:false,uniform:false,icard:false}
+  };
+  users.push(newUser);
+  DB.set('users',users);
+  closeModal();
+  renderUsers();
+  // Show password card so admin can share with staff
+  const waText=encodeURIComponent(
+    'Hi '+name+'! Your ārāma staff account is ready.\n\nLogin at: '+window.location.href+'\nUsername: '+uname+'\nPassword: '+pass+'\n\n⏳ Please upload your selfie & Aadhaar in My Profile within 7 days.\n— ārāma Operations Team'
+  );
+  openModal('✅ User Created — '+name,
+    '<div style="text-align:center;padding:16px">'+
+    '<div style="font-size:40px;margin-bottom:10px">🎉</div>'+
+    '<div style="font-size:14px;font-weight:700;margin-bottom:6px">'+name+' is now active!</div>'+
+    '<div style="font-size:12px;color:var(--text2);margin-bottom:12px">Share these login details with staff:</div>'+
+    '<div style="background:rgba(201,150,10,.1);border:1px solid rgba(201,150,10,.3);border-radius:10px;padding:14px;margin-bottom:12px">'+
+    '<div style="font-size:12px;color:var(--text3);margin-bottom:2px">Username</div>'+
+    '<div style="font-size:16px;font-weight:700;font-family:monospace;color:var(--accent3)">'+uname+'</div>'+
+    '<div style="font-size:12px;color:var(--text3);margin:8px 0 2px">Password</div>'+
+    '<div style="font-size:22px;font-weight:800;font-family:monospace;letter-spacing:3px;color:var(--gold2)">'+pass+'</div>'+
+    '</div>'+
+    '<div style="font-size:11px;color:#fde68a;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:8px;margin-bottom:12px">⏳ Staff has <strong>7 days</strong> to upload selfie &amp; Aadhaar. POS &amp; access work immediately.</div>'+
+    '<a href="https://wa.me/91'+phone+'?text='+waText+'" target="_blank" class="btn btn-green" style="width:100%;justify-content:center;margin-bottom:6px">💬 Send via WhatsApp</a>'+
+    '</div>',
+    '<button class="btn btn-accent" onclick="closeModal()">Done ✓</button>');
 }
 function openEditUser(id){
   const users=DB.get('users')||[];
@@ -2867,7 +3519,7 @@ function approveStaff(idx){
     pending.splice(idx,1);DB.set('pending-staff',pending);renderUsers();return;
   }
   const pass='Staff@'+Math.random().toString(36).substr(2,6).toUpperCase();
-  const complianceDeadline=Date.now()+(10*24*60*60*1000); // 10-day grace period
+  const complianceDeadline=Date.now()+(7*24*60*60*1000); // 7-day grace period
   const newUser={
     id:'u'+Date.now(),
     username:app.phone,
@@ -2889,13 +3541,13 @@ function approveStaff(idx){
   DB.set('users',users);
   pending.splice(idx,1);DB.set('pending-staff',pending);
   renderUsers();
-  const daysLeft=10;
+  const daysLeft=7;
   const waText=encodeURIComponent(
     'Hi '+newUser.name+'! Your ārāma staff account has been approved.\n\n'+
     'Login URL: '+window.location.href+'\n'+
     'Username: '+app.phone+'\n'+
     'Password: '+pass+'\n\n'+
-    '⚠️ Please upload your documents (Aadhaar, PV, Medical) within '+daysLeft+' days to avoid account suspension.\n\n'+
+    '⏳ Please upload your selfie & Aadhaar in My Profile within '+daysLeft+' days. POS & access work immediately.\n\n'+
     '— ārāma Operations Team'
   );
   openModal('Staff Approved ✓',
