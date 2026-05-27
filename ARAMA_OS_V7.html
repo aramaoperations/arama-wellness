@@ -4496,6 +4496,14 @@ function renderConfig(){
         <div class="form-group"><label>Website</label><input class="form-control" id="cfg_web" value="${cfg.website||''}"></div>
       </div>
       <div class="card">
+        <div style="font-weight:700;margin-bottom:14px">🔐 Integrations &amp; Auth</div>
+        <div class="form-group">
+          <label>Google OAuth Client ID <small style="color:var(--text3)">(enables Google Sign-In on login screen)</small></label>
+          <input class="form-control" id="cfg_googleClientId" value="${cfg.googleClientId||''}" placeholder="xxxxxxxxxxxx.apps.googleusercontent.com">
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Get from <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--accent3)">Google Cloud Console → Credentials</a>. Add your site URL as authorized origin.</div>
+        </div>
+      </div>
+      <div class="card">
         <div style="font-weight:700;margin-bottom:14px">📧 Email Contacts</div>
         <div class="form-group"><label>Customer Care</label><input class="form-control" id="cfg_eCare" value="${cfg.emailCare||'care@arama.asia'}"></div>
         <div class="form-group"><label>Tech / Maintenance</label><input class="form-control" id="cfg_eTech" value="${cfg.emailTech||'tech@arama.asia'}"></div>
@@ -4756,6 +4764,7 @@ function saveBrandConfig(){
   cfg.emailTech=document.getElementById('cfg_eTech').value;
   cfg.emailOps=document.getElementById('cfg_eOps').value;
   cfg.reportRecipients=document.getElementById('cfg_recipients').value.split(',').map(s=>s.trim()).filter(Boolean);
+  cfg.googleClientId=(document.getElementById('cfg_googleClientId')?.value||'').trim();
   DB.set('config',cfg);toast('Brand config saved','success');
 }
 function saveServicePricing(){
