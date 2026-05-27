@@ -427,7 +427,7 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       <div class="page active" id="page-dashboard">
         <div class="page-header">
           <div><div class="page-title">📊 Dashboard</div><div class="page-subtitle" id="dashSubtitle">Loading...</div></div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <div id="dashFilterBar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <div style="display:flex;align-items:center;gap:6px;font-size:12px">
               <label style="color:var(--text2)">From</label>
               <input type="date" id="dashFrom" class="form-control" style="width:130px;padding:5px 8px;font-size:12px">
@@ -1344,6 +1344,17 @@ function clearDashFilter(){
   renderDashboard();
 }
 function renderDashboard(){
+  const s=currentSession;
+  if(!s)return;
+  const isAdmin=['superadmin','admin','manager'].includes(s.role);
+  const fb=document.getElementById('dashFilterBar');
+  if(fb)fb.style.display=isAdmin?'flex':'none';
+  const titleEl=document.querySelector('#page-dashboard .page-title');
+  if(titleEl)titleEl.textContent=isAdmin?'📊 Dashboard':'🏅 My Dashboard';
+  if(isAdmin){renderAdminDashboard();}else{renderStaffPersonalDashboard();}
+}
+
+function renderAdminDashboard(){
   const locs=DB.get('locations')||[];
   const txns=DB.get('transactions')||[];
   const users=DB.get('users')||[];
@@ -1367,8 +1378,6 @@ function renderDashboard(){
   const totalChairs=locs.reduce((s,l)=>s+l.chairs,0);
   const activeStaff=users.filter(u=>u.role==='staff'&&u.active).length;
   const unresolved=Object.values(DB.get('locationRemarks')||{}).flat().filter(r=>!r.resolved).length;
-
-  // Real monthly revenue from transactions
   const allTxns=DB.get('transactions')||[];
   const monthMap={};
   allTxns.forEach(t=>{
@@ -1381,12 +1390,9 @@ function renderDashboard(){
   const months=sortedKeys.length?sortedKeys.map(k=>{const[y,m]=k.split('-');return MNAMES[parseInt(m)-1]+' '+y.slice(2);}):[];
   const vals=sortedKeys.map(k=>monthMap[k]);
   const maxVal=vals.length?Math.max(...vals):1;
-  const bars=vals.length?vals.map((v,i)=>`<div class="chart-bar" style="height:${Math.round(v/maxVal*100)}%" data-val="₹${(v/100000).toFixed(2)}L"></div>`).join(''):'<div style="color:var(--text3);font-size:12px;padding:20px 0">No transactions recorded yet — data will appear after first POS sale</div>';
+  const bars=vals.length?vals.map((v,i)=>`<div class="chart-bar" style="height:${Math.round(v/maxVal*100)}%" data-val="₹${(v/100000).toFixed(2)}L"></div>`).join(''):'<div style="color:var(--text3);font-size:12px;padding:20px 0">No transactions yet</div>';
   const lbls=months.map(m=>`<div class="chart-label">${m}</div>`).join('');
-
-  // Top locations by revenue
   const topLocs=[...locs].sort((a,b)=>b.phonepeTotal-a.phonepeTotal).slice(0,5);
-
   document.getElementById('dashSubtitle').textContent=`${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · ${activeLocs} active locations`;
   document.getElementById('dashContent').innerHTML=`
   <div class="kpi-grid">
@@ -1440,6 +1446,350 @@ function renderDashboard(){
       </div>
     </div>
   </div>`;
+}
+
+function renderStaffPersonalDashboard(){
+  const s=currentSession;
+  const today=new Date();
+  const todayStr=today.toDateString();
+  const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
+  const weekStart=new Date(today);weekStart.setDate(today.getDate()-today.getDay());
+
+  // ── Attendance ──
+  const attLog=DB.get('attendanceLog')||[];
+  const myLog=attLog.filter(e=>e.userId===s.id);
+  const todayLog=myLog.filter(e=>new Date(e.time).toDateString()===todayStr);
+  const lastIn=todayLog.slice().reverse().find(e=>e.type==='in');
+  const lastOut=todayLog.slice().reverse().find(e=>e.type==='out'&&(!lastIn||new Date(e.time)>new Date(lastIn.time)));
+  const isClockedIn=!!(lastIn&&!lastOut);
+  let shiftMins=0,shiftHrs='-';
+  if(lastIn){
+    const end=isClockedIn?Date.now():new Date(lastOut?.time||lastIn.time).getTime();
+    shiftMins=Math.max(0,(end-new Date(lastIn.time).getTime())/60000);
+    const h=Math.floor(shiftMins/60),m=Math.round(shiftMins%60);
+    shiftHrs=h>0?h+'h '+m+'m':m+'m';
+  }
+  const monthInLogs=myLog.filter(e=>e.type==='in'&&new Date(e.time)>=monthStart);
+  const monthDaysWorked=new Set(monthInLogs.map(e=>new Date(e.time).toDateString())).size;
+
+  // ── Transactions ──
+  const allTxns=DB.get('transactions')||[];
+  const myTxns=allTxns.filter(t=>t.createdBy===s.name||t.staffId===s.id||t.createdBy===s.username);
+  const myToday=myTxns.filter(t=>new Date(t.createdAt).toDateString()===todayStr);
+  const myWeek=myTxns.filter(t=>new Date(t.createdAt)>=weekStart);
+  const myMonth=myTxns.filter(t=>new Date(t.createdAt)>=monthStart);
+  const revToday=myToday.reduce((a,t)=>a+(t.total||t.amount||0),0);
+  const revWeek=myWeek.reduce((a,t)=>a+(t.total||t.amount||0),0);
+  const revMonth=myMonth.reduce((a,t)=>a+(t.total||t.amount||0),0);
+  const sessToday=myToday.filter(t=>t.type==='service').length;
+  const sessMonth=myMonth.filter(t=>t.type==='service').length;
+
+  // ── Targets ──
+  const cfg=DB.get('config')||{};
+  const tgt=(DB.get('staffTargets')||{})[s.id]||cfg.defaultStaffTargets||{shift:3000,week:20000,month:80000};
+  const tShift=tgt.shift||3000,tWeek=tgt.week||20000,tMonth=tgt.month||80000;
+  const pShift=Math.min(100,Math.round(revToday/tShift*100));
+  const pWeek=Math.min(100,Math.round(revWeek/tWeek*100));
+  const pMonth=Math.min(100,Math.round(revMonth/tMonth*100));
+  const pCol=p=>p>=100?'var(--green)':p>=70?'var(--gold)':p>=40?'var(--orange)':'var(--red)';
+  const pBar=(v,t,c)=>`<div style="background:var(--border);border-radius:4px;height:9px;overflow:hidden"><div style="width:${Math.min(100,Math.round(v/t*100))}%;height:100%;background:${c};border-radius:4px;transition:.5s ease"></div></div>`;
+
+  // ── Incentive Tiers ──
+  const TIERS=[
+    {name:'Bronze',icon:'🥉',min:0,max:50000,pct:5,col:'#cd7f32'},
+    {name:'Silver',icon:'🥈',min:50001,max:80000,pct:8,col:'#aaa'},
+    {name:'Gold',icon:'🥇',min:80001,max:120000,pct:12,col:'var(--gold)'},
+    {name:'Platinum',icon:'💎',min:120001,max:Infinity,pct:18,col:'#e5e4e2'}
+  ];
+  const tier=TIERS.find(t=>revMonth>=t.min&&revMonth<=t.max)||TIERS[0];
+  const nextTier=TIERS[TIERS.indexOf(tier)+1];
+  const projIncentive=Math.round(revMonth*(tier.pct/100));
+
+  // ── Rating ──
+  const reviews=DB.get('staffReviews')||[];
+  const myReviews=reviews.filter(r=>r.staffId===s.id);
+  const monthReviews=myReviews.filter(r=>new Date(r.createdAt)>=monthStart);
+  const avgRating=myReviews.length?(myReviews.reduce((a,r)=>a+(r.rating||0),0)/myReviews.length).toFixed(1):'N/A';
+
+  // ── User / Pay ──
+  const users=DB.get('users')||[];
+  const me=users.find(u=>u.id===s.id)||{};
+  const baseSalary=me.baseSalary||15000;
+  const advance=me.advance||0;
+  const salaryReleased=me.salaryReleased||false;
+  const netPay=baseSalary+projIncentive-advance;
+
+  // ── Leaves ──
+  const leaveBalance=DB.get('leaveBalance')||{};
+  const myLeave=leaveBalance[s.id]||{CL:12,SL:6,PL:0};
+  const leaveRequests=DB.get('leaveRequests')||[];
+  const myLeaveMonth=leaveRequests.filter(l=>l.staffId===s.id&&l.status==='approved'&&new Date(l.from)>=monthStart);
+  const clTaken=myLeaveMonth.filter(l=>l.type==='CL').length;
+  const slTaken=myLeaveMonth.filter(l=>l.type==='SL').length;
+
+  // ── Documents ──
+  const docs=me.documents||{};
+  const docItems=[{key:'aadhaar',label:'Aadhaar'},{key:'photo',label:'Photo'},{key:'medical',label:'Medical Cert'},{key:'police',label:'Police Verif.'}];
+  const docsVerified=docItems.filter(d=>docs[d.key]==='verified').length;
+
+  // ── Greeting ──
+  const hr=today.getHours();
+  const greet=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  const greetIcon=hr<12?'🌅':hr<17?'☀️':'🌙';
+  const dayStr=today.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+
+  document.getElementById('dashSubtitle').textContent=dayStr+' · '+(activeLocation?.name||s.locations?.[0]||'ārāma');
+
+  document.getElementById('dashContent').innerHTML=`
+
+  <!-- ── Shift Banner ── -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-size:19px;font-weight:800;font-family:'Alegreya',Georgia,serif;color:var(--accent3)">${greetIcon} ${greet}, ${s.name.split(' ')[0]}!</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:5px">
+        ${isClockedIn?`🟢 Clocked in &nbsp;·&nbsp; <strong style="color:var(--green)">${shiftHrs} into shift</strong>`:lastOut?`👋 Shift ended &nbsp;·&nbsp; <strong style="color:var(--text2)">${shiftHrs} worked today</strong>`:'⏱ Not clocked in yet'}
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="btn ${isClockedIn?'btn-red':'btn-green'}" onclick="${isClockedIn?'clockOut':'clockIn'}();setTimeout(renderDashboard,300)" style="padding:10px 20px;font-weight:700;font-size:13px">
+        ${isClockedIn?'🔴 Clock Out':'🟢 Clock In'}
+      </button>
+      <button class="btn btn-accent" onclick="navigate('pos')" style="padding:10px 16px">🧾 POS</button>
+      <button class="btn btn-outline btn-sm" onclick="renderDashboard()">⟳ Refresh</button>
+    </div>
+  </div>
+
+  <!-- ── Personal KPIs ── -->
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:18px">
+    <div class="kpi-card">
+      <div class="kpi-label">Sessions Today</div>
+      <div class="kpi-value" style="color:var(--accent3)">${sessToday}</div>
+      <div class="kpi-sub">${myToday.length} txns · ₹${revToday.toLocaleString('en-IN')}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Revenue Today</div>
+      <div class="kpi-value" style="color:var(--green)">₹${revToday.toLocaleString('en-IN')}</div>
+      <div class="kpi-sub">Shift target ₹${tShift.toLocaleString('en-IN')} · <b style="color:${pCol(pShift)}">${pShift}%</b></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Month Revenue</div>
+      <div class="kpi-value" style="color:var(--gold)">₹${(revMonth/1000).toFixed(1)}K</div>
+      <div class="kpi-sub">${sessMonth} sessions · ${monthDaysWorked} days worked</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">My Rating</div>
+      <div class="kpi-value" style="color:var(--orange)">⭐ ${avgRating}</div>
+      <div class="kpi-sub">${myReviews.length} reviews · ${monthReviews.length} this month</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Shift Hours</div>
+      <div class="kpi-value" style="color:var(--blue)">${shiftHrs}</div>
+      <div class="kpi-sub">${isClockedIn?'Currently active':lastOut?'Clocked out':'Not started'}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Week Revenue</div>
+      <div class="kpi-value" style="color:var(--cyan)">₹${(revWeek/1000).toFixed(1)}K</div>
+      <div class="kpi-sub">Target ₹${(tWeek/1000).toFixed(0)}K · <b style="color:${pCol(pWeek)}">${pWeek}%</b></div>
+    </div>
+  </div>
+
+  <!-- ── Targets ── -->
+  <div class="card" style="margin-bottom:16px">
+    <div style="font-weight:700;font-size:14px;margin-bottom:16px">🎯 My Targets</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px">
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px">
+          <span style="font-weight:600;color:var(--text2)">Shift Target</span>
+          <span style="font-weight:700;color:${pCol(pShift)}">₹${revToday.toLocaleString('en-IN')} / ₹${tShift.toLocaleString('en-IN')} — ${pShift}%</span>
+        </div>
+        ${pBar(revToday,tShift,pCol(pShift))}
+        <div style="font-size:10px;color:var(--text3);margin-top:5px">${pShift>=100?'✅ Target achieved!':`₹${Math.max(0,tShift-revToday).toLocaleString('en-IN')} more needed`}</div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px">
+          <span style="font-weight:600;color:var(--text2)">Week Target</span>
+          <span style="font-weight:700;color:${pCol(pWeek)}">₹${(revWeek/1000).toFixed(1)}K / ₹${(tWeek/1000).toFixed(0)}K — ${pWeek}%</span>
+        </div>
+        ${pBar(revWeek,tWeek,pCol(pWeek))}
+        <div style="font-size:10px;color:var(--text3);margin-top:5px">${pWeek>=100?'✅ Week target hit!':''}</div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px">
+          <span style="font-weight:600;color:var(--text2)">Month Target</span>
+          <span style="font-weight:700;color:${pCol(pMonth)}">₹${(revMonth/1000).toFixed(1)}K / ₹${(tMonth/1000).toFixed(0)}K — ${pMonth}%</span>
+        </div>
+        ${pBar(revMonth,tMonth,pCol(pMonth))}
+        <div style="font-size:10px;color:var(--text3);margin-top:5px">${pMonth>=100?'🏆 Month target smashed!':nextTier?`Reach ${nextTier.name} tier with ₹${Math.max(0,nextTier.min-revMonth).toLocaleString('en-IN')} more`:''}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Incentive + Leaderboard ── -->
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">💰 Incentive Tracker</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <div style="width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid ${tier.col}">${tier.icon}</div>
+        <div>
+          <div style="font-weight:800;font-size:17px;color:${tier.col}">${tier.name} Tier</div>
+          <div style="font-size:11px;color:var(--text3)">${tier.pct}% incentive on your revenue</div>
+        </div>
+      </div>
+      <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:11px;color:var(--text3)">Projected Incentive (${today.toLocaleDateString('en-IN',{month:'short'})})</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">${tier.pct}% × ₹${revMonth.toLocaleString('en-IN')}</div>
+        </div>
+        <div style="font-size:22px;font-weight:800;color:var(--green)">₹${projIncentive.toLocaleString('en-IN')}</div>
+      </div>
+      ${nextTier?`<div style="font-size:11px;color:var(--text3);margin-bottom:6px">${nextTier.icon} ${nextTier.name} unlocks at ₹${(nextTier.min/1000).toFixed(0)}K — <strong style="color:var(--gold)">₹${Math.max(0,nextTier.min-revMonth).toLocaleString('en-IN')} more</strong> to unlock ${nextTier.pct}%</div>
+      ${pBar(revMonth,nextTier.min,'var(--gold)').replace('9px','6px')}`
+      :'<div style="font-size:11px;color:var(--green);font-weight:700;padding:6px 0">🏆 Highest tier! Maximum 18% incentive unlocked.</div>'}
+    </div>
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">🏆 Team Leaderboard <span style="font-size:10px;color:var(--text3);font-weight:400">— this month</span></div>
+      ${renderStaffLeaderboard(s.id,s.name)}
+    </div>
+  </div>
+
+  <!-- ── Attendance + Pay ── -->
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">📅 Attendance & Leave</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+        <div style="text-align:center;background:rgba(16,185,129,.1);border-radius:8px;padding:10px">
+          <div style="font-size:22px;font-weight:800;color:var(--green)">${monthDaysWorked}</div>
+          <div style="font-size:10px;color:var(--text3)">Days Present</div>
+        </div>
+        <div style="text-align:center;background:rgba(249,115,22,.1);border-radius:8px;padding:10px">
+          <div style="font-size:22px;font-weight:800;color:var(--orange)">${clTaken+slTaken}</div>
+          <div style="font-size:10px;color:var(--text3)">Leaves Taken</div>
+        </div>
+        <div style="text-align:center;background:rgba(201,150,10,.1);border-radius:8px;padding:10px">
+          <div style="font-size:22px;font-weight:800;color:var(--gold)">${shiftHrs}</div>
+          <div style="font-size:10px;color:var(--text3)">Today Shift</div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.04em;margin-bottom:8px">LEAVE BALANCE</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div style="flex:1;border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center">
+          <div style="font-size:18px;font-weight:700;color:var(--accent3)">${Math.max(0,(myLeave.CL||12)-clTaken)}</div>
+          <div style="font-size:10px;color:var(--text3)">CL left</div>
+        </div>
+        <div style="flex:1;border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center">
+          <div style="font-size:18px;font-weight:700;color:var(--blue)">${Math.max(0,(myLeave.SL||6)-slTaken)}</div>
+          <div style="font-size:10px;color:var(--text3)">SL left</div>
+        </div>
+        <div style="flex:1;border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center">
+          <div style="font-size:18px;font-weight:700;color:var(--green)">${myLeave.PL||0}</div>
+          <div style="font-size:10px;color:var(--text3)">PL earned</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" style="width:100%" onclick="applyLeaveModal('${s.id}','${s.name}')">📝 Apply for Leave</button>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">💵 My Pay — ${today.toLocaleDateString('en-IN',{month:'long',year:'numeric'})}</div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:12px;color:var(--text2)">Base Salary</span><span style="font-weight:700">₹${baseSalary.toLocaleString('en-IN')}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:12px;color:var(--text2)">Incentive (${tier.pct}% tier)</span><span style="font-weight:700;color:var(--green)">+₹${projIncentive.toLocaleString('en-IN')}</span>
+        </div>
+        ${advance>0?`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:12px;color:var(--text2)">Advance Deduction</span><span style="font-weight:700;color:var(--red)">−₹${advance.toLocaleString('en-IN')}</span>
+        </div>`:''}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:12px;background:rgba(201,150,10,.1);border-radius:8px">
+          <span style="font-size:14px;font-weight:700">Net Pay</span>
+          <span style="font-size:22px;font-weight:800;color:var(--gold)">₹${netPay.toLocaleString('en-IN')}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+        <span class="badge ${salaryReleased?'badge-green':'badge-orange'}">${salaryReleased?'✅ Released':'⏳ Pending Release'}</span>
+        <button class="btn btn-outline btn-sm" onclick="navigate('hrms')">HRMS →</button>
+      </div>
+      <div style="margin-top:10px;padding:9px 11px;background:rgba(59,130,246,.07);border-radius:7px;font-size:11px;color:var(--text2)">
+        📈 Monthly revenue: ₹${revMonth.toLocaleString('en-IN')} · Month target ${pMonth}% achieved
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Documents + Quick Actions ── -->
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">📁 My Documents <span style="font-size:11px;font-weight:400;color:${docsVerified===docItems.length?'var(--green)':'var(--orange)'}">${docsVerified}/${docItems.length} verified</span></div>
+      ${docItems.map(d=>{
+        const st=docs[d.key]||'missing';
+        const badge=st==='verified'?'<span class="badge badge-green">✅ Verified</span>':st==='pending'?'<span class="badge badge-orange">⏳ In Review</span>':'<span class="badge badge-red">⚠️ Missing</span>';
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span>'+d.label+'</span>'+badge+'</div>';
+      }).join('')}
+      ${docsVerified<docItems.length?'<button class="btn btn-accent btn-sm" style="width:100%;margin-top:12px" onclick="navigate(\'hrms\')">Upload Missing Docs →</button>':'<div style="margin-top:12px;font-size:12px;color:var(--green);text-align:center;font-weight:600">✅ All documents verified</div>'}
+    </div>
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">⚡ Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+        <button class="btn btn-accent" onclick="navigate('pos')" style="justify-content:center">🧾 Open POS</button>
+        <button class="btn btn-outline" onclick="navigate('queue')" style="justify-content:center">📋 Queue</button>
+        <button class="btn btn-outline" onclick="navigate('dailyreport')" style="justify-content:center">📝 Daily Log</button>
+        <button class="btn btn-outline" onclick="navigate('hrms')" style="justify-content:center">👤 My Profile</button>
+      </div>
+      <div style="padding:11px 13px;border:1px dashed var(--border);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6">
+        💡 <strong style="color:var(--accent3)">ārāma Tip:</strong> Help customers leave a video review → you earn <strong>₹10</strong> per approved review, tracked in HRMS and paid with salary!
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderStaffLeaderboard(myId,myName){
+  const txns=DB.get('transactions')||[];
+  const users=DB.get('users')||[];
+  const monthStart=new Date();monthStart.setDate(1);monthStart.setHours(0,0,0,0);
+  const staffRevs={};
+  txns.filter(t=>new Date(t.createdAt)>=monthStart&&t.type==='service').forEach(t=>{
+    const k=t.createdBy||'';
+    if(k)staffRevs[k]=(staffRevs[k]||0)+(t.total||t.amount||0);
+  });
+  const ranked=Object.entries(staffRevs).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(!ranked.length)return '<div style="text-align:center;color:var(--text3);padding:24px;font-size:12px">No session data this month yet.<br>Your sales appear here after first POS transaction.</div>';
+  const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
+  return ranked.map(([name,rev],i)=>{
+    const isMe=name===myName||name===myId;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;margin-bottom:5px;'+(isMe?'background:rgba(201,150,10,.12);border:1px solid var(--accent)':'')+'">'
+      +'<span style="font-size:18px">'+medals[i]+'</span>'
+      +'<div style="flex:1"><div style="font-size:13px;font-weight:'+(isMe?'700':'500')+';color:'+(isMe?'var(--accent3)':'var(--text1)')+'">'+name+(isMe?' (you)':'')+'</div>'
+      +'<div style="font-size:10px;color:var(--text3)">₹'+rev.toLocaleString('en-IN')+' this month</div></div>'
+      +'<div style="font-size:12px;font-weight:700;color:var(--gold)">#'+(i+1)+'</div></div>';
+  }).join('');
+}
+
+function applyLeaveModal(staffId,staffName){
+  openModal('📝 Apply for Leave',`
+  <div class="form-group"><label>Leave Type</label>
+    <select class="form-control" id="leaveType">
+      <option value="CL">Casual Leave (CL)</option>
+      <option value="SL">Sick Leave (SL)</option>
+      <option value="PL">Privilege Leave (PL)</option>
+      <option value="LOP">Leave Without Pay (LOP)</option>
+    </select>
+  </div>
+  <div class="form-group"><label>From Date</label><input type="date" class="form-control" id="leaveFrom" value="${new Date().toISOString().slice(0,10)}"></div>
+  <div class="form-group"><label>To Date</label><input type="date" class="form-control" id="leaveTo" value="${new Date().toISOString().slice(0,10)}"></div>
+  <div class="form-group"><label>Reason</label><textarea class="form-control" id="leaveReason" rows="3" placeholder="Brief reason for leave..."></textarea></div>
+  <button class="btn btn-accent btn-lg" style="width:100%" onclick="submitLeave('${staffId}','${staffName||''}')">Submit Leave Request</button>`);
+}
+
+function submitLeave(staffId,staffName){
+  const type=document.getElementById('leaveType')?.value;
+  const from=document.getElementById('leaveFrom')?.value;
+  const to=document.getElementById('leaveTo')?.value;
+  const reason=document.getElementById('leaveReason')?.value.trim();
+  if(!from||!to){toast('Please select dates','error');return;}
+  if(new Date(from)>new Date(to)){toast('End date must be after start date','error');return;}
+  const requests=DB.get('leaveRequests')||[];
+  requests.push({id:'lr'+Date.now(),staffId,staffName:staffName||currentSession?.name||'',type,from,to,reason,status:'pending',appliedAt:new Date().toISOString()});
+  DB.set('leaveRequests',requests);
+  closeModal();
+  toast('Leave request submitted! Admin will approve shortly.','success');
 }
 
 // ═══════════════════════════════════════════════
@@ -2041,6 +2391,95 @@ function exportAttendanceCSV(){
 }
 
 // ══════════════════════════════════════════════
+// LEAVE REQUEST MANAGEMENT (Admin)
+// ══════════════════════════════════════════════
+function renderLeaveRequests(){
+  const el=document.getElementById('leaveRequestsTable');
+  if(!el)return;
+  const requests=(DB.get('leaveRequests')||[]).sort((a,b)=>new Date(b.appliedAt)-new Date(a.appliedAt));
+  if(!requests.length){el.innerHTML='<div style="text-align:center;color:var(--text3);padding:30px">No leave requests yet.</div>';return;}
+  const pending=requests.filter(r=>r.status==='pending').length;
+  el.innerHTML=`
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-weight:700;font-size:14px">📝 Leave Requests <span class="badge badge-orange" style="margin-left:6px">${pending} pending</span></div>
+  </div>
+  <div class="table-wrap"><table><thead><tr>
+    <th>Staff</th><th>Type</th><th>From</th><th>To</th><th>Reason</th><th>Applied</th><th>Status</th><th>Actions</th>
+  </tr></thead><tbody>
+  ${requests.map(r=>`<tr>
+    <td style="font-weight:600">${r.staffName||r.staffId}</td>
+    <td><span class="badge ${r.type==='SL'?'badge-orange':r.type==='PL'?'badge-green':'badge-purple'}">${r.type}</span></td>
+    <td>${r.from}</td><td>${r.to}</td>
+    <td style="font-size:11px;color:var(--text2);max-width:180px">${r.reason||'-'}</td>
+    <td style="font-size:11px;color:var(--text3)">${new Date(r.appliedAt).toLocaleDateString('en-IN')}</td>
+    <td><span class="badge ${r.status==='approved'?'badge-green':r.status==='rejected'?'badge-red':'badge-orange'}">${r.status}</span></td>
+    <td style="display:flex;gap:4px">
+      ${r.status==='pending'?`<button class="btn btn-green btn-sm" onclick="updateLeave('${r.id}','approved')">✅</button>
+      <button class="btn btn-red btn-sm" onclick="updateLeave('${r.id}','rejected')">❌</button>`:'<span style="color:var(--text3);font-size:11px">Done</span>'}
+    </td>
+  </tr>`).join('')}
+  </tbody></table></div>`;
+}
+function updateLeave(id,status){
+  const reqs=DB.get('leaveRequests')||[];
+  const idx=reqs.findIndex(r=>r.id===id);
+  if(idx<0)return;
+  reqs[idx].status=status;
+  reqs[idx].resolvedBy=currentSession?.name||'Admin';
+  reqs[idx].resolvedAt=new Date().toISOString();
+  DB.set('leaveRequests',reqs);
+  toast('Leave request '+status,'success');
+  renderLeaveRequests();
+}
+
+// ══════════════════════════════════════════════
+// STAFF TARGETS (Admin set per-staff targets)
+// ══════════════════════════════════════════════
+function renderStaffTargets(){
+  const el=document.getElementById('staffTargetsTable');
+  if(!el)return;
+  const users=DB.get('users')||[];
+  const staff=users.filter(u=>['staff','supervisor'].includes(u.role));
+  const targets=DB.get('staffTargets')||{};
+  el.innerHTML=`
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-weight:700;font-size:14px">🎯 Staff Revenue Targets</div>
+    <button class="btn btn-accent btn-sm" onclick="saveAllTargets()">💾 Save All</button>
+  </div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Set shift, weekly, and monthly revenue targets for each staff member. Staff sees live progress meters on their dashboard.</div>
+  <div class="table-wrap"><table><thead><tr>
+    <th>Staff</th><th>Role</th><th>Shift Target (₹)</th><th>Week Target (₹)</th><th>Month Target (₹)</th>
+  </tr></thead><tbody>
+  ${staff.map(u=>{
+    const t=targets[u.id]||{shift:3000,week:20000,month:80000};
+    return `<tr>
+      <td style="font-weight:600">${u.name}</td>
+      <td><span class="badge badge-purple">${ROLE_LABELS[u.role]||u.role}</span></td>
+      <td><input type="number" class="form-control" style="width:100px;padding:5px 8px" id="tgt_shift_${u.id}" value="${t.shift}"></td>
+      <td><input type="number" class="form-control" style="width:100px;padding:5px 8px" id="tgt_week_${u.id}" value="${t.week}"></td>
+      <td><input type="number" class="form-control" style="width:110px;padding:5px 8px" id="tgt_month_${u.id}" value="${t.month}"></td>
+    </tr>`;
+  }).join('')}
+  </tbody></table></div>
+  <div style="margin-top:14px;padding:12px;background:rgba(201,150,10,.08);border-radius:8px;font-size:12px;color:var(--text2)">
+    <strong>Incentive Tiers:</strong> Bronze ₹0–50K (5%) · Silver ₹50K–80K (8%) · Gold ₹80K–1.2L (12%) · Platinum 1.2L+ (18%)
+  </div>`;
+}
+function saveAllTargets(){
+  const users=DB.get('users')||[];
+  const staff=users.filter(u=>['staff','supervisor'].includes(u.role));
+  const targets=DB.get('staffTargets')||{};
+  staff.forEach(u=>{
+    const shift=parseInt(document.getElementById('tgt_shift_'+u.id)?.value)||3000;
+    const week=parseInt(document.getElementById('tgt_week_'+u.id)?.value)||20000;
+    const month=parseInt(document.getElementById('tgt_month_'+u.id)?.value)||80000;
+    targets[u.id]={shift,week,month};
+  });
+  DB.set('staffTargets',targets);
+  toast('Targets saved for all staff ✅','success');
+}
+
+// ══════════════════════════════════════════════
 // ADD SERVICE MODAL (for Services config tab)
 // ══════════════════════════════════════════════
 function openAddServiceModal(){
@@ -2512,6 +2951,8 @@ function renderHRMS(){
   <div class="tabs"><button class="tab-btn active" onclick="hrmsTab(this,'hrmsStaff')">Staff</button>
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsPayroll')">Payroll</button>
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsAttendance');renderAttendanceLog()">Attendance</button>
+    <button class="tab-btn" onclick="hrmsTab(this,'hrmsLeaveRequests');renderLeaveRequests()">Leave Requests</button>
+    <button class="tab-btn" onclick="hrmsTab(this,'hrmsTargets');renderStaffTargets()">Targets</button>
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsCompliance')">Compliance</button>
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsTrainingTab')">Training</button>
   </div>
@@ -2564,6 +3005,12 @@ function renderHRMS(){
         <td><span class="badge ${u.salaryReleased?'badge-green':'badge-orange'}">${u.salaryReleased?'Released':'Pending'}</span></td>
       </tr>`).join('')}</tbody></table>
     </div>
+  </div>
+  <div id="hrmsLeaveRequests" style="display:none">
+    <div class="card"><div id="leaveRequestsTable"><div style="text-align:center;color:var(--text3);padding:20px">Loading…</div></div></div>
+  </div>
+  <div id="hrmsTargets" style="display:none">
+    <div class="card"><div id="staffTargetsTable"><div style="text-align:center;color:var(--text3);padding:20px">Loading…</div></div></div>
   </div>
   <div id="hrmsCompliance" style="display:none">
     <div class="card"><div style="font-weight:700;margin-bottom:12px">6-Item Salary Release Checklist</div>
