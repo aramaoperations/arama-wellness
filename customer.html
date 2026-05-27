@@ -2,1728 +2,1219 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1a1a2e">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f0f1a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ārāma Wellness — Feel Better Instantly</title>
+<title>ārāma Wellness — Feel Better Today</title>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700;800&display=swap" rel="stylesheet">
+<!-- Google GSI -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Facebook JS SDK -->
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0f0f1a;--bg2:#1a1a2e;--bg3:#16213e;--bg4:#0d1117;
-  --card:#1e1e30;--card2:#252540;
-  --accent:#7c3aed;--accent2:#9d5cf6;--accent3:#b78bfa;
-  --gold:#f59e0b;--gold2:#fbbf24;
+  --bg:#0f0f1a;--bg2:#1a1a2e;--bg3:#16213e;--card:#1e1e30;--card2:#252540;
+  --accent:#C9960A;--accent2:#E6AD0A;--accent3:#FFCC2A;
+  --gold:#FFCC2A;--gold2:#FFD93D;
   --green:#10b981;--green2:#34d399;
-  --red:#ef4444;--teal:#14b8a6;
-  --blue:#3b82f6;--blue2:#60a5fa;
+  --red:#ef4444;--blue:#3b82f6;
   --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
-  --border:#2d2d4a;--border2:#3d3d5c;
-  --radius:12px;--radius2:18px;
-  --safe-bottom:env(safe-area-inset-bottom,0px);
-  --nav-h:64px;
+  --border:#2d2d45;--border2:#3d3d60;
+  --radius:12px;--radius2:18px;--radius3:24px;
+  --nav-h:68px;--safe-b:env(safe-area-inset-bottom,0px);
 }
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{min-height:100%;font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.5;padding-bottom:calc(var(--nav-h) + var(--safe-bottom));overflow-x:hidden}
-a{color:var(--accent3);text-decoration:none}
-button,input,select,textarea{font-family:inherit;font-size:16px}/* prevent iOS zoom on focus */
+body{min-height:100dvh;font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.5;overflow-x:hidden;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 8px)}
+button,input,select,textarea{font-family:inherit;font-size:16px}
 button{cursor:pointer;border:none;outline:none;-webkit-tap-highlight-color:transparent}
-input,select,textarea{outline:none;border:2px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:var(--radius);padding:14px 16px;width:100%;-webkit-appearance:none;appearance:none}
-input:focus,select:focus,textarea:focus{border-color:var(--accent)}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2394a3b8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
-select option{background:var(--bg2)}
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+input,textarea{outline:none;border:2px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:var(--radius);padding:14px 16px;width:100%;-webkit-appearance:none}
+input:focus,textarea:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(201,150,10,.18)}
+input::placeholder{color:var(--text3)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 .hidden{display:none!important}
-
-/* ── LAYOUT ── */
-.container{max-width:720px;margin:0 auto;padding:0 16px}
-.container-wide{max-width:1100px;margin:0 auto;padding:0 16px}
-.section{padding:28px 0}
-.section-title{font-size:22px;font-weight:800;margin-bottom:6px}
-.section-sub{font-size:14px;color:var(--text2);margin-bottom:22px;line-height:1.6}
-.divider{height:1px;background:var(--border);margin:28px 0}
-
-/* ── FLEX/GRID ── */
-.flex{display:flex}.ac{align-items:center}.jb{justify-content:space-between}.jc{justify-content:center}.wrap{flex-wrap:wrap}.gap8{gap:8px}.gap12{gap:12px}.gap16{gap:16px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:480px){.grid2{grid-template-columns:1fr}}
-.w100{width:100%}
-.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
-.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}
-.bold{font-weight:700}.semi{font-weight:600}
-.text2{color:var(--text2)}.text3{color:var(--text3)}.text-gold{color:var(--gold)}.text-green{color:var(--green)}.text-accent{color:var(--accent3)}
-.small{font-size:13px}.xs{font-size:12px}
-
-/* ── CARDS ── */
+.container{max-width:680px;margin:0 auto;padding:0 16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:var(--radius);font-weight:700;font-size:14px;transition:transform .1s,opacity .15s;user-select:none}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:linear-gradient(135deg,var(--accent),var(--accent3));color:#0f0f1a}
+.btn-outline{background:transparent;border:2px solid var(--border2);color:var(--text)}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--text)}
+.btn-green{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--green2)}
+.btn-red{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.btn-sm{padding:9px 14px;font-size:13px;border-radius:10px}
+.btn-w{width:100%}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:20px}
-.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.badge-gold{background:rgba(245,158,11,.15);color:var(--gold2)}
-.badge-green{background:rgba(16,185,129,.15);color:var(--green2)}
-.badge-purple{background:rgba(124,58,237,.15);color:var(--accent3)}
-.badge-blue{background:rgba(59,130,246,.15);color:var(--blue2)}
-.badge-red{background:rgba(239,68,68,.15);color:#f87171}
-
-/* ── BUTTONS — all min 48px for tap targets ── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:var(--radius);font-size:15px;font-weight:700;transition:all .15s;white-space:nowrap;cursor:pointer;border:none;min-height:48px;-webkit-tap-highlight-color:transparent;letter-spacing:.01em}
-.btn-primary{background:var(--accent);color:#fff}.btn-primary:active{background:var(--accent2);transform:scale(.97)}
-.btn-secondary{background:var(--card2);color:var(--text);border:2px solid var(--border2)}.btn-secondary:active{border-color:var(--accent)}
-.btn-gold{background:linear-gradient(135deg,var(--gold),#f97316);color:#000;font-weight:800}.btn-gold:active{filter:brightness(1.08);transform:scale(.97)}
-.btn-green{background:var(--green);color:#fff}
-.btn-whatsapp{background:#25D366;color:#fff;font-weight:700}.btn-whatsapp:active{background:#20bd5a}
-.btn-lg{padding:16px 28px;font-size:17px;border-radius:14px;min-height:56px}
-.btn-sm{padding:10px 16px;font-size:13px;min-height:40px}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,.45)}70%{box-shadow:0 0 0 14px rgba(124,58,237,0)}}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.fade-up{animation:fadeUp .35s ease both}
-.float{animation:float 3s ease-in-out infinite}
-
-/* ── TOAST ── */
-#toast-container{position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom) + 12px);left:16px;right:16px;z-index:400;display:flex;flex-direction:column;gap:8px;align-items:center}
-.toast{padding:14px 20px;border-radius:var(--radius);font-size:14px;font-weight:600;width:100%;max-width:400px;animation:fadeUp .3s ease;box-shadow:0 8px 24px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px}
-.toast-success{background:#065f46;border:1px solid var(--green);color:#a7f3d0}
-.toast-error{background:#7f1d1d;border:1px solid var(--red);color:#fca5a5}
-.toast-info{background:#1e1b4b;border:1px solid var(--accent);color:var(--accent3)}
-
-/* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
-@media(min-width:600px){.modal-overlay{align-items:center}}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius2) var(--radius2) 0 0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding-bottom:var(--safe-bottom)}
-@media(min-width:600px){.modal{border-radius:var(--radius2)}}
-.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0}
-.modal-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.modal-header h3{font-size:17px;font-weight:700}
-.modal-body{padding:18px 20px}
-.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px}
-.close-btn{background:var(--card2);border:1px solid var(--border2);color:var(--text2);min-width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0}
-
-/* ── NOTIFICATION BAR ── */
-.notif-bar{background:linear-gradient(90deg,#6d28d9,var(--accent),#6d28d9);background-size:200%;animation:shimmer 4s linear infinite;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;color:#fff;line-height:1.4}
-.notif-bar a{color:#fff;text-decoration:underline;cursor:pointer}
-
-/* ── HEADER (desktop only, hidden on mobile) ── */
-header{background:rgba(26,26,46,.96);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06)}
-.brand{font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.brand-sub{font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;display:block;margin-top:-4px}
-.desktop-nav{display:flex;gap:2px;align-items:center}
-.nav-link{padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;min-height:40px;display:flex;align-items:center}
-.nav-link:hover,.nav-link.active{background:var(--card2);color:var(--text)}
-.nav-link.active{color:var(--accent3)}
-.header-pts-badge{background:linear-gradient(135deg,var(--gold),#f97316);color:#000;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:800;cursor:pointer;display:none;min-height:40px;align-items:center}
-@media(max-width:680px){header{display:none}} /* hide header on mobile — use bottom nav */
-
-/* ── MOBILE TOP BAR ── */
-.mobile-topbar{display:none;background:rgba(26,26,46,.96);padding:12px 16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06)}
-@media(max-width:680px){.mobile-topbar{display:flex}}
-.mobile-pts{background:linear-gradient(135deg,var(--gold),#f97316);color:#000;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:800;cursor:pointer;display:none;min-height:36px;align-items:center}
-
-/* ── BOTTOM NAV (mobile) ── */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(15,15,26,.97);border-top:1px solid var(--border);padding-bottom:var(--safe-bottom);backdrop-filter:blur(16px)}
-@media(max-width:680px){.bottom-nav{display:flex}}
-.bottom-nav-inner{display:flex;align-items:stretch;height:var(--nav-h)}
-.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:6px 4px;-webkit-tap-highlight-color:transparent;transition:all .15s;border-top:2px solid transparent;min-width:0}
-.bnav-item.active{border-top-color:var(--accent3)}
-.bnav-icon{font-size:22px;line-height:1}
-.bnav-label{font-size:10px;font-weight:600;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52px;text-align:center}
-.bnav-item.active .bnav-label{color:var(--accent3)}
-
-/* ── STICKY FIND CTA (mobile) ── */
-.sticky-find-cta{display:none;position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom) + 12px);right:16px;z-index:190}
-@media(max-width:680px){.sticky-find-cta.visible{display:block}}
-.sticky-find-btn{background:linear-gradient(135deg,var(--accent),#6d28d9);color:#fff;border:none;border-radius:50px;padding:14px 20px;font-size:14px;font-weight:700;box-shadow:0 4px 20px rgba(124,58,237,.5);display:flex;align-items:center;gap:8px;cursor:pointer;min-height:52px;animation:pulse 2.5s infinite}
-
-/* ── HERO ── */
-.hero{text-align:center;padding:40px 16px 32px;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.28) 0%,transparent 65%);position:relative}
-.hero-emoji{font-size:64px;margin-bottom:16px;display:block}
-.hero h1{font-size:clamp(30px,8vw,52px);font-weight:900;line-height:1.1;margin-bottom:14px}
-.hero h1 span{background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{font-size:16px;color:var(--text2);max-width:420px;margin:0 auto 24px;line-height:1.6}
-.hero-cta{display:flex;flex-direction:column;gap:10px;align-items:stretch;max-width:320px;margin:0 auto}
-@media(min-width:480px){.hero-cta{flex-direction:row;max-width:none;justify-content:center}}
-.hero-stats{display:flex;margin-top:32px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden}
-.hero-stat{flex:1;text-align:center;padding:16px 8px;border-right:1px solid var(--border)}
-.hero-stat:last-child{border-right:none}
-.hero-stat .val{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block}
-.hero-stat .lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;display:block}
-
-/* ── SERVICE CARDS ── */
-.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px}
-@media(max-width:400px){.svc-grid{grid-template-columns:1fr 1fr}}
-.svc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;transition:border-color .15s;cursor:pointer}
-.svc-card:active{transform:scale(.97)}
-.svc-img{height:110px;background-size:cover;background-position:center;position:relative}
-.svc-img-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1) 40%,rgba(0,0,0,.75))}
-.svc-img-tag{position:absolute;bottom:8px;left:10px;z-index:1;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px}
-.svc-icon-badge{position:absolute;top:8px;right:10px;font-size:20px;z-index:1}
-.svc-body{padding:12px}
-.svc-name{font-size:14px;font-weight:700;margin-bottom:3px}
-.svc-desc{font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.svc-price{font-size:20px;font-weight:900;color:var(--gold)}
-.svc-dur{font-size:11px;color:var(--text3)}
-.svc-cta{margin-top:10px;width:100%;padding:10px;font-size:13px;min-height:40px}
-
-/* ── CATEGORY TABS ── */
-.cat-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:18px;scrollbar-width:none}
-.cat-tabs::-webkit-scrollbar{display:none}
-.cat-tab{padding:10px 18px;border-radius:50px;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer;border:2px solid var(--border2);background:transparent;color:var(--text2);flex-shrink:0;min-height:42px;-webkit-tap-highlight-color:transparent}
-.cat-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-
-/* ── HOW IT WORKS ── */
-.hiw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px;margin:20px 0}
-.hiw-step{text-align:center;padding:20px 12px}
-.hiw-num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;margin:0 auto 12px;color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.4)}
-.hiw-step h4{font-size:14px;font-weight:700;margin-bottom:6px}
-.hiw-step p{font-size:12px;color:var(--text2);line-height:1.5}
-
-/* ── TESTIMONIALS ── */
-.testi-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
-.testi-scroll::-webkit-scrollbar{display:none}
-.testi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:18px;min-width:260px;max-width:300px;flex-shrink:0;position:relative}
-.testi-quote{font-size:42px;font-weight:900;color:var(--accent);opacity:.3;position:absolute;top:4px;left:14px;line-height:1}
-.testi-text{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:12px;margin-top:10px;font-style:italic}
-.testi-author{display:flex;align-items:center;gap:10px}
-.testi-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
-.stars{color:var(--gold);font-size:12px;margin-bottom:6px}
-
-/* ── PASS CARDS ── */
-.pass-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
-.pass-scroll::-webkit-scrollbar{display:none}
-.pass-card{border-radius:var(--radius2);padding:24px 20px;position:relative;overflow:hidden;border:2px solid transparent;min-width:240px;max-width:280px;flex-shrink:0;display:flex;flex-direction:column}
-.pass-card.popular{border-color:var(--gold)}
-.pass-silver{background:linear-gradient(140deg,#1e2040,#2a2a50)}
-.pass-gold{background:linear-gradient(140deg,#2d1a0a,#3d2e10)}
-.pass-platinum{background:linear-gradient(140deg,#0a1e35,#1a1030)}
-.pass-popular-tag{position:absolute;top:0;right:0;background:var(--gold);color:#000;font-size:9px;font-weight:800;padding:5px 14px;border-radius:0 var(--radius2) 0 10px;text-transform:uppercase;letter-spacing:.06em}
-.pass-icon{font-size:32px;margin-bottom:10px}
-.pass-name{font-size:16px;font-weight:800}
-.pass-price{font-size:34px;font-weight:900;margin:8px 0 2px}
-.pass-per{font-size:12px;color:var(--text2);margin-bottom:6px}
-.pass-save{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,.2);color:var(--green2);margin-bottom:12px}
-.pass-desc{font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5}
-.pass-feature{display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 0;color:var(--text2)}
-.pass-feature .ck{color:var(--green2);font-size:14px;flex-shrink:0}
-.pass-cta{width:100%;margin-top:auto;padding-top:16px}
-
-/* ── LOCATION ── */
-.loc-search-box{background:var(--card2);border:1px solid var(--border2);border-radius:var(--radius2);padding:14px 16px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.loc-search-box input{flex:1;background:transparent;border:none;font-size:16px;color:var(--text);padding:0}
-.loc-count{font-size:13px;color:var(--text3);margin-bottom:14px}
-.loc-zone-filter{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:none}
-.loc-zone-filter::-webkit-scrollbar{display:none}
-.zone-btn{padding:9px 16px;border-radius:50px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;border:2px solid var(--border2);background:transparent;color:var(--text2);flex-shrink:0;min-height:40px;-webkit-tap-highlight-color:transparent}
-.zone-btn.active{border-color:transparent}
-.zone-btn.z-all.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.zone-btn.z-wr.active{background:rgba(59,130,246,.25);color:var(--blue2);border-color:var(--blue)}
-.zone-btn.z-cr.active{background:rgba(16,185,129,.25);color:var(--green2);border-color:var(--green)}
-.zone-btn.z-metro.active{background:rgba(124,58,237,.25);color:var(--accent3);border-color:var(--accent)}
-.loc-list{display:flex;flex-direction:column;gap:10px}
-.loc-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:border-color .15s;-webkit-tap-highlight-color:transparent;min-height:72px}
-.loc-item:active{background:var(--card2)}
-.loc-item-zone{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;letter-spacing:.04em}
-.lz-WR{background:rgba(59,130,246,.2);color:var(--blue2)}
-.lz-CR{background:rgba(16,185,129,.2);color:var(--green2)}
-.lz-Metro{background:rgba(124,58,237,.2);color:var(--accent3)}
-.loc-item-info{flex:1;min-width:0}
-.loc-item-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.loc-item-city{font-size:13px;color:var(--text2);margin-top:1px}
-.loc-item-station{font-size:12px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
-.loc-item-arrow{color:var(--text3);font-size:18px;flex-shrink:0}
-
-/* ── LOYALTY ── */
-.loyalty-hero{background:linear-gradient(140deg,#1c0a4a,#2a1060);border:1px solid rgba(124,58,237,.4);border-radius:var(--radius2);padding:28px 20px;text-align:center;margin-bottom:22px}
-.pts-display{font-size:56px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
-.earn-table{width:100%;border-collapse:collapse;margin-top:14px}
-.earn-table th{background:var(--bg4);color:var(--text2);font-size:11px;font-weight:700;text-transform:uppercase;padding:10px 14px;text-align:left;letter-spacing:.05em}
-.earn-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:14px}
-.earn-table tr:last-child td{border-bottom:none}
-
-/* ── B2B HERO ── */
-.b2b-hero{border-radius:var(--radius2);overflow:hidden;margin-bottom:28px;position:relative;background:linear-gradient(140deg,#0a1628,#0d2640,#0a2818);padding:28px 20px}
-.b2b-hero::after{content:'';position:absolute;right:0;top:0;bottom:0;width:40%;background:url('https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&q=80&fit=crop') center/cover no-repeat;opacity:.2}
-.b2b-hero-text{position:relative;z-index:1}
-.b2b-hero-text h2{font-size:clamp(20px,5vw,28px);font-weight:900;margin-bottom:10px;line-height:1.2}
-.b2b-hero-text p{color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:18px}
-.b2b-stats{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:18px}
-.b2b-stat .v{font-size:22px;font-weight:900;color:var(--gold)}
-.b2b-stat .l{font-size:11px;color:var(--text3);text-transform:uppercase}
-.partner-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:28px}
-.partner-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 12px;text-align:center;transition:all .15s}
-.partner-card:active{background:var(--card2)}
-.partner-icon{font-size:26px;margin-bottom:6px}
-.partner-name{font-size:12px;font-weight:700}
-.partner-desc{font-size:10px;color:var(--text2);margin-top:3px;line-height:1.4}
-.offer-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.offer-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;gap:14px;align-items:flex-start;border-left:3px solid var(--accent)}
-.offer-icon{font-size:24px;flex-shrink:0;margin-top:2px}
-.offer-title{font-size:14px;font-weight:700;margin-bottom:4px}
-.offer-desc{font-size:13px;color:var(--text2);line-height:1.5}
-.pricing-list{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
-@media(min-width:600px){.pricing-list{flex-direction:row;gap:14px}}
-.price-card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius2);padding:20px;flex:1;position:relative;text-align:center}
-.price-card.featured{border-color:var(--gold);background:linear-gradient(140deg,var(--card),#2d1a08)}
-.price-tag{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;font-size:9px;font-weight:800;padding:4px 12px;border-radius:0 0 8px 8px;white-space:nowrap;letter-spacing:.05em}
-.price-tier{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.price-range{font-size:13px;color:var(--text2);margin-bottom:6px}
-.price-disc{font-size:30px;font-weight:900;color:var(--gold);margin:6px 0}
-.price-feats{text-align:left;margin-top:12px}
-.price-feat{font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)}
-.price-feat:last-child{border-bottom:none}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;margin-bottom:6px;color:var(--text2);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:480px){.form-row{grid-template-columns:1fr}}
-
-/* ── TECH ── */
-.tech-list{display:flex;flex-direction:column;gap:12px}
-.tech-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:18px;display:flex;gap:16px;align-items:flex-start}
-.tech-icon{font-size:28px;flex-shrink:0;margin-top:2px}
-.tech-title{font-size:15px;font-weight:700;margin-bottom:6px}
-.tech-desc{font-size:13px;color:var(--text2);line-height:1.6}
-.equip-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin:0 -16px;padding-left:16px;padding-right:16px;margin-bottom:20px;scrollbar-width:none}
-.equip-scroll::-webkit-scrollbar{display:none}
-.equip-card{min-width:200px;height:160px;border-radius:var(--radius2);overflow:hidden;position:relative;flex-shrink:0;background-size:cover;background-position:center}
-.equip-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 35%,rgba(0,0,0,.1))}
-.equip-info{position:absolute;bottom:0;left:0;right:0;padding:14px;z-index:1}
-.equip-name{font-size:14px;font-weight:800;margin-bottom:2px}
-.equip-desc{font-size:11px;color:rgba(255,255,255,.75)}
-
-/* ── FAQ ── */
-.faq-list{display:flex;flex-direction:column;gap:8px}
-.faq-item{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.faq-q{padding:16px 18px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:14px;min-height:56px;-webkit-tap-highlight-color:transparent}
-.faq-q:active{background:var(--card2)}
-.faq-icon{color:var(--text3);font-size:20px;transition:transform .2s;flex-shrink:0;margin-left:8px}
-.faq-q.open .faq-icon{transform:rotate(45deg)}
-.faq-a{display:none;padding:0 18px 16px;font-size:14px;color:var(--text2);line-height:1.65;border-top:1px solid var(--border)}
-.faq-a.show{display:block}
-
-/* ── INFO BOX ── */
-.info-box{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);border-radius:var(--radius);padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.6}
-.success-box{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:var(--radius2);padding:28px 20px;text-align:center}
-
-/* ── PAY OPTION CARDS ── */
-.pay-opt{border:2px solid var(--border2);border-radius:14px;padding:18px;cursor:pointer;text-align:center;transition:all .15s;-webkit-tap-highlight-color:transparent}
-.pay-opt:active{transform:scale(.97)}
-.pay-opt.sel-online{border-color:var(--green);background:rgba(16,185,129,.08)}
-.pay-opt.sel-kiosk{border-color:var(--gold);background:rgba(245,158,11,.07)}
-.upi-app-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;min-height:44px;transition:border-color .15s}
-.upi-app-btn:hover{border-color:var(--accent)}
-
-/* ── BOOKING WIZARD ── */
-.book-steps{display:flex;gap:0;margin-bottom:28px;position:relative}
-.book-steps::before{content:'';position:absolute;top:20px;left:10%;right:10%;height:2px;background:var(--border);z-index:0}
-.book-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:1}
-.step-num{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;border:3px solid var(--border);background:var(--bg);color:var(--text3);transition:all .2s}
-.step-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);text-align:center}
-.book-step.active .step-num{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 0 4px rgba(124,58,237,.2)}
-.book-step.active .step-label{color:var(--accent3)}
-.book-step.done .step-num{background:var(--green);border-color:var(--green);color:#fff}
-.book-step.done .step-label{color:var(--green2)}
-.step-panel{display:none}.step-panel.active{display:block}
-
-/* ── SLOT GRID ── */
-.slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;max-height:300px;overflow-y:auto;padding:4px}
-@media(max-width:400px){.slot-grid{grid-template-columns:repeat(3,1fr)}}
-.slot-btn{padding:10px 4px;border-radius:10px;border:2px solid var(--border2);background:var(--bg3);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .15s;-webkit-tap-highlight-color:transparent;min-height:44px;line-height:1.3}
-.slot-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(124,58,237,.1)}
-.slot-btn.selected{background:var(--accent);border-color:var(--accent);color:#fff}
-.slot-btn.busy{background:var(--bg4);border-color:var(--border);color:var(--text3);cursor:not-allowed;opacity:.5}
-
-/* ── BOOKING CARD ── */
-.bk-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:18px;position:relative;overflow:hidden;margin-bottom:12px}
-.bk-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
-.bk-card.upcoming::before{background:var(--green)}
-.bk-card.past::before{background:var(--text3)}
-.bk-card.cancelled::before{background:var(--red)}
-.bk-id{font-size:11px;font-weight:700;color:var(--accent3);letter-spacing:.08em;text-transform:uppercase}
-.bk-title{font-size:16px;font-weight:700;margin:4px 0 8px}
-.bk-meta{font-size:13px;color:var(--text2);display:flex;flex-direction:column;gap:4px}
-
-/* ── ACCOUNT ── */
-.acct-hero{background:linear-gradient(140deg,#1c0a4a,#0a1628);border:1px solid rgba(124,58,237,.3);border-radius:var(--radius2);padding:28px 20px;text-align:center;margin-bottom:22px}
-.acct-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin:0 auto 12px;color:#fff}
-.stat-row{display:flex;gap:10px;margin-bottom:0}
-.stat-box{flex:1;background:rgba(255,255,255,.07);border-radius:10px;padding:12px;text-align:center}
-.stat-box .sv{font-size:22px;font-weight:900}
-.stat-box .sl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
-
-/* ── FOOTER ── */
-footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 16px 20px;margin-top:40px}
-.footer-brand{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--accent3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.footer-links{display:flex;gap:0;flex-wrap:wrap;margin:16px -4px}
-.footer-link{padding:8px 12px;font-size:14px;color:var(--text2);cursor:pointer;border-radius:8px}
-.footer-link:active{background:var(--card2)}
-.footer-copy{font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.badge-gold{background:rgba(201,150,10,.18);color:var(--gold2);border:1px solid rgba(201,150,10,.3)}
+.badge-green{background:rgba(16,185,129,.15);color:var(--green2);border:1px solid rgba(16,185,129,.3)}
+.badge-blue{background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+.chip{display:inline-flex;align-items:center;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;border:2px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s}
+.chip.active{border-color:var(--accent2);color:var(--accent3);background:rgba(201,150,10,.12)}
+/* TOP BAR */
+#topBar{position:sticky;top:0;z-index:100;background:rgba(15,15,26,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:680px;margin:0 auto}
+.brand-name{font-family:'Alegreya',Georgia,serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--accent2),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+/* BOTTOM NAV */
+#bottomNav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(15,15,26,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);padding-bottom:var(--safe-b)}
+.nav-inner{display:flex;max-width:680px;margin:0 auto}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 8px;font-size:10px;font-weight:600;color:var(--text3);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .2s;border:none;background:transparent}
+.nav-item.active{color:var(--accent3)}
+.nav-item .nav-icon{font-size:22px;line-height:1}
+/* AUTH SCREEN */
+#authScreen{position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:24px 16px 40px}
+.auth-wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.auth-logo{font-family:'Alegreya',Georgia,serif;font-size:48px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;text-align:center}
+.auth-tagline{font-size:14px;color:var(--text3);text-align:center;margin-bottom:28px}
+.auth-box{width:100%;max-width:420px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius3);padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.auth-tabs{display:flex;gap:0;background:var(--bg3);border-radius:var(--radius);padding:4px;margin-bottom:20px}
+.auth-tab{flex:1;padding:9px;border-radius:10px;font-size:14px;font-weight:600;color:var(--text3);background:transparent;border:none;cursor:pointer;transition:all .2s}
+.auth-tab.active{background:var(--card2);color:var(--accent3)}
+.form-label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;display:block}
+.form-group{margin-bottom:14px}
+/* SOCIAL BUTTONS */
+.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 12px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid;cursor:pointer;transition:all .15s;width:100%}
+.social-btn:active{transform:scale(.97)}
+.soc-google{background:#fff;color:#3c4043;border-color:#dadce0}
+.soc-facebook{background:#1877F2;color:#fff;border-color:#1877F2}
+.soc-instagram{background:linear-gradient(135deg,#833AB4,#FD1D1D,#FCB045);color:#fff;border-color:transparent}
+.soc-x{background:#000;color:#fff;border-color:#333}
+.soc-linkedin{background:#0A66C2;color:#fff;border-color:#0A66C2}
+.social-btn svg{flex-shrink:0}
+.or-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--text3);font-size:12px}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-footer{text-align:center;font-size:13px;color:var(--text3);margin-top:14px}
+.auth-footer a{color:var(--accent3);font-weight:600}
+/* LOYALTY CARD */
+.loyalty-card{background:linear-gradient(135deg,#1a1208,#2a1f00,#1a1208);border:1px solid rgba(201,150,10,.4);border-radius:var(--radius2);padding:22px;position:relative;overflow:hidden}
+.loyalty-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(201,150,10,.2),transparent 60%);pointer-events:none}
+.loyalty-tier{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:4px}
+.loyalty-pts{font-size:38px;font-weight:900;font-family:'Alegreya',Georgia,serif;background:linear-gradient(135deg,var(--accent2),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.loyalty-bar-wrap{margin-top:12px;background:rgba(201,150,10,.15);border-radius:4px;height:6px;overflow:hidden}
+.loyalty-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold2));border-radius:4px;transition:width .6s}
+/* SERVICE CARDS */
+.service-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.svc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.svc-card:active{transform:scale(.98)}
+.svc-card.selected{border-color:var(--accent2);background:rgba(201,150,10,.08)}
+.svc-badge{position:absolute;top:10px;right:10px;background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.4);border-radius:6px;font-size:10px;font-weight:700;color:var(--green2);padding:2px 6px}
+/* PASS CARDS */
+.pass-card{border-radius:var(--radius2);padding:18px;margin-bottom:12px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s}
+.pass-card:active{transform:scale(.98)}
+.pass-bronze{background:linear-gradient(135deg,#2d1f0e,#4a3115);border:1px solid rgba(176,114,46,.5)}
+.pass-silver{background:linear-gradient(135deg,#1e2233,#2d3250);border:1px solid rgba(148,163,184,.4)}
+.pass-gold{background:linear-gradient(135deg,#1a1208,#2e1f00);border:1px solid rgba(201,150,10,.5)}
+.pass-platinum{background:linear-gradient(135deg,#0d1a2d,#1a2d4a);border:1px solid rgba(139,92,246,.5)}
+/* REFERRAL */
+.referral-card{background:linear-gradient(135deg,#0d1a0d,#112211);border:1px solid rgba(16,185,129,.3);border-radius:var(--radius2);padding:20px}
+.ref-code{font-size:26px;font-weight:900;font-family:monospace;letter-spacing:6px;color:var(--green2);text-align:center;padding:14px;background:rgba(16,185,129,.08);border-radius:var(--radius);border:1px solid rgba(16,185,129,.2);cursor:pointer;user-select:all;margin:12px 0}
+/* MISC */
+.progress-bar{height:8px;border-radius:4px;background:var(--bg3);overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .6s}
+.section-title{font-size:20px;font-weight:800;margin-bottom:4px}
+.section-sub{font-size:13px;color:var(--text2);margin-bottom:16px}
+.chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:16px}
+.chip-row::-webkit-scrollbar{display:none}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#0f0f1a;flex-shrink:0}
+/* OTP POPUP */
+#otpOverlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.8);backdrop-filter:blur(8px)}
+.otp-popup{background:var(--card);border:1px solid rgba(201,150,10,.4);border-radius:var(--radius3);padding:28px 24px;max-width:360px;width:90%;text-align:center}
+.otp-display{font-size:42px;font-weight:900;font-family:monospace;letter-spacing:10px;color:var(--gold2);padding:18px;background:rgba(201,150,10,.08);border:2px dashed rgba(201,150,10,.4);border-radius:var(--radius2);margin:14px 0}
+/* TOAST */
+#toastWrap{position:fixed;top:76px;left:50%;transform:translateX(-50%);z-index:900;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:8px;width:90%;max-width:360px}
+.toast{padding:11px 18px;border-radius:30px;font-size:13px;font-weight:600;animation:toastIn .25s ease,toastOut .3s ease 2.2s forwards;text-align:center}
+.toast-success{background:rgba(16,185,129,.92);color:#fff}
+.toast-error{background:rgba(239,68,68,.92);color:#fff}
+.toast-info{background:rgba(201,150,10,.92);color:#0f0f1a}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0}}
+/* PROVIDER SETUP MODAL */
+.setup-step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.setup-num{width:24px;height:24px;border-radius:50%;background:rgba(201,150,10,.2);color:var(--accent3);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 </style>
 </head>
 <body>
 
-<div id="toast-container"></div>
+<div id="toastWrap"></div>
 
-<!-- NOTIFICATION BAR -->
-<div class="notif-bar">
-  🎉 <strong>Monthly Unlimited Pass @ ₹2,499</strong> — All 33 kiosks, unlimited sessions. <a onclick="showTab('passes')">See Passes →</a>
-</div>
-
-<!-- DESKTOP HEADER -->
-<header>
-  <div>
-    <div class="brand">ārāma</div>
-    <span class="brand-sub">Wellness Kiosks</span>
-  </div>
-  <nav class="desktop-nav" id="desktop-nav">
-    <div class="nav-link active" onclick="showTab('services',this)">💆 Services</div>
-    <div class="nav-link" onclick="showTab('passes',this)">🎟️ Passes</div>
-    <div class="nav-link" onclick="showTab('locations',this)">📍 Find Us</div>
-    <div class="nav-link" onclick="showTab('loyalty',this)">⭐ Loyalty</div>
-    <div class="nav-link" onclick="showTab('technology',this)">⚡ Tech</div>
-    <div class="nav-link" onclick="showTab('b2b',this)">🤝 B2B</div>
-    <div class="nav-link" onclick="showTab('book',this)">📅 Book</div>
-    <div class="nav-link" onclick="showTab('account',this)">👤 Account</div>
-  </nav>
-  <div class="flex gap8 ac">
-    <div class="header-pts-badge" id="hdr-pts-d" onclick="openLoyaltyTab()">⭐ <span id="hdr-pts-val-d">0</span> pts</div>
-    <button class="btn btn-gold btn-sm" onclick="openLoyaltyTab()">My Points</button>
-  </div>
-</header>
-
-<!-- MOBILE TOP BAR -->
-<div class="mobile-topbar">
-  <div>
-    <div class="brand" style="font-size:20px">ārāma</div>
-    <span class="brand-sub" style="font-size:9px">Wellness Kiosks</span>
-  </div>
-  <div class="flex gap8 ac">
-    <div class="mobile-pts" id="mob-pts" onclick="openLoyaltyTab()">⭐ <span id="mob-pts-val">0</span> pts</div>
-    <button class="btn btn-gold btn-sm" onclick="openLoyaltyTab()">⭐ Points</button>
+<!-- OTP OVERLAY -->
+<div id="otpOverlay" class="hidden">
+  <div class="otp-popup">
+    <div style="font-size:32px;margin-bottom:8px">🔐</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:4px">Your OTP</div>
+    <div style="font-size:13px;color:var(--text3)" id="otpSubtext">Show this to your ārāma therapist</div>
+    <div class="otp-display" id="otpCode">------</div>
+    <div style="font-size:12px;color:var(--text3)" id="otpTimer">Expires in 5:00</div>
+    <button class="btn btn-gold btn-w" style="margin-top:14px" onclick="closeOTP()">Got it ✓</button>
   </div>
 </div>
 
-<!-- STICKY FIND CTA (mobile, only on hero/services) -->
-<div class="sticky-find-cta" id="sticky-cta">
-  <button class="sticky-find-btn" onclick="showTab('locations')">📍 Find Nearest Kiosk</button>
-</div>
-
-<!-- ════════════════════════════════
-     HERO
-════════════════════════════════ -->
-<div id="hero-section" class="hero fade-up">
-  <div class="container">
-    <span class="hero-emoji float">💆</span>
-    <h1>Feel Better in<br><span>15 Minutes</span></h1>
-    <p>Professional massage at railway stations across India. Walk in, pay, relax — no appointment needed.</p>
-    <div class="hero-cta">
-      <button class="btn btn-primary btn-lg" onclick="showTab('services')">View Services</button>
-      <button class="btn btn-secondary btn-lg" onclick="showTab('locations')">📍 Near Me</button>
-    </div>
-    <div class="hero-stats mt24">
-      <div class="hero-stat"><span class="val">33</span><span class="lbl">Kiosks</span></div>
-      <div class="hero-stat"><span class="val">₹149</span><span class="lbl">From</span></div>
-      <div class="hero-stat"><span class="val">1L+</span><span class="lbl">Sessions</span></div>
-      <div class="hero-stat"><span class="val">4.8★</span><span class="lbl">Rated</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════
-     PAGES
-════════════════════════════════ -->
-<div id="pages">
-
-<!-- SERVICES -->
-<div id="tab-services" class="hidden fade-up">
-  <div class="container section">
-    <div class="section-title">💆 Services</div>
-    <div class="section-sub">Sanitised chairs, trained staff, token-verified auto-stop. No booking needed.</div>
-    <div class="cat-tabs" id="svc-tabs">
-      <button class="cat-tab active" onclick="filterSvc('all',this)">All</button>
-      <button class="cat-tab" onclick="filterSvc('chair',this)">💺 Chair</button>
-      <button class="cat-tab" onclick="filterSvc('leg',this)">🦵 Leg</button>
-      <button class="cat-tab" onclick="filterSvc('gun',this)">🔫 Gun</button>
-      <button class="cat-tab" onclick="filterSvc('combo',this)">✨ Combo</button>
-    </div>
-    <div class="svc-grid" id="services-grid"></div>
-    <div class="card" style="background:linear-gradient(140deg,var(--bg2),var(--bg3));margin-top:4px">
-      <h3 style="font-size:18px;margin-bottom:18px">🔄 How It Works</h3>
-      <div class="hiw-grid">
-        <div class="hiw-step"><div class="hiw-num">1</div><h4>Walk In</h4><p>Find any ārāma kiosk at a railway station — no booking needed</p></div>
-        <div class="hiw-step"><div class="hiw-num">2</div><h4>Choose</h4><p>Pick massage type and duration at the counter</p></div>
-        <div class="hiw-step"><div class="hiw-num">3</div><h4>Pay</h4><p>UPI / PhonePe / cash. Get a session token instantly.</p></div>
-        <div class="hiw-step"><div class="hiw-num">4</div><h4>Relax</h4><p>Chair starts. Auto-stops when done — zero guessing.</p></div>
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <div class="auth-wrap">
+    <div class="auth-logo">ārāma</div>
+    <div class="auth-tagline">पहले luxury था, अब ज़रूरी है</div>
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
       </div>
-    </div>
-    <div class="divider"></div>
-    <div class="section-title" style="font-size:19px">💬 Reviews</div>
-    <div class="testi-scroll mt16">
-      <div class="testi-card"><div class="testi-quote">"</div><div class="stars">★★★★★</div><div class="testi-text">Caught a 2-hour wait at Borivali. The ārāma chair was a lifesaver — 30 min and I felt completely refreshed.</div><div class="testi-author"><div class="testi-avatar">R</div><div><div style="font-size:13px;font-weight:700">Rajesh M.</div><div style="font-size:11px;color:var(--text3)">Borivali Station</div></div></div></div>
-      <div class="testi-card"><div class="testi-quote">"</div><div class="stars">★★★★★</div><div class="testi-text">I travel WR corridor every week. ārāma at Andheri is part of my routine. Staff are professional, chair always clean.</div><div class="testi-author"><div class="testi-avatar">P</div><div><div style="font-size:13px;font-weight:700">Priya S.</div><div style="font-size:11px;color:var(--text3)">Andheri Station</div></div></div></div>
-      <div class="testi-card"><div class="testi-quote">"</div><div class="stars">★★★★★</div><div class="testi-text">Gun session at Vadodara fixed my shoulder before a 4-hour journey. Got the 10-session pass — absolutely worth it.</div><div class="testi-author"><div class="testi-avatar">K</div><div><div style="font-size:13px;font-weight:700">Kiran D.</div><div style="font-size:11px;color:var(--text3)">Vadodara</div></div></div></div>
-    </div>
-  </div>
-</div>
 
-<!-- PASSES -->
-<div id="tab-passes" class="hidden fade-up">
-  <div class="container section">
-    <div class="section-title">🎟️ Wellness Passes</div>
-    <div class="section-sub">Save up to 25% with multi-session passes. Valid at all 33 locations.</div>
-    <div class="pass-scroll" id="passes-grid"></div>
-    <div class="card mt24" style="background:var(--bg3)">
-      <h3 class="mb16" style="font-size:17px">📋 Pass Terms</h3>
-      <div class="grid2" style="gap:10px">
-        <div style="padding:12px;background:var(--bg4);border-radius:10px"><div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Valid At</div><div style="font-weight:700;font-size:14px">All 33+ Locations</div></div>
-        <div style="padding:12px;background:var(--bg4);border-radius:10px"><div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Validity</div><div style="font-weight:700;font-size:14px">6 Months</div></div>
-        <div style="padding:12px;background:var(--bg4);border-radius:10px"><div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Transferable</div><div style="font-weight:700;font-size:14px">No (phone-linked)</div></div>
-        <div style="padding:12px;background:var(--bg4);border-radius:10px"><div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Refund</div><div style="font-weight:700;font-size:14px">Unused sessions</div></div>
-      </div>
-    </div>
-    <div class="divider"></div>
-    <div class="section-title" style="font-size:19px">❓ FAQs</div>
-    <div class="faq-list mt16" id="pass-faqs">
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I use my pass at any ārāma kiosk?<span class="faq-icon">+</span></div><div class="faq-a">Yes! Your pass is valid at all 33+ ārāma locations. Just give your phone number at the counter — our staff will see your balance.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What if I don't use all sessions?<span class="faq-icon">+</span></div><div class="faq-a">Unused sessions within the validity period are refundable on request. Email tech@arama.asia with your phone number and purchase date.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Does Monthly Pass mean truly unlimited?<span class="faq-icon">+</span></div><div class="faq-a">Yes — unlimited 15-min chair sessions for 30 calendar days at any location. Fair-use: max 3 sessions per visit per day.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Do I earn loyalty points on passes?<span class="faq-icon">+</span></div><div class="faq-a">Yes! 10 points per ₹100 on purchase price, plus a +150 pass bonus on top.</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- FIND US -->
-<div id="tab-locations" class="hidden fade-up">
-  <div class="container section">
-    <div class="section-title">📍 Find a Kiosk</div>
-    <div class="section-sub">33 kiosks across Gujarat & Maharashtra railway stations.</div>
-    <div class="loc-search-box">
-      <span style="font-size:22px;flex-shrink:0">🔍</span>
-      <input type="search" id="loc-q" placeholder="City, station, or code…" oninput="renderLocations()" style="border:none;background:transparent;padding:0;font-size:16px">
-    </div>
-    <div class="loc-zone-filter">
-      <button class="zone-btn z-all active" onclick="setZone('',this)">All Zones</button>
-      <button class="zone-btn z-wr" onclick="setZone('WR',this)">🔵 WR</button>
-      <button class="zone-btn z-cr" onclick="setZone('CR',this)">🟢 CR</button>
-      <button class="zone-btn z-metro" onclick="setZone('Metro',this)">🟣 Metro</button>
-    </div>
-    <div class="loc-count" id="loc-count"></div>
-    <div class="loc-list" id="loc-grid"></div>
-  </div>
-</div>
-
-<!-- LOYALTY -->
-<div id="tab-loyalty" class="hidden fade-up">
-  <div class="container section">
-    <div class="loyalty-hero">
-      <div style="font-size:40px;margin-bottom:12px">⭐</div>
-      <h2 style="font-size:22px;font-weight:900;margin-bottom:8px">ārāma Loyalty Points</h2>
-      <p style="color:var(--text2);margin-bottom:22px;font-size:14px">No app needed — just your phone number.</p>
-      <div style="display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto">
-        <input type="tel" id="loyalty-phone" placeholder="Enter 10-digit phone number" maxlength="10" style="text-align:center;font-size:18px;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff">
-        <button class="btn btn-gold w100" onclick="checkLoyalty()">Check My Points →</button>
-      </div>
-      <div id="loyalty-result" class="mt24"></div>
-    </div>
-    <div class="grid2">
-      <div class="card">
-        <h3 style="font-size:16px;margin-bottom:14px">💡 How to Earn</h3>
-        <table class="earn-table">
-          <thead><tr><th>Activity</th><th>Points</th></tr></thead>
-          <tbody>
-            <tr><td>Sign-up bonus</td><td class="text-gold bold">+50</td></tr>
-            <tr><td>Per ₹100 spent</td><td class="text-gold bold">+10</td></tr>
-            <tr><td>Pass purchase</td><td class="text-gold bold">+150</td></tr>
-            <tr><td>Refer a friend</td><td class="text-gold bold">+100</td></tr>
-            <tr><td>Google review</td><td class="text-gold bold">+50</td></tr>
-            <tr><td>Video testimonial</td><td class="text-gold bold">+200</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card">
-        <h3 style="font-size:16px;margin-bottom:14px">🎁 How to Redeem</h3>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="padding:12px;background:var(--bg3);border-radius:10px;font-size:14px"><div style="font-weight:700;margin-bottom:3px">100 pts = ₹1</div><div style="font-size:12px;color:var(--text2)">Discount at counter</div></div>
-          <div style="padding:12px;background:var(--bg3);border-radius:10px;font-size:14px"><div style="font-weight:700;margin-bottom:3px">Min ₹499 bill</div><div style="font-size:12px;color:var(--text2)">Max 20% off per bill</div></div>
-          <div style="padding:12px;background:var(--bg3);border-radius:10px;font-size:14px"><div style="font-weight:700;margin-bottom:3px">Valid 12 months</div><div style="font-size:12px;color:var(--text2)">Reminder 30/7/1 days before expiry</div></div>
-          <div style="padding:12px;background:var(--bg3);border-radius:10px;font-size:14px"><div style="font-weight:700;margin-bottom:3px">Carry-forward</div><div style="font-size:12px;color:var(--text2)">Visit within 30 days of expiry</div></div>
+      <!-- ── SOCIAL BUTTONS ── -->
+      <div id="socialBtns">
+        <!-- Row 1: Google full width -->
+        <div id="gsi_btn" style="display:flex;justify-content:center;margin-bottom:8px"></div>
+        <button class="social-btn soc-google btn-w" onclick="triggerGoogle()" style="margin-bottom:8px">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.4 30.2 0 24 0 14.6 0 6.6 5.5 2.7 13.5l7.8 6C12.4 13.4 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 6.9-10 6.9-17z"/><path fill="#FBBC05" d="M10.5 28.5c-.5-1.5-.8-3-.8-4.5s.3-3 .8-4.5l-7.8-6C1 16.5 0 20.1 0 24s1 7.5 2.7 10.5l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.2 0-11.6-4-13.5-9.5l-7.8 6C6.6 42.5 14.6 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+        <!-- Row 2: 2-column grid -->
+        <div class="social-grid">
+          <button class="social-btn soc-facebook" onclick="socialLogin('facebook')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.883v2.271h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+            Facebook
+          </button>
+          <button class="social-btn soc-instagram" onclick="socialLogin('instagram')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            Instagram
+          </button>
+          <button class="social-btn soc-linkedin" onclick="socialLogin('linkedin')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </button>
+          <button class="social-btn soc-x" onclick="socialLogin('x')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            X (Twitter)
+          </button>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- TECHNOLOGY -->
-<div id="tab-technology" class="hidden fade-up">
-  <div class="container section">
-    <div class="section-title">⚡ Technology & Safety</div>
-    <div class="section-sub">Token-verified sessions, hardware-enforced timing, daily hygiene audits.</div>
-    <div class="equip-scroll">
-      <div class="equip-card" style="background-image:url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=300&fit=crop&q=80'),linear-gradient(135deg,#1a2a1a,#0a1a0a)"><div class="equip-info"><div class="equip-name">💺 Full Body Chair</div><div class="equip-desc">Back · Neck · Shoulders · Arms</div></div></div>
-      <div class="equip-card" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&q=80'),linear-gradient(135deg,#1a1a2a,#0a0a2a)"><div class="equip-info"><div class="equip-name">🦵 Leg Massager</div><div class="equip-desc">Calf · Ankle · Foot compression</div></div></div>
-      <div class="equip-card" style="background-image:url('https://images.unsplash.com/photo-1540206395-68808572332f?w=400&h=300&fit=crop&q=80'),linear-gradient(135deg,#2a1a1a,#1a0a0a)"><div class="equip-info"><div class="equip-name">🔫 Percussion Gun</div><div class="equip-desc">Deep tissue · Knots · Tension</div></div></div>
-    </div>
-    <div class="tech-list">
-      <div class="tech-item"><div class="tech-icon">🔐</div><div><div class="tech-title">Token-Based Session</div><div class="tech-desc">Chair activates only after payment token is issued. No token → no session. Fraud-proof by design.</div></div></div>
-      <div class="tech-item"><div class="tech-icon">⚡</div><div><div class="tech-title">ESP32 Hardware Relay</div><div class="tech-desc">Each kiosk has an ESP32 WiFi relay that physically cuts power at session end — guaranteed stop, no overruns.</div></div></div>
-      <div class="tech-item"><div class="tech-icon">🏥</div><div><div class="tech-title">Hygiene Protocol</div><div class="tech-desc">Chair covers changed between customers. Sanitiser before every session. Daily checklist logged in our system.</div></div></div>
-      <div class="tech-item"><div class="tech-icon">📱</div><div><div class="tech-title">UPI / PhonePe Ready</div><div class="tech-desc">Scan & pay in seconds. PhonePe QR at every kiosk. Cash accepted. Digital receipt on request.</div></div></div>
-      <div class="tech-item"><div class="tech-icon">⭐</div><div><div class="tech-title">Phone-Linked Loyalty</div><div class="tech-desc">No app download. Points linked to your number — check or redeem at any ārāma counter anytime.</div></div></div>
-      <div class="tech-item"><div class="tech-icon">🛡️</div><div><div class="tech-title">5-Layer Anti-Cheat</div><div class="tech-desc">Physical relay · QR-first · Shift audit · Supervisor check · Trust score per location. Every rupee accounted for.</div></div></div>
-    </div>
-  </div>
-</div>
+      <div class="or-divider">or use phone / email</div>
 
-<!-- B2B -->
-<div id="tab-b2b" class="hidden fade-up">
-  <div class="container section">
-    <!-- HERO -->
-    <div class="b2b-hero">
-      <div class="b2b-hero-text">
-        <h2>Bring Wellness to Your <span style="color:var(--gold2)">Workplace & Venue</span></h2>
-        <p>Volume pricing, branded setups, corporate wellness programmes, on-site events, and revenue-sharing for venue partners.</p>
-        <div class="b2b-stats">
-          <div class="b2b-stat"><div class="v">33+</div><div class="l">Locations</div></div>
-          <div class="b2b-stat"><div class="v">1L+</div><div class="l">Sessions</div></div>
-          <div class="b2b-stat"><div class="v">24h</div><div class="l">Response</div></div>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-gold" onclick="document.getElementById('b2b-form-top').scrollIntoView({behavior:'smooth'})">Get a Quote →</button>
-          <a href="https://wa.me/918080808080?text=Hi%20ārāma%2C%20B2B%20enquiry" target="_blank" class="btn btn-whatsapp">💬 WhatsApp</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- PARTNERS -->
-    <div class="section-title" style="font-size:19px">🤝 Who We Work With</div>
-    <div class="partner-grid mt16 mb24">
-      <div class="partner-card"><div class="partner-icon">🏢</div><div class="partner-name">Corporate / IT</div><div class="partner-desc">Monthly employee wellness</div></div>
-      <div class="partner-card"><div class="partner-icon">🏨</div><div class="partner-name">Hotels</div><div class="partner-desc">Lobby & spa zones</div></div>
-      <div class="partner-card"><div class="partner-icon">🏥</div><div class="partner-name">Hospitals</div><div class="partner-desc">Waiting area comfort</div></div>
-      <div class="partner-card"><div class="partner-icon">🎓</div><div class="partner-name">Education</div><div class="partner-desc">Campus wellness</div></div>
-      <div class="partner-card"><div class="partner-icon">🚉</div><div class="partner-name">Railway / Transport</div><div class="partner-desc">Station partnerships</div></div>
-      <div class="partner-card"><div class="partner-icon">🎪</div><div class="partner-name">Events</div><div class="partner-desc">Conferences & expos</div></div>
-    </div>
-
-    <!-- WHAT WE OFFER -->
-    <div class="section-title" style="font-size:19px">💡 What We Offer</div>
-    <div class="offer-list mt16">
-      <div class="offer-item"><div class="offer-icon">🏷️</div><div><div class="offer-title">Discounted Bulk Passes</div><div class="offer-desc">10%–30% off based on committed monthly volume. Monthly invoicing available.</div></div></div>
-      <div class="offer-item" style="border-left-color:var(--gold)"><div class="offer-icon">🎨</div><div><div class="offer-title">Branded Kiosk Setup</div><div class="offer-desc">Custom branding panels, co-branded receipts, partner logo on-screen.</div></div></div>
-      <div class="offer-item" style="border-left-color:var(--green)"><div class="offer-icon">📅</div><div><div class="offer-title">On-Site Wellness Events</div><div class="offer-desc">We bring chairs and staff to your venue. Perfect for employee wellness days.</div></div></div>
-      <div class="offer-item" style="border-left-color:var(--teal)"><div class="offer-icon">📊</div><div><div class="offer-title">Monthly Usage Reports</div><div class="offer-desc">Analytics, employee engagement data, and billing summary every month.</div></div></div>
-      <div class="offer-item" style="border-left-color:var(--blue)"><div class="offer-icon">🤝</div><div><div class="offer-title">Revenue Sharing</div><div class="offer-desc">Venue partners earn a % of every session. Turn unused space into passive income.</div></div></div>
-      <div class="offer-item" style="border-left-color:var(--accent3)"><div class="offer-icon">👤</div><div><div class="offer-title">Dedicated Account Manager</div><div class="offer-desc">Single point of contact for billing, scheduling, and issue resolution.</div></div></div>
-    </div>
-
-    <!-- PRICING TIERS -->
-    <div class="divider"></div>
-    <div class="section-title" style="font-size:19px">📦 Pricing Tiers</div>
-    <div class="pricing-list mt16">
-      <div class="price-card">
-        <div class="price-tier">Starter</div>
-        <div class="price-range">50–200 sessions/mo</div>
-        <div class="price-disc">10% off</div>
-        <div class="price-feats">
-          <div class="price-feat">✓ Bulk pass vouchers</div>
-          <div class="price-feat">✓ Monthly invoice</div>
-          <div class="price-feat">✓ Email support</div>
-          <div class="price-feat" style="color:var(--text3)">✗ Custom branding</div>
-        </div>
-        <button class="btn btn-secondary w100 mt12" onclick="document.getElementById('b2b-form-top').scrollIntoView({behavior:'smooth'})">Get Quote</button>
-      </div>
-      <div class="price-card featured">
-        <div class="price-tag">⭐ MOST POPULAR</div>
-        <div class="price-tier">Growth</div>
-        <div class="price-range">200–1,000 sessions/mo</div>
-        <div class="price-disc">20% off</div>
-        <div class="price-feats">
-          <div class="price-feat">✓ All Starter features</div>
-          <div class="price-feat">✓ Custom branding</div>
-          <div class="price-feat">✓ Monthly report</div>
-          <div class="price-feat">✓ Dedicated contact</div>
-        </div>
-        <button class="btn btn-gold w100 mt12" onclick="document.getElementById('b2b-form-top').scrollIntoView({behavior:'smooth'})">Get Quote →</button>
-      </div>
-      <div class="price-card">
-        <div class="price-tier">Enterprise</div>
-        <div class="price-range">1,000+ sessions/mo</div>
-        <div class="price-disc">30%+ off</div>
-        <div class="price-feats">
-          <div class="price-feat">✓ All Growth features</div>
-          <div class="price-feat">✓ On-site events</div>
-          <div class="price-feat">✓ Revenue sharing</div>
-          <div class="price-feat">✓ Custom SLA</div>
-        </div>
-        <button class="btn btn-primary w100 mt12" onclick="document.getElementById('b2b-form-top').scrollIntoView({behavior:'smooth'})">Contact Sales</button>
-      </div>
-    </div>
-
-    <!-- QUOTE FORM -->
-    <div class="divider"></div>
-    <div id="b2b-form-top">
-      <div class="section-title" style="font-size:19px">📋 Request a Quote</div>
-      <div class="section-sub">We reply within 24 hours. Or WhatsApp for a faster response.</div>
-    </div>
-    <div id="b2b-form-wrap">
-      <div class="form-group"><label>Company / Organisation *</label><input type="text" id="b2b-company" placeholder="Your Company Ltd."></div>
-      <div class="form-row">
-        <div class="form-group"><label>Your Name *</label><input type="text" id="b2b-name" placeholder="Full name"></div>
-        <div class="form-group"><label>Phone *</label><input type="tel" id="b2b-phone" placeholder="9876543210" maxlength="10"></div>
-      </div>
-      <div class="form-group"><label>Work Email</label><input type="email" id="b2b-email" placeholder="you@company.com"></div>
-      <div class="form-row">
+      <!-- LOGIN FORM -->
+      <div id="tabLogin">
         <div class="form-group">
-          <label>Industry *</label>
-          <select id="b2b-industry">
-            <option value="">Select sector</option>
-            <option>Corporate / IT / BPO</option><option>Hotel / Hospitality</option>
-            <option>Hospital / Healthcare</option><option>Education</option>
-            <option>Railway / Transport</option><option>Event / Exhibition</option>
-            <option>Retail / Mall</option><option>Airport / Aviation</option><option>Other</option>
-          </select>
+          <label class="form-label">Phone / Email</label>
+          <input id="loginId" type="text" placeholder="9876543210 or email@example.com" autocomplete="username">
         </div>
         <div class="form-group">
-          <label>Sessions/Month</label>
-          <select id="b2b-volume">
-            <option value="">Select range</option>
-            <option>Less than 50</option><option>50–200</option>
-            <option>200–500</option><option>500–1,000</option><option>1,000+</option>
-          </select>
+          <label class="form-label">Password</label>
+          <input id="loginPass" type="password" placeholder="Your password" autocomplete="current-password">
         </div>
+        <button class="btn btn-gold btn-w" onclick="doLogin()">Sign In →</button>
+        <div class="auth-footer"><a href="#" onclick="openForgotPass();return false">Forgot password?</a> &nbsp;·&nbsp; <a href="#" onclick="switchAuthTab('register');return false">Register</a></div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Primary Need</label>
-          <select id="b2b-usecase">
-            <option value="">Select</option>
-            <option>Employee Wellness</option><option>Venue Partnership</option>
-            <option>On-Site Event</option><option>Bulk Passes</option>
-            <option>Revenue Sharing</option><option>Custom Deployment</option><option>Other</option>
-          </select>
+
+      <!-- REGISTER FORM -->
+      <div id="tabRegister" class="hidden">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div class="form-group" style="margin-bottom:0"><label class="form-label">First Name</label><input id="reg_first" type="text" placeholder="Priya"></div>
+          <div class="form-group" style="margin-bottom:0"><label class="form-label">Last Name</label><input id="reg_last" type="text" placeholder="Sharma"></div>
         </div>
-        <div class="form-group"><label>Your City</label><input type="text" id="b2b-city" placeholder="City / Location"></div>
-      </div>
-      <div class="form-group"><label>Tell Us More</label><textarea id="b2b-msg" rows="4" placeholder="Requirements, number of employees, timeline, any specific requests…"></textarea></div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-primary btn-lg w100" onclick="submitB2B()">Send Enquiry →</button>
-        <a href="https://wa.me/918080808080?text=Hi%20ārāma%2C%20B2B%20enquiry" target="_blank" class="btn btn-whatsapp btn-lg w100">💬 WhatsApp Instead</a>
-      </div>
-      <div class="info-box mt16">📩 Reply within <strong>24 hours</strong>. For urgent needs use WhatsApp. Email: <a href="mailto:tech@arama.asia">tech@arama.asia</a></div>
-    </div>
-    <div id="b2b-success" class="hidden">
-      <div class="success-box">
-        <div style="font-size:52px;margin-bottom:14px">✅</div>
-        <h3 style="font-size:20px;font-weight:800;margin-bottom:8px">Enquiry Received!</h3>
-        <p style="color:var(--text2);margin-bottom:16px">Our B2B team will contact you within <strong>24 hours</strong>.</p>
-        <p style="font-size:13px;color:var(--text3);margin-bottom:20px">Ref: <span id="b2b-ref" style="font-weight:700;color:var(--accent3)"></span></p>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <a href="https://wa.me/918080808080" target="_blank" class="btn btn-whatsapp w100">💬 Follow Up on WhatsApp</a>
-          <button class="btn btn-secondary w100" onclick="resetB2B()">Submit Another Enquiry</button>
-        </div>
+        <div class="form-group"><label class="form-label">Mobile</label><input id="reg_phone" type="tel" placeholder="10-digit number" maxlength="10"></div>
+        <div class="form-group"><label class="form-label">Email (optional)</label><input id="reg_email" type="email" placeholder="you@example.com"></div>
+        <div class="form-group"><label class="form-label">Password</label><input id="reg_pass" type="password" placeholder="Min 6 characters"></div>
+        <div style="background:rgba(201,150,10,.08);border:1px solid rgba(201,150,10,.2);border-radius:10px;padding:10px;font-size:12px;color:var(--text2);margin-bottom:14px">📋 ID proof (Aadhaar/PAN) is optional — upload later in your profile.</div>
+        <button class="btn btn-gold btn-w" onclick="doRegister()">Create Account →</button>
+        <div class="auth-footer">Have an account? <a href="#" onclick="switchAuthTab('login');return false">Sign In</a></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- BOOK A SESSION -->
-<div id="tab-book" class="hidden fade-up">
-  <div class="container section">
-    <div class="section-title">📅 Book a Session</div>
-    <div class="section-sub">Verify your number via WhatsApp. Pay online for instant confirmation — or pay cash/UPI at the kiosk.</div>
-
-    <!-- 5-step indicator -->
-    <div class="book-steps">
-      <div class="book-step active" data-step="1"><div class="step-num">1</div><div class="step-label">Choose</div></div>
-      <div class="book-step" data-step="2"><div class="step-num">2</div><div class="step-label">Time</div></div>
-      <div class="book-step" data-step="3"><div class="step-num">🔐</div><div class="step-label">Verify</div></div>
-      <div class="book-step" data-step="4"><div class="step-num">💳</div><div class="step-label">Pay</div></div>
-      <div class="book-step" data-step="5"><div class="step-num">✓</div><div class="step-label">Done</div></div>
-    </div>
-
-    <!-- Step 1: Location + Service -->
-    <div class="step-panel active" id="bk-panel-1">
-      <div class="card">
-        <h3 style="font-size:17px;margin-bottom:18px">📍 Where & What?</h3>
-        <div class="form-group">
-          <label>Select Location *</label>
-          <select id="bk-loc" style="font-size:15px"><option value="">Choose a kiosk…</option></select>
-        </div>
-        <div class="form-group">
-          <label>Select Service *</label>
-          <select id="bk-svc" style="font-size:15px"><option value="">Choose a service…</option></select>
-        </div>
-        <div class="info-box mt8 mb16" style="font-size:13px">💡 Walk-ins always welcome — no booking required. Reserve a slot when you want a guaranteed time.</div>
-        <button class="btn btn-primary w100 btn-lg" onclick="bkNext1()">Next: Choose Time →</button>
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+  <div id="topBar">
+    <div class="topbar-inner">
+      <div class="brand-name">ārāma</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="topPts" style="font-size:13px;font-weight:700;color:var(--accent3)"></div>
+        <div id="topAvatar" class="avatar" style="width:36px;height:36px;font-size:14px;cursor:pointer" onclick="navigate('me')"></div>
       </div>
     </div>
-
-    <!-- Step 2: Date + Slot -->
-    <div class="step-panel" id="bk-panel-2">
-      <div class="card">
-        <h3 style="font-size:17px;margin-bottom:16px">🗓️ Pick Date & Time</h3>
-        <label style="display:block;margin-bottom:8px;color:var(--text2);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Date</label>
-        <div class="cat-tabs mb20" id="bk-date-tabs" style="flex-wrap:wrap;gap:8px"></div>
-        <label style="display:block;margin-bottom:10px;color:var(--text2);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Available Slots — <span id="bk-dur-lbl" style="font-weight:500;color:var(--text3)">15 min per slot</span></label>
-        <div class="slot-grid" id="bk-slots"></div>
-        <div style="display:flex;gap:12px;font-size:12px;color:var(--text3);margin-bottom:16px">
-          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--accent);display:inline-block"></span>Selected</span>
-          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--bg4);border:1px solid var(--border);display:inline-block"></span>Full</span>
-        </div>
-        <div class="flex gap8">
-          <button class="btn btn-secondary" style="flex:1" onclick="showBookStep(1)">← Back</button>
-          <button class="btn btn-primary" style="flex:2" onclick="bkNext2()">Next: Verify →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 3: Phone Verification via WhatsApp OTP -->
-    <div class="step-panel" id="bk-panel-3">
-      <div class="card">
-        <h3 style="font-size:17px;margin-bottom:6px">🔐 Verify Your Number</h3>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:18px">A 6-digit code is generated for you. Send it from your WhatsApp to confirm you own this number — prevents anyone booking with your number.</p>
-        <div class="form-group"><label>Your Name *</label><input type="text" id="bk-name" placeholder="Full name" autocomplete="name"></div>
-        <div class="form-group">
-          <label>Phone Number *</label>
-          <input type="tel" id="bk-phone" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel" oninput="bkPhoneChanged()">
-          <div style="font-size:12px;color:var(--text3);margin-top:5px">Booking + loyalty points linked to this number</div>
-        </div>
-        <!-- OTP box shown after Get Code -->
-        <div id="bk-otp-wrap" class="hidden">
-          <div style="background:linear-gradient(140deg,#1c1008,#2a1e06);border:2px solid var(--gold);border-radius:16px;padding:22px;text-align:center;margin-bottom:16px">
-            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px">Your Verification Code</div>
-            <div id="bk-otp-display" style="font-size:40px;font-weight:900;color:var(--gold);letter-spacing:.25em;margin-bottom:14px">──────</div>
-            <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Send this code from WhatsApp to <strong style="color:#fff">+91 80808 08080</strong></div>
-            <button class="btn btn-whatsapp w100 btn-lg" id="bk-wa-btn" onclick="sendOTPWA()">💬 Open WhatsApp &amp; Send Code</button>
-          </div>
-          <div style="text-align:center;font-size:13px;color:var(--text3);margin-bottom:16px">Sent your code? Choose how to pay below.</div>
-          <button class="btn btn-primary w100 btn-lg" onclick="bkProceedPay()">Next: Choose Payment →</button>
-        </div>
-        <!-- Get code trigger -->
-        <div id="bk-get-otp-wrap">
-          <div class="flex gap8 mt8">
-            <button class="btn btn-secondary" style="flex:1" onclick="showBookStep(2)">← Back</button>
-            <button class="btn btn-gold" style="flex:2" onclick="bkGetOTP()">🔐 Get Verification Code →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 4: Payment -->
-    <div class="step-panel" id="bk-panel-4">
-      <div class="card">
-        <h3 style="font-size:17px;margin-bottom:16px">💳 Choose Payment</h3>
-        <div id="bk-pay-summary"></div>
-        <!-- Option cards -->
-        <div class="grid2" style="gap:12px;margin-bottom:20px">
-          <div class="pay-opt" id="bk-po-online" onclick="selectPayOpt('online')">
-            <div style="font-size:28px;margin-bottom:6px">💳</div>
-            <div style="font-weight:800;font-size:15px;margin-bottom:4px">Pay Online</div>
-            <div style="font-size:12px;color:var(--text2)">UPI / PhonePe / GPay</div>
-            <div style="font-size:11px;color:var(--green2);margin-top:8px;font-weight:700">✅ Confirmed Instantly</div>
-          </div>
-          <div class="pay-opt" id="bk-po-kiosk" onclick="selectPayOpt('kiosk')">
-            <div style="font-size:28px;margin-bottom:6px">🏪</div>
-            <div style="font-weight:800;font-size:15px;margin-bottom:4px">Pay at Kiosk</div>
-            <div style="font-size:12px;color:var(--text2)">Cash / UPI at counter</div>
-            <div style="font-size:11px;color:var(--gold2);margin-top:8px;font-weight:700">⏳ Staff Confirms Arrival</div>
-          </div>
-        </div>
-        <!-- UPI Payment section -->
-        <div id="bk-upi-sec" class="hidden">
-          <div style="background:var(--bg3);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px">
-            <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Scan with any UPI app</div>
-            <img id="bk-qr-img" style="width:200px;height:200px;border-radius:10px;border:3px solid #fff;display:block;margin:0 auto 14px;background:var(--border2)" alt="UPI QR">
-            <div style="font-size:14px;font-weight:700;margin-bottom:4px">UPI ID: <span id="bk-upi-id-lbl" style="color:var(--accent3)">arama@ybl</span></div>
-            <div style="font-size:24px;font-weight:900;color:var(--gold);margin-bottom:14px" id="bk-upi-amt-lbl"></div>
-            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-              <a id="lnk-phonepe" class="upi-app-btn" href="#">📱 PhonePe</a>
-              <a id="lnk-gpay" class="upi-app-btn" href="#">💚 GPay</a>
-              <a id="lnk-upi" class="upi-app-btn" href="#">⚡ Any UPI</a>
-            </div>
-          </div>
-          <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:14px;padding:18px">
-            <div style="font-weight:700;color:var(--green2);margin-bottom:10px;font-size:14px">✅ After Paying — Enter Transaction ID</div>
-            <div class="form-group mb12">
-              <label>UTR / Transaction Reference *</label>
-              <input type="text" id="bk-utr" placeholder="e.g. 123456789012" style="letter-spacing:.04em">
-              <div style="font-size:11px;color:var(--text3);margin-top:4px">Find in your UPI app → Payment History</div>
-            </div>
-            <button class="btn btn-success w100 btn-lg" onclick="submitUTR()">✅ Confirm Payment &amp; Book →</button>
-          </div>
-        </div>
-        <!-- Kiosk Payment section -->
-        <div id="bk-kiosk-sec" class="hidden">
-          <div class="info-box mb16">🏪 Walk to the ārāma counter at your selected location. Staff will take payment and start your session. Show your Booking ID.</div>
-          <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px">⚠️ Slot is held for <strong style="color:var(--gold)">15 minutes</strong> from booking time. Staff must confirm before session can start.</div>
-          <button class="btn btn-gold w100 btn-lg" onclick="confirmKioskBooking()">Reserve Slot (Pay at Kiosk) →</button>
-        </div>
-        <div class="mt12">
-          <button class="btn btn-secondary btn-sm" onclick="showBookStep(3)">← Back</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 5: Done (populated by JS) -->
-    <div class="step-panel" id="bk-panel-5"></div>
-
   </div>
-</div>
-
-<!-- MY ACCOUNT -->
-<div id="tab-account" class="hidden fade-up">
-  <div class="container section">
-    <div class="section-title">👤 My Account</div>
-
-    <!-- Login state -->
-    <div id="acct-login">
-      <div class="acct-hero">
-        <div style="font-size:52px;margin-bottom:14px">👤</div>
-        <h2 style="font-size:22px;font-weight:800;margin-bottom:8px;color:#fff">Sign In</h2>
-        <p style="color:rgba(255,255,255,.7);margin-bottom:22px;font-size:14px;max-width:300px;margin-left:auto;margin-right:auto">Enter your phone to access bookings, loyalty points & session history.</p>
-        <div style="display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto">
-          <input type="tel" id="acct-ph" placeholder="10-digit phone number" maxlength="10" style="text-align:center;font-size:18px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);color:#fff">
-          <button class="btn btn-gold w100 btn-lg" onclick="acctLogin()">Sign In →</button>
-        </div>
-        <div style="margin-top:14px;font-size:13px;color:rgba(255,255,255,.4)">No password needed — your phone number is your account</div>
-      </div>
-    </div>
-
-    <!-- Dashboard (shown when logged in) -->
-    <div id="acct-dash" class="hidden">
-      <div class="acct-hero" id="acct-hdr"></div>
-      <div id="acct-bookings" style="margin-bottom:16px"></div>
-      <div class="divider"></div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-primary w100" onclick="showTab('book')">📅 Book a New Session</button>
-        <button class="btn btn-secondary w100" onclick="showTab('loyalty')">⭐ Loyalty Points & History</button>
-        <button class="btn btn-secondary w100" style="color:var(--red2);border-color:rgba(239,68,68,.25)" onclick="acctLogout()">Sign Out</button>
-      </div>
+  <div id="content"></div>
+  <div id="bottomNav">
+    <div class="nav-inner">
+      <button class="nav-item active" data-tab="home" onclick="navigate('home')"><span class="nav-icon">🏠</span><span>Home</span></button>
+      <button class="nav-item" data-tab="book" onclick="navigate('book')"><span class="nav-icon">📅</span><span>Book</span></button>
+      <button class="nav-item" data-tab="passes" onclick="navigate('passes')"><span class="nav-icon">🎟️</span><span>Passes</span></button>
+      <button class="nav-item" data-tab="history" onclick="navigate('history')"><span class="nav-icon">📋</span><span>History</span></button>
+      <button class="nav-item" data-tab="me" onclick="navigate('me')"><span class="nav-icon">👤</span><span>Me</span></button>
     </div>
   </div>
 </div>
 
-</div><!-- /pages -->
-
-<!-- FOOTER -->
-<footer>
-  <div class="container">
-    <div class="footer-brand">ārāma Wellness</div>
-    <div style="font-size:13px;color:var(--text2);margin-top:4px">Massage chair kiosks at Indian railway stations.</div>
-    <div class="footer-links">
-      <span class="footer-link" onclick="showTab('services')">Services</span>
-      <span class="footer-link" onclick="showTab('passes')">Passes</span>
-      <span class="footer-link" onclick="showTab('locations')">Find Us</span>
-      <span class="footer-link" onclick="showTab('loyalty')">Loyalty</span>
-      <span class="footer-link" onclick="showTab('b2b')">B2B</span>
-      <a class="footer-link" href="mailto:tech@arama.asia">Contact</a>
-    </div>
-    <div class="footer-copy">© 2024 ārāma Robotic Technologies · tech@arama.asia · Sessions are token-verified and hardware-timed.</div>
-  </div>
-</footer>
-
-<!-- BOTTOM NAV (mobile) -->
-<nav class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <div class="bnav-item active" id="bn-services" onclick="showTab('services')"><div class="bnav-icon">💆</div><div class="bnav-label">Services</div></div>
-    <div class="bnav-item" id="bn-passes" onclick="showTab('passes')"><div class="bnav-icon">🎟️</div><div class="bnav-label">Passes</div></div>
-    <div class="bnav-item" id="bn-locations" onclick="showTab('locations')"><div class="bnav-icon">📍</div><div class="bnav-label">Find Us</div></div>
-    <div class="bnav-item" id="bn-loyalty" onclick="showTab('loyalty')"><div class="bnav-icon">⭐</div><div class="bnav-label">Points</div></div>
-    <div class="bnav-item" id="bn-book" onclick="showTab('book')"><div class="bnav-icon">📅</div><div class="bnav-label">Book</div></div>
-    <div class="bnav-item" id="bn-account" onclick="showTab('account')"><div class="bnav-icon">👤</div><div class="bnav-label">Account</div></div>
-  </div>
-</nav>
-
-<div id="modals"></div>
+<!-- MODAL (bottom sheet) -->
+<div id="modalBack" class="hidden" style="position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)" onclick="closeModal()"></div>
+<div id="modal" class="hidden" style="position:fixed;bottom:0;left:0;right:0;z-index:401;background:var(--card);border-radius:var(--radius3) var(--radius3) 0 0;padding:24px 18px;max-height:92dvh;overflow-y:auto;max-width:680px;margin:0 auto">
+  <div style="width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 18px"></div>
+  <div id="modalTitle" style="font-size:20px;font-weight:800;margin-bottom:16px"></div>
+  <div id="modalBody"></div>
+  <div id="modalFoot" style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"></div>
+</div>
 
 <script>
-// ── DB ─────────────────────────────────────────────────────
-const DB={
-  get(k){try{return JSON.parse(localStorage.getItem('arama_'+k))}catch(e){return null}},
-  set(k,v){localStorage.setItem('arama_'+k,JSON.stringify(v))}
+// ══════════════════════════════════════════
+// SOCIAL LOGIN CONFIG
+// ── Fill in your app IDs here ──
+// ══════════════════════════════════════════
+const SOCIAL = {
+  google: {
+    clientId: '983210226770-6gs5e6q6oos50h098j9v1de5ddgcieqk.apps.googleusercontent.com'
+  },
+  facebook: {
+    appId: '',        // Get from developers.facebook.com → Create App → Facebook Login
+    // Also add instagram_basic scope to same FB app for Instagram login
+  },
+  instagram: {
+    // Uses same FB appId above — just adds instagram_basic scope
+    // Requires Instagram Basic Display product added in FB Developer Console
+  },
+  x: {
+    clientId: '',     // Get from developer.twitter.com → Projects → OAuth 2.0 Client ID
+    // Must enable "OAuth 2.0" and set redirect URI to this page URL in Twitter Dev Console
+  },
+  linkedin: {
+    clientId: '',     // Get from linkedin.com/developers → My Apps → Auth → Client ID
+    // Add redirect URI to this page URL in LinkedIn App settings
+    // Note: LinkedIn token exchange requires client_secret — works via proxy or firebase
+  }
 };
 
-// ── DATA ────────────────────────────────────────────────────
-const SVCS=[
-  {id:'CHR15',name:'Chair Massage',duration:15,price:199,category:'chair',icon:'💺',active:true,desc:'15 min full back & neck massage. Quick refresher between trains.',img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=220&fit=crop&q=80'},
-  {id:'CHR30',name:'Chair Massage',duration:30,price:349,category:'chair',icon:'💺',active:true,desc:'30 min premium back massage with shoulder focus.',img:'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400&h=220&fit=crop&q=80'},
-  {id:'CHR45',name:'Chair Massage',duration:45,price:499,category:'chair',icon:'💺',active:true,desc:'45 min deep tissue — the full relaxation experience.',img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=220&fit=crop&q=80'},
-  {id:'LEG15',name:'Leg Massager',duration:15,price:149,category:'leg',icon:'🦵',active:true,desc:'15 min calf & foot compression. Great for long journeys.',img:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=220&fit=crop&q=80'},
-  {id:'LEG30',name:'Leg Massager',duration:30,price:249,category:'leg',icon:'🦵',active:true,desc:'30 min full leg relaxation — thigh to ankle.',img:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=220&fit=crop&q=80'},
-  {id:'GUN10',name:'Gun Massage',duration:10,price:149,category:'gun',icon:'🔫',active:true,desc:'10 min percussion therapy — targets knots in minutes.',img:'https://images.unsplash.com/photo-1540206395-68808572332f?w=400&h=220&fit=crop&q=80'},
-  {id:'GUN20',name:'Gun Massage',duration:20,price:249,category:'gun',icon:'🔫',active:true,desc:'20 min deep percussion across back, shoulders, legs.',img:'https://images.unsplash.com/photo-1540206395-68808572332f?w=400&h=220&fit=crop&q=80'},
-  {id:'COMBO30',name:'Chair + Leg Combo',duration:30,price:449,category:'combo',icon:'✨',active:true,desc:'Chair massage and leg massager simultaneously.',img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=220&fit=crop&q=80'},
-  {id:'COMBO45',name:'Chair + Gun Combo',duration:45,price:599,category:'combo',icon:'✨',active:true,desc:'45 min chair massage followed by percussion therapy.',img:'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400&h=220&fit=crop&q=80'},
+const DB_PREFIX = 'arama_';
+const CDB = {
+  get(k){try{return JSON.parse(localStorage.getItem(DB_PREFIX+k))}catch{return null}},
+  set(k,v){localStorage.setItem(DB_PREFIX+k,JSON.stringify(v))},
+  remove(k){localStorage.removeItem(DB_PREFIX+k)},
+  push(k,item){const a=this.get(k)||[];a.push(item);this.set(k,a)}
+};
+
+// ══════════════════════════════════════════
+// SERVICES & PASSES DATA
+// ══════════════════════════════════════════
+const SERVICES=[
+  {id:'s1',cat:'massage',name:'Chair Massage',icon:'💆',price:80,mrp:100,duration:'20 min',desc:'Quick relief for neck, shoulders & back.'},
+  {id:'s2',cat:'massage',name:'Foot Reflexology',icon:'🦶',price:120,mrp:150,duration:'30 min',desc:'Deep relaxation through pressure-point therapy.'},
+  {id:'s3',cat:'massage',name:'Head & Scalp',icon:'🧠',price:100,mrp:120,duration:'20 min',desc:'Reduce headaches, improve focus.'},
+  {id:'s4',cat:'massage',name:'Full Body Swedish',icon:'🛌',price:350,mrp:450,duration:'60 min',desc:'Complete relaxation with long flowing strokes.'},
+  {id:'s5',cat:'massage',name:'Deep Tissue',icon:'💪',price:400,mrp:500,duration:'60 min',desc:'Targets muscle knots and chronic tension.'},
+  {id:'s6',cat:'massage',name:'Hot Stone Therapy',icon:'🪨',price:500,mrp:650,duration:'75 min',desc:'Warm basalt stones melt away deep tension.'},
+  {id:'s7',cat:'vibration',name:'Vibration Platform',icon:'⚡',price:60,mrp:80,duration:'15 min',desc:'Whole-body vibration for circulation and energy.'},
+  {id:'s8',cat:'vibration',name:'Vibration + Massage',icon:'✨',price:150,mrp:200,duration:'35 min',desc:'Vibration followed by targeted chair massage.'},
+  {id:'s9',cat:'wellness',name:'Infrared Sauna',icon:'🔥',price:200,mrp:250,duration:'30 min',desc:'Detox and relieve muscle soreness.'},
+  {id:'s10',cat:'wellness',name:'Compression Boots',icon:'🥾',price:120,mrp:150,duration:'30 min',desc:'Pneumatic leg compression for recovery.'},
+  {id:'s11',cat:'wellness',name:'Eye & Temple',icon:'👁️',price:80,mrp:100,duration:'15 min',desc:'Relieves digital eye strain.'},
+  {id:'s12',cat:'combo',name:'Refresh Combo',icon:'🌿',price:180,mrp:250,duration:'45 min',desc:'Head massage + foot reflexology.',combo:true},
+  {id:'s13',cat:'combo',name:'Power Hour',icon:'⚡',price:350,mrp:480,duration:'60 min',desc:'Vibration + Chair massage + Eye therapy.',combo:true},
+  {id:'s14',cat:'combo',name:'Ultimate Unwind',icon:'🌟',price:650,mrp:850,duration:'90 min',desc:'Full body + hot stone + compression.',combo:true},
 ];
+
 const PASSES=[
-  {id:'P5',name:'5-Session Pass',sessions:5,price:799,per:160,save:'Save ₹196 (10%)',desc:'5 × 15min chair sessions. Perfect for regular travellers.',color:'pass-silver',icon:'🥈'},
-  {id:'P10',name:'10-Session Pass',sessions:10,price:1499,per:150,save:'Save ₹491 (25%)',desc:'10 × 15min sessions. Best value for frequent visitors.',color:'pass-gold',icon:'🥇',popular:true},
-  {id:'PMTH',name:'Monthly Unlimited',sessions:null,price:2499,save:'Best Value',desc:'Unlimited 15min sessions for 30 days. Max 3 per visit.',color:'pass-platinum',icon:'💎'},
-];
-const LOCS=[
-  {code:'ST-P1',name:'Surat P1',station:'Surat Railway Station P1',city:'Surat',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'ST-CL',name:'Surat Cloakroom',station:'Surat Railway Cloakroom',city:'Surat',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'ST-P4',name:'Surat P4',station:'Surat Railway Station P4',city:'Surat',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'VP-VIP',name:'Vapi VIP P1',station:'Vapi Railway Station VIP P1',city:'Vapi',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'VP-P2',name:'Vapi P2-3 Lift',station:'Vapi Railway Station P2-3 near Lift',city:'Vapi',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'VSD-P2',name:'Valsad P2-3',station:'Valsad Railway Station P2-3',city:'Valsad',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'VSD-CON',name:'Valsad Concourse',station:'Valsad Railway Concourse P1',city:'Valsad',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'ANK-P1',name:'Ankleshwar P1',station:'Ankleshwar Railway Station P1',city:'Ankleshwar',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'BRC-P3',name:'Bharuch P3-4',station:'Bharuch Railway Station P3-4',city:'Bharuch',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'BRC-P1',name:'Bharuch Chayapuri',station:'Bharuch Chayapuri Area',city:'Bharuch',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'VAD-P1',name:'Vadodara P1',station:'Vadodara Railway Station P1',city:'Vadodara',state:'Gujarat',zone:'WR',chairs:3},
-  {code:'VAD-P6',name:'Vadodara P6',station:'Vadodara Railway Station P6',city:'Vadodara',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'AND-P4',name:'Anand P4',station:'Anand Railway Station P4',city:'Anand',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'NDD-CON',name:'Nadiad Concourse',station:'Nadiad Railway Station Concourse',city:'Nadiad',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'VV-STN',name:'Vallabh Vidyanagar',station:'Vallabh Vidyanagar Railway Station',city:'Vallabh Vidyanagar',state:'Gujarat',zone:'WR',chairs:2},
-  {code:'MMCT-D1',name:'MMCT Deck 1',station:'Mumbai Central MMCT Deck 1',city:'Mumbai',state:'Maharashtra',zone:'CR',chairs:3},
-  {code:'MMCT-D2',name:'MMCT Deck 2',station:'Mumbai Central MMCT Deck 2',city:'Mumbai',state:'Maharashtra',zone:'CR',chairs:2},
-  {code:'DDR-P5',name:'Dadar P5',station:'Dadar Railway Station P5',city:'Mumbai',state:'Maharashtra',zone:'CR',chairs:2},
-  {code:'DDR-FOB',name:'Dadar FOB',station:'Dadar Railway Station FOB',city:'Mumbai',state:'Maharashtra',zone:'CR',chairs:2},
-  {code:'ADH-D1',name:'Andheri Deck 1',station:'Andheri Railway Station Deck 1',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'ADH-D2',name:'Andheri Deck 2',station:'Andheri Railway Station Deck 2',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'ADH-METRO',name:'Andheri Metro',station:'Andheri Metro Station',city:'Mumbai',state:'Maharashtra',zone:'Metro',chairs:2},
-  {code:'BOR-FOB',name:'Borivali FOB',station:'Borivali Railway Station FOB',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'BOR-P10',name:'Borivali P10',station:'Borivali Railway Station P10',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'VIR-P1',name:'Virar P1',station:'Virar Railway Station P1',city:'Virar',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'BAN-STN',name:'Bandra Station',station:'Bandra Railway Station',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:3},
-  {code:'GRG-STN',name:'Goregaon Station',station:'Goregaon Railway Station',city:'Mumbai',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'NLP-EAST',name:'Nallasopara East',station:'Nallasopara Railway Station East',city:'Nallasopara',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'NLP-WEST',name:'Nallasopara West',station:'Nallasopara Railway Station West',city:'Nallasopara',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'MIR-STN',name:'Mira Road',station:'Mira Road Railway Station',city:'Mira Road',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'EKN-AC',name:'Ekta Nagar AC Hall',station:'Ekta Nagar AC Waiting Hall',city:'Ekta Nagar',state:'Maharashtra',zone:'WR',chairs:2},
-  {code:'KLY-P1',name:'Kalyan P1',station:'Kalyan Railway Station P1',city:'Kalyan',state:'Maharashtra',zone:'CR',chairs:2},
-  {code:'THN-P3',name:'Thane P3',station:'Thane Railway Station P3',city:'Thane',state:'Maharashtra',zone:'CR',chairs:2},
+  {id:'p1',name:'Starter Pass',sessions:5,price:350,mrp:450,validity:30,color:'pass-bronze',icon:'🥉',desc:'5 sessions · Any service · 30 days',pts:500},
+  {id:'p2',name:'Regular Pass',sessions:10,price:600,mrp:800,validity:60,color:'pass-silver',icon:'🥈',desc:'10 sessions · Any service · 60 days',pts:1000},
+  {id:'p3',name:'Gold Pass',sessions:20,price:1100,mrp:1500,validity:90,color:'pass-gold',icon:'🥇',desc:'20 sessions · All services · 90 days',pts:2000},
+  {id:'p4',name:'Platinum Unlimited',sessions:999,price:1800,mrp:2500,validity:30,color:'pass-platinum',icon:'💎',desc:'Unlimited · All services · 30 days',pts:3500},
 ];
 
-// ── UTILS ───────────────────────────────────────────────────
-const fc=n=>'₹'+Number(n||0).toLocaleString('en-IN');
-const fd=m=>m>=60?Math.floor(m/60)+'h'+(m%60?' '+m%60+'m':''):m+'min';
-const CAT_CLS={chair:'badge-purple',leg:'badge-green',gun:'badge-red',combo:'badge-gold'};
-const CAT_LBL={chair:'Chair',leg:'Leg',gun:'Gun',combo:'Combo'};
+const TIERS=[
+  {name:'Bronze',min:0,max:500,color:'#b0723e',icon:'🥉'},
+  {name:'Silver',min:500,max:2000,color:'#94a3b8',icon:'🥈'},
+  {name:'Gold',min:2000,max:5000,color:'#E6AD0A',icon:'🥇'},
+  {name:'Platinum',min:5000,max:Infinity,color:'#a78bfa',icon:'💎'},
+];
 
-function toast(msg,type='info'){
-  const t=document.createElement('div');t.className='toast toast-'+type;
-  const ic={success:'✅',error:'❌',info:'ℹ️'};
-  t.innerHTML='<span>'+(ic[type]||'ℹ️')+'</span><span>'+msg+'</span>';
-  document.getElementById('toast-container').appendChild(t);
-  setTimeout(()=>t.remove(),3500);
+const LOCATIONS=['Inorbit Mall, Hyderabad','GVK One Mall','Phoenix Palassio','Sarath City Capital','IKEA Hyderabad','Nexus Mall, Bangalore','Orion Mall','Phoenix MarketCity, Pune','Ambience Mall, Gurgaon','Select Citywalk, Delhi'];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let currentUser=null;
+let currentTab='home';
+let activeFilter='all';
+let bookingState={service:null,location:null,date:null,time:null};
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function toast(msg,type='info',dur=2500){
+  const w=document.getElementById('toastWrap');
+  const el=document.createElement('div');
+  el.className=`toast toast-${type}`;el.textContent=msg;w.appendChild(el);
+  setTimeout(()=>el.remove(),dur+300);
 }
-function openModal(html){
-  let m=document.getElementById('cust-modal');if(m)m.remove();
-  const el=document.createElement('div');el.className='modal-overlay';el.id='cust-modal';el.innerHTML=html;
-  el.addEventListener('click',e=>{if(e.target===el)el.remove()});
-  document.getElementById('modals').appendChild(el);
+function getInitials(n=''){return n.trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().substr(0,2)||'?';}
+function getTier(pts){return TIERS.find(t=>pts>=t.min&&pts<t.max)||TIERS[TIERS.length-1];}
+function formatDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}
+function formatTime(iso){if(!iso)return'—';return new Date(iso).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});}
+function openModal(title,body,foot=''){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('modalFoot').innerHTML=foot;
+  document.getElementById('modalBack').classList.remove('hidden');
+  document.getElementById('modal').classList.remove('hidden');
 }
-function closeModal(){const m=document.getElementById('cust-modal');if(m)m.remove();}
-
-// ── NAV ─────────────────────────────────────────────────────
-let currentZone='';
-const TABS=['services','passes','locations','loyalty','technology','b2b','book','account'];
-const BN_IDS={services:'bn-services',passes:'bn-passes',locations:'bn-locations',loyalty:'bn-loyalty',b2b:'bn-b2b',book:'bn-book',account:'bn-account'};
-
-function showTab(tab, navEl){
-  // hide all
-  TABS.forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.classList.add('hidden');});
-  document.getElementById('hero-section').classList.add('hidden');
-  // show target
-  const target=document.getElementById('tab-'+tab);
-  if(target){target.classList.remove('hidden');target.classList.add('fade-up');}
-  // desktop nav
-  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
-  if(navEl){navEl.classList.add('active');}
-  else{document.querySelectorAll('.nav-link').forEach(n=>{if((n.getAttribute('onclick')||'').includes("'"+tab+"'"))n.classList.add('active');});}
-  // bottom nav
-  document.querySelectorAll('.bnav-item').forEach(n=>n.classList.remove('active'));
-  const bnEl=document.getElementById(BN_IDS[tab]);if(bnEl)bnEl.classList.add('active');
-  // sticky cta
-  const cta=document.getElementById('sticky-cta');
-  if(cta){if(tab==='services'||tab==='passes')cta.classList.add('visible');else cta.classList.remove('visible');}
-  // render
-  if(tab==='services')renderSvcs('all');
-  if(tab==='passes')renderPasses();
-  if(tab==='locations')renderLocations();
-  if(tab==='book')initBooking();
-  if(tab==='account')renderAccount();
-  window.scrollTo({top:0,behavior:'smooth'});
+function closeModal(){
+  document.getElementById('modalBack').classList.add('hidden');
+  document.getElementById('modal').classList.add('hidden');
 }
 
-// ── SERVICES ────────────────────────────────────────────────
-function getSvcs(){return (DB.get('services')||SVCS).filter(s=>s.active&&s.category!=='pass');}
-function renderSvcs(cat){
-  const list=getSvcs().filter(s=>!cat||cat==='all'||s.category===cat);
-  const grid=document.getElementById('services-grid');if(!grid)return;
-  grid.innerHTML=list.map(s=>`
-  <div class="svc-card" onclick="showSvcModal('${s.id}')">
-    <div class="svc-img" style="background-image:url('${s.img||''}');background-color:var(--bg3)">
-      <div class="svc-img-overlay"></div>
-      <div class="svc-img-tag badge ${CAT_CLS[s.category]||'badge-purple'}">${CAT_LBL[s.category]||s.category}</div>
-      <div class="svc-icon-badge">${s.icon}</div>
-    </div>
-    <div class="svc-body">
-      <div class="svc-name">${s.name}</div>
-      <div class="svc-desc">${s.desc||''}</div>
-      <div class="svc-price">${fc(s.price)}</div>
-      <div class="svc-dur">${fd(s.duration)} session</div>
-      <button class="btn btn-primary svc-cta" onclick="event.stopPropagation();showSvcModal('${s.id}')">View Details</button>
-    </div>
-  </div>`).join('');
+// PKCE helpers (for X and LinkedIn)
+function generateRandomString(len=64){
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  const arr=new Uint8Array(len);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b=>chars[b%chars.length]).join('');
 }
-function filterSvc(cat,el){
-  document.querySelectorAll('#svc-tabs .cat-tab').forEach(t=>t.classList.remove('active'));
-  if(el)el.classList.add('active');
-  renderSvcs(cat);
+async function sha256(plain){
+  const enc=new TextEncoder();
+  const data=enc.encode(plain);
+  const hash=await crypto.subtle.digest('SHA-256',data);
+  return hash;
 }
-function showSvcModal(id){
-  const s=getSvcs().find(x=>x.id===id);if(!s)return;
-  openModal(`<div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><h3>${s.icon} ${s.name} — ${fd(s.duration)}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
-    <div class="modal-body">
-      <div style="height:160px;background-image:url('${s.img||''}');background-size:cover;background-position:center;border-radius:12px;margin-bottom:16px;background-color:var(--bg3)"></div>
-      <div class="flex ac jb mb16">
-        <div><div style="font-size:30px;font-weight:900;color:var(--gold)">${fc(s.price)}</div><div style="font-size:13px;color:var(--text2)">${fd(s.duration)} session</div></div>
-        <span class="badge ${CAT_CLS[s.category]||'badge-purple'}" style="font-size:13px;padding:8px 14px">${CAT_LBL[s.category]||s.category}</span>
-      </div>
-      <p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px">${s.desc||''}</p>
-      <div style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:14px">
-        <div style="font-weight:700;margin-bottom:10px;font-size:14px">✅ Every session includes:</div>
-        <div style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--text2)">
-          <div>✓ Sanitised & hygiene-checked equipment</div>
-          <div>✓ Trained attendant on duty</div>
-          <div>✓ Token-verified session (hardware auto-stop)</div>
-          <div>✓ Loyalty points on payment</div>
-          <div>✓ Receipt available on request</div>
-        </div>
-      </div>
-      <div style="font-size:13px;color:var(--text3);text-align:center">Walk in anytime — no booking needed. Pay at the counter.</div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" style="flex:1" onclick="closeModal()">Close</button>
-      <button class="btn btn-primary" style="flex:1" onclick="closeModal();showTab('locations')">📍 Find Kiosk</button>
-    </div>
-  </div>`);
+function base64urlEncode(arr){
+  return btoa(String.fromCharCode(...new Uint8Array(arr))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
 }
+async function buildPKCE(){
+  const verifier=generateRandomString(64);
+  const hashed=await sha256(verifier);
+  const challenge=base64urlEncode(hashed);
+  return{verifier,challenge};
+}
+function getRedirectUri(){return window.location.origin+window.location.pathname;}
 
-// ── PASSES ──────────────────────────────────────────────────
-function renderPasses(){
-  const grid=document.getElementById('passes-grid');if(!grid)return;
-  grid.innerHTML=PASSES.map(p=>`
-  <div class="pass-card ${p.color}${p.popular?' popular':''}">
-    ${p.popular?'<div class="pass-popular-tag">⭐ POPULAR</div>':''}
-    <div class="pass-icon">${p.icon}</div>
-    <div class="pass-name">${p.name}</div>
-    <div class="pass-price">${fc(p.price)}</div>
-    ${p.per?'<div class="pass-per">'+fc(p.per)+' per session</div>':'<div class="pass-per">Unlimited sessions</div>'}
-    <div class="pass-save">${p.save}</div>
-    <div class="pass-desc">${p.desc}</div>
-    ${p.sessions?'<div class="pass-feature"><span class="ck">✓</span>'+p.sessions+' × 15min sessions</div>':'<div class="pass-feature"><span class="ck">✓</span>Unlimited 15min sessions</div>'}
-    <div class="pass-feature"><span class="ck">✓</span>All 33+ locations</div>
-    <div class="pass-feature"><span class="ck">✓</span>6-month validity</div>
-    <div class="pass-feature"><span class="ck">✓</span>${Math.floor(p.price/100*10)+150} loyalty points</div>
-    ${p.per?'<div class="pass-feature" style="color:var(--green2)"><span class="ck">✓</span>Just '+fc(p.per)+'/session</div>':'<div class="pass-feature" style="color:var(--gold2)"><span class="ck">✓</span>Maximum savings!</div>'}
-    <div class="pass-cta"><button class="btn btn-gold w100" onclick="enquirePass('${p.name}','${p.price}')">Get This Pass →</button></div>
-  </div>`).join('');
-}
-function enquirePass(name,price){
-  openModal(`<div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><h3>🎟️ ${name}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
-    <div class="modal-body">
-      <div style="text-align:center;padding:12px 0 20px">
-        <div style="font-size:34px;font-weight:900;color:var(--gold)">${fc(price)}</div>
-        <div style="font-size:14px;color:var(--text2);margin-top:4px">${name}</div>
-      </div>
-      <div class="info-box mb16">Passes are purchased at any ārāma kiosk. Walk to the counter and ask our staff. Linked to your phone instantly — no app needed.</div>
-      <div class="form-group"><label>Your Phone (for pass + loyalty)</label><input type="tel" id="pass-ph" placeholder="9876543210" maxlength="10"></div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <a href="https://wa.me/918080808080?text=Hi%20ārāma%2C%20I%20want%20the%20${encodeURIComponent(name)}" target="_blank" class="btn btn-whatsapp w100">💬 Ask on WhatsApp</a>
-        <button class="btn btn-primary w100" onclick="closeModal();showTab('locations')">📍 Find Nearest Kiosk</button>
-      </div>
-    </div>
-  </div>`);
-}
-function toggleFaq(el){
-  el.classList.toggle('open');
-  el.nextElementSibling.classList.toggle('show');
-}
-
-// ── LOCATIONS ───────────────────────────────────────────────
-function getLocs(){const s=DB.get('locations');return s&&s.length?s.filter(l=>l.active!==false&&!l.isVendor):LOCS;}
-function setZone(z,el){
-  currentZone=z;
-  document.querySelectorAll('.zone-btn').forEach(b=>b.classList.remove('active'));
-  if(el)el.classList.add('active');
-  renderLocations();
-}
-function renderLocations(){
-  const q=(document.getElementById('loc-q')?.value||'').toLowerCase();
-  const locs=getLocs().filter(l=>{
-    const qm=!q||l.name.toLowerCase().includes(q)||l.city.toLowerCase().includes(q)||l.station.toLowerCase().includes(q)||l.code.toLowerCase().includes(q);
-    const zm=!currentZone||l.zone===currentZone;
-    return qm&&zm;
+// ══════════════════════════════════════════
+// SOCIAL LOGIN — GOOGLE
+// ══════════════════════════════════════════
+function initGoogleAuth(){
+  if(typeof google==='undefined')return;
+  google.accounts.id.initialize({
+    client_id:SOCIAL.google.clientId,
+    callback:handleGoogleCredential,
+    auto_select:false,
+    cancel_on_tap_outside:true
   });
-  const cnt=document.getElementById('loc-count');
-  if(cnt)cnt.textContent='Showing '+locs.length+' kiosk'+(locs.length!==1?'s':'');
-  const grid=document.getElementById('loc-grid');if(!grid)return;
-  if(!locs.length){grid.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2)">No locations found</div>';return;}
-  grid.innerHTML=locs.map(l=>`
-  <div class="loc-item" onclick="showLocModal('${l.code}')">
-    <div class="loc-item-zone lz-${l.zone}">${l.zone}</div>
-    <div class="loc-item-info">
-      <div class="loc-item-name">${l.name}</div>
-      <div class="loc-item-city">📍 ${l.city}, ${l.state}</div>
-      <div class="loc-item-station">${l.station}</div>
-    </div>
-    <div class="flex ac gap8">
-      <span class="badge badge-green" style="font-size:10px">💺${l.chairs}</span>
-      <div class="loc-item-arrow">›</div>
-    </div>
-  </div>`).join('');
+  google.accounts.id.renderButton(document.getElementById('gsi_btn'),{
+    theme:'filled_black',shape:'pill',size:'large',text:'continue_with',width:340
+  });
+  google.accounts.id.prompt();
 }
-function showLocModal(code){
-  const l=getLocs().find(x=>x.code===code);if(!l)return;
-  const mq=encodeURIComponent(l.station+' '+l.city);
-  openModal(`<div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><h3>📍 ${l.name}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
-    <div class="modal-body">
-      <div style="display:flex;gap:10px;margin-bottom:16px">
-        <div style="flex:1;padding:14px;background:var(--bg3);border-radius:12px;text-align:center"><div style="font-size:26px;font-weight:900">${l.chairs}</div><div style="font-size:11px;color:var(--text2)">Chairs</div></div>
-        <div style="flex:1;padding:14px;background:var(--bg3);border-radius:12px;text-align:center"><div class="loc-item-zone lz-${l.zone}" style="display:inline-flex;border-radius:8px;width:auto;height:auto;padding:4px 10px;font-size:13px">${l.zone}</div><div style="font-size:11px;color:var(--text2);margin-top:4px">Zone</div></div>
-      </div>
-      <div style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:12px">
-        <div style="font-weight:700;font-size:15px;margin-bottom:4px">🚉 ${l.station}</div>
-        <div style="font-size:14px;color:var(--text2)">${l.city}, ${l.state}</div>
-      </div>
-      <div style="background:var(--bg3);border-radius:12px;padding:14px;margin-bottom:12px;font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Services:</strong> Chair Massage · Leg Massager · Percussion Gun · Combo Sessions · Wellness Passes</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:18px">⏰ ~6AM–10PM daily. Walk in — no appointment needed.</div>
-      <a href="https://www.google.com/maps/search/?api=1&query=${mq}" target="_blank" class="btn btn-secondary w100">🗺️ Open in Google Maps</a>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary w100" onclick="closeModal()">Got It!</button>
-    </div>
-  </div>`);
+function triggerGoogle(){
+  if(typeof google==='undefined'){toast('Google Sign-In not loaded yet. Try again.','error');return;}
+  google.accounts.id.prompt(n=>{
+    if(n.isNotDisplayed()||n.isSkippedMoment())toast('Popup blocked — try the button again','info');
+  });
+}
+function handleGoogleCredential(resp){
+  try{
+    const payload=JSON.parse(atob(resp.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    handleSocialCallback('google',{email:payload.email,name:payload.name,avatar:payload.picture,sub:payload.sub});
+  }catch(e){toast('Google sign-in failed','error');}
 }
 
-// ── LOYALTY ─────────────────────────────────────────────────
-function checkLoyalty(){
-  const phone=(document.getElementById('loyalty-phone')?.value||'').trim();
-  if(phone.length!==10){toast('Enter your 10-digit phone number','error');return;}
-  const m=DB.get('loyalty_'+phone);
-  const el=document.getElementById('loyalty-result');if(!el)return;
-  if(m&&(m.points||0)>0){
-    const cashVal=Math.floor((m.points||0)/100);
-    const hist=(m.history||[]).slice(-5).reverse();
-    el.innerHTML=`<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:14px;padding:22px;text-align:center">
-      <div class="pts-display">${(m.points||0).toLocaleString('en-IN')}</div>
-      <div style="font-size:13px;color:var(--text2);margin-top:6px">Loyalty Points</div>
-      <div style="margin-top:12px;font-size:18px;font-weight:700;color:var(--green)">≈ ${fc(cashVal)} value</div>
-      ${m.name?'<div style="margin-top:8px;font-size:15px">Welcome, <strong>'+m.name+'</strong>! 👋</div>':''}
-      <div style="margin-top:10px;font-size:12px;color:var(--text3)">${(m.history||[]).length} transactions</div>
-    </div>
-    ${hist.length?'<div style="margin-top:14px"><div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px">Recent</div>'+hist.map(h=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px"><span style="color:var(--text2)">${new Date(h.ts||h.date).toLocaleDateString('en-IN')}</span><span style="${(h.pts||0)>0?'color:var(--green)':'color:var(--red)'}">${(h.pts||0)>0?'+':''}${h.pts||0} pts</span></div>`).join('')+'</div>':''}`;
-    ['mob-pts','hdr-pts-d'].forEach(id=>{const el=document.getElementById(id);if(el){el.style.display='flex';}});
-    document.getElementById('mob-pts-val').textContent=(m.points||0).toLocaleString('en-IN');
-    const vd=document.getElementById('hdr-pts-val-d');if(vd)vd.textContent=(m.points||0).toLocaleString('en-IN');
-    localStorage.setItem('arama_cust_phone',phone);
-  } else {
-    el.innerHTML=`<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:14px;padding:22px;text-align:center">
-      <div style="font-size:36px;margin-bottom:10px">🆕</div>
-      <div style="font-weight:700;font-size:16px;margin-bottom:8px">No account yet</div>
-      <div style="font-size:14px;color:var(--text2);margin-bottom:14px">Give your phone number at the counter when you pay — account created instantly on first visit!</div>
-      <span class="badge badge-gold" style="font-size:13px;padding:8px 16px">+50 bonus points on sign-up</span>
-    </div>`;
-  }
-}
-function openLoyaltyTab(){
-  showTab('loyalty');
-  setTimeout(()=>{const el=document.getElementById('loyalty-phone');if(el)el.focus();},300);
-}
-
-// ── B2B ─────────────────────────────────────────────────────
-function submitB2B(){
-  const co=document.getElementById('b2b-company')?.value?.trim();
-  const nm=document.getElementById('b2b-name')?.value?.trim();
-  const ph=document.getElementById('b2b-phone')?.value?.trim();
-  const ind=document.getElementById('b2b-industry')?.value;
-  if(!co){toast('Enter your company name','error');return;}
-  if(!nm){toast('Enter your name','error');return;}
-  if(!ph||ph.length<10){toast('Enter a valid 10-digit phone number','error');return;}
-  if(!ind){toast('Select your industry sector','error');return;}
-  const ref='B2B-'+Date.now().toString(36).toUpperCase();
-  const lead={id:ref,company:co,contactName:nm,phone:ph,email:document.getElementById('b2b-email')?.value||'',value:0,stage:'New Lead',notes:document.getElementById('b2b-msg')?.value||'',source:'Website B2B Form',industry:ind,usecase:document.getElementById('b2b-usecase')?.value||'',city:document.getElementById('b2b-city')?.value||'',volume:document.getElementById('b2b-volume')?.value||'',ts:new Date().toISOString(),lastContact:new Date().toISOString()};
-  const leads=JSON.parse(localStorage.getItem('arama_crm-leads')||'[]');leads.push(lead);localStorage.setItem('arama_crm-leads',JSON.stringify(leads));
-  document.getElementById('b2b-ref').textContent=ref;
-  document.getElementById('b2b-form-wrap').classList.add('hidden');
-  document.getElementById('b2b-success').classList.remove('hidden');
-}
-function resetB2B(){
-  ['b2b-company','b2b-name','b2b-phone','b2b-email','b2b-city','b2b-msg'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  ['b2b-industry','b2b-volume','b2b-usecase'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});
-  document.getElementById('b2b-form-wrap').classList.remove('hidden');
-  document.getElementById('b2b-success').classList.add('hidden');
-}
-
-// ── BOOKING ─────────────────────────────────────────────────
-const UPI_ID='arama.pay@ybl';
-const UPI_NAME='arama Wellness';
-const ARAMA_WA='918080808080';
-
-let bookState={
-  step:1,locCode:'',locName:'',station:'',city:'',
-  svcId:'',svcName:'',duration:15,price:0,
-  date:'',slot:'',phone:'',name:'',
-  bookingId:'',payMode:''
+// ══════════════════════════════════════════
+// SOCIAL LOGIN — FACEBOOK & INSTAGRAM
+// ══════════════════════════════════════════
+window.fbAsyncInit=function(){
+  if(!SOCIAL.facebook.appId)return;
+  FB.init({appId:SOCIAL.facebook.appId,cookie:true,xfbml:false,version:'v19.0'});
 };
 
-function initBooking(){
-  // Reset state
-  bookState={step:1,locCode:'',locName:'',station:'',city:'',svcId:'',svcName:'',duration:15,price:0,date:'',slot:'',phone:'',name:''};
-  // Populate location dropdown
-  const locSel=document.getElementById('bk-loc');
-  if(locSel){
-    locSel.innerHTML='<option value="">Choose a kiosk…</option>'+
-      getLocs().map(l=>`<option value="${l.code}">${l.name} — ${l.city} (${l.zone})</option>`).join('');
+function facebookLogin(){
+  if(!SOCIAL.facebook.appId){showSetupGuide('facebook');return;}
+  if(typeof FB==='undefined'){toast('Facebook SDK not loaded','error');return;}
+  FB.login(function(resp){
+    if(resp.authResponse){
+      FB.api('/me',{fields:'name,email,picture'},function(user){
+        handleSocialCallback('facebook',{email:user.email||'',name:user.name,avatar:user.picture?.data?.url||'',sub:'fb_'+user.id});
+      });
+    }else{toast('Facebook login cancelled','info');}
+  },{scope:'email'});
+}
+
+function instagramLogin(){
+  if(!SOCIAL.facebook.appId){showSetupGuide('instagram');return;}
+  if(typeof FB==='undefined'){toast('Facebook/Instagram SDK not loaded','error');return;}
+  // Instagram via FB Login with instagram_basic scope
+  FB.login(function(resp){
+    if(resp.authResponse){
+      FB.api('/me',{fields:'name,email'},function(user){
+        handleSocialCallback('instagram',{email:user.email||'',name:user.name,sub:'ig_'+user.id});
+      });
+    }else{toast('Instagram login cancelled','info');}
+  },{scope:'email,instagram_basic'});
+}
+
+// ══════════════════════════════════════════
+// SOCIAL LOGIN — X / TWITTER (PKCE)
+// ══════════════════════════════════════════
+async function xLogin(){
+  if(!SOCIAL.x.clientId){showSetupGuide('x');return;}
+  const{verifier,challenge}=await buildPKCE();
+  const state=generateRandomString(16);
+  sessionStorage.setItem('_pkce_verifier',verifier);
+  sessionStorage.setItem('_pkce_state',state);
+  sessionStorage.setItem('_pkce_provider','x');
+  const params=new URLSearchParams({
+    response_type:'code',
+    client_id:SOCIAL.x.clientId,
+    redirect_uri:getRedirectUri(),
+    scope:'tweet.read users.read offline.access',
+    state,
+    code_challenge:challenge,
+    code_challenge_method:'S256'
+  });
+  window.location.href='https://twitter.com/i/oauth2/authorize?'+params.toString();
+}
+
+async function handleXCallback(code,state){
+  const storedState=sessionStorage.getItem('_pkce_state');
+  const verifier=sessionStorage.getItem('_pkce_verifier');
+  if(state!==storedState){toast('X login failed: state mismatch','error');return;}
+  try{
+    // X supports public client PKCE — no client_secret needed
+    const resp=await fetch('https://api.twitter.com/2/oauth2/token',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams({
+        code,grant_type:'authorization_code',
+        client_id:SOCIAL.x.clientId,
+        redirect_uri:getRedirectUri(),
+        code_verifier:verifier,
+        client_type:'public_client'
+      })
+    });
+    const data=await resp.json();
+    if(!data.access_token){toast('X login failed','error');return;}
+    // Get user info
+    const me=await fetch('https://api.twitter.com/2/users/me?user.fields=name,profile_image_url',{
+      headers:{Authorization:'Bearer '+data.access_token}
+    }).then(r=>r.json());
+    const u=me.data||{};
+    handleSocialCallback('x',{email:'',name:u.name||u.username||'',avatar:u.profile_image_url||'',sub:'x_'+u.id});
+  }catch(e){toast('X token exchange failed. Check CORS / redirect URI settings.','error');}
+}
+
+// ══════════════════════════════════════════
+// SOCIAL LOGIN — LINKEDIN (PKCE)
+// ══════════════════════════════════════════
+async function linkedinLogin(){
+  if(!SOCIAL.linkedin.clientId){showSetupGuide('linkedin');return;}
+  const{verifier,challenge}=await buildPKCE();
+  const state=generateRandomString(16);
+  sessionStorage.setItem('_pkce_verifier',verifier);
+  sessionStorage.setItem('_pkce_state',state);
+  sessionStorage.setItem('_pkce_provider','linkedin');
+  const params=new URLSearchParams({
+    response_type:'code',
+    client_id:SOCIAL.linkedin.clientId,
+    redirect_uri:getRedirectUri(),
+    scope:'openid profile email',
+    state,
+    code_challenge:challenge,
+    code_challenge_method:'S256'
+  });
+  window.location.href='https://www.linkedin.com/oauth/v2/authorization?'+params.toString();
+}
+
+async function handleLinkedinCallback(code,state){
+  const storedState=sessionStorage.getItem('_pkce_state');
+  if(state!==storedState){toast('LinkedIn login failed: state mismatch','error');return;}
+  // LinkedIn token exchange requires client_secret — needs a proxy
+  // For now: show a message and use email/phone as fallback
+  toast('LinkedIn: token exchange requires a backend proxy. Use email login instead.','info',5000);
+  cleanOAuthParams();
+}
+
+// ══════════════════════════════════════════
+// SOCIAL LOGIN — DISPATCHER
+// ══════════════════════════════════════════
+function socialLogin(provider){
+  if(provider==='facebook')facebookLogin();
+  else if(provider==='instagram')instagramLogin();
+  else if(provider==='x')xLogin();
+  else if(provider==='linkedin')linkedinLogin();
+  else if(provider==='google')triggerGoogle();
+}
+
+// Called after any successful social auth
+function handleSocialCallback(provider,{email,name,avatar,sub}){
+  const customers=CDB.get('customers')||[];
+  // Match by email or by provider sub
+  let cust=email?customers.find(c=>(c.email||'').toLowerCase()===email.toLowerCase()):null;
+  if(!cust)cust=customers.find(c=>c.socialSub===sub);
+  if(!cust){
+    // Auto-register
+    cust={
+      id:'c'+Date.now(),
+      name:name||email?.split('@')[0]||'Guest',
+      email:email||'',phone:'',avatar:avatar||'',
+      socialSub:sub,socialProvider:provider,
+      loyaltyPts:50,
+      loyaltyHistory:[{type:'earn',pts:50,desc:'Welcome bonus via '+provider,date:new Date().toISOString()}],
+      bookings:[],passes:[],
+      referralCode:'ARA'+Math.random().toString(36).substr(2,5).toUpperCase(),
+      createdAt:new Date().toISOString()
+    };
+    customers.push(cust);
+    CDB.set('customers',customers);
+    toast('Welcome to ārāma, '+cust.name.split(' ')[0]+'! +50 pts 🎉','success',3000);
+  }else{
+    toast('Welcome back, '+cust.name.split(' ')[0]+'! 👋','success');
   }
-  // Populate service dropdown
-  const svcSel=document.getElementById('bk-svc');
-  if(svcSel){
-    svcSel.innerHTML='<option value="">Choose a service…</option>'+
-      getSvcs().map(s=>`<option value="${s.id}">${s.name} ${fd(s.duration)} — ${fc(s.price)}</option>`).join('');
+  cleanOAuthParams();
+  loginUser(cust);
+}
+
+function cleanOAuthParams(){
+  // Remove oauth params from URL without reload
+  const url=new URL(window.location.href);
+  url.searchParams.delete('code');
+  url.searchParams.delete('state');
+  url.searchParams.delete('error');
+  window.history.replaceState({},'',url.toString());
+  sessionStorage.removeItem('_pkce_verifier');
+  sessionStorage.removeItem('_pkce_state');
+  sessionStorage.removeItem('_pkce_provider');
+}
+
+// ══════════════════════════════════════════
+// SETUP GUIDE MODAL
+// ══════════════════════════════════════════
+const SETUP_GUIDES={
+  facebook:{
+    name:'Facebook / Instagram',
+    color:'#1877F2',
+    steps:[
+      'Go to <strong>developers.facebook.com</strong> → Create App → Consumer',
+      'Add product: <strong>Facebook Login</strong> (this covers Instagram too)',
+      'In Settings → Basic: copy your <strong>App ID</strong>',
+      'In Facebook Login → Settings: add this page URL as <strong>Valid OAuth Redirect URI</strong>',
+      'For Instagram: also add <strong>Instagram Basic Display</strong> product',
+      'Paste the App ID into <code>SOCIAL.facebook.appId</code> in this file'
+    ]
+  },
+  instagram:{
+    name:'Instagram',
+    color:'#E1306C',
+    steps:[
+      'Instagram login uses your <strong>Facebook App</strong> (same App ID)',
+      'Go to <strong>developers.facebook.com</strong> → Your App',
+      'Add product: <strong>Instagram Basic Display</strong>',
+      'Add this page URL as <strong>Valid OAuth Redirect URI</strong>',
+      'Paste FB App ID into <code>SOCIAL.facebook.appId</code> in this file'
+    ]
+  },
+  x:{
+    name:'X (Twitter)',
+    color:'#000',
+    steps:[
+      'Go to <strong>developer.twitter.com</strong> → Projects & Apps',
+      'Create an App → enable <strong>OAuth 2.0</strong>',
+      'Set App Type to <strong>Native App</strong> (public client — no secret needed!)',
+      'Add this page URL as <strong>Redirect URI</strong>',
+      'Copy <strong>Client ID</strong> (not Client Secret)',
+      'Paste into <code>SOCIAL.x.clientId</code> in this file'
+    ]
+  },
+  linkedin:{
+    name:'LinkedIn',
+    color:'#0A66C2',
+    steps:[
+      'Go to <strong>linkedin.com/developers</strong> → My Apps → Create app',
+      'Add product: <strong>Sign In with LinkedIn using OpenID Connect</strong>',
+      'Add this page URL as <strong>Authorized redirect URL</strong>',
+      'Copy <strong>Client ID</strong> from Auth tab',
+      'Paste into <code>SOCIAL.linkedin.clientId</code> in this file',
+      '<strong>Note:</strong> LinkedIn token exchange requires a backend/proxy. Consider Firebase Auth or Supabase for production.'
+    ]
   }
-  // Pre-fill if logged in
-  const sp=localStorage.getItem('arama_cust_phone');
-  const sn=localStorage.getItem('arama_cust_name');
-  if(sp&&document.getElementById('bk-phone'))document.getElementById('bk-phone').value=sp;
-  if(sn&&document.getElementById('bk-name'))document.getElementById('bk-name').value=sn;
-  // Date tabs
-  renderBkDateTabs();
-  showBookStep(1);
+};
+
+function showSetupGuide(provider){
+  const g=SETUP_GUIDES[provider];
+  if(!g){toast('Provider not configured','info');return;}
+  openModal('Set up '+g.name+' Login',`
+  <div style="background:rgba(201,150,10,.08);border:1px solid rgba(201,150,10,.2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:var(--text2)">
+    ⚙️ This social login needs a <strong style="color:var(--accent3)">${g.name} App ID / Client ID</strong> to work. One-time setup takes 5 minutes.
+  </div>
+  ${g.steps.map((s,i)=>`
+  <div class="setup-step">
+    <div class="setup-num">${i+1}</div>
+    <div>${s}</div>
+  </div>`).join('')}`,
+  `<button class="btn btn-outline" onclick="closeModal()">Close</button>`);
 }
 
-function showBookStep(n){
-  bookState.step=n;
-  for(let i=1;i<=5;i++){
-    const p=document.getElementById('bk-panel-'+i);
-    if(p){p.classList.toggle('active',i===n);}
-    const s=document.querySelector('.book-step[data-step="'+i+'"]');
-    if(s){
-      s.classList.remove('active','done');
-      if(i===n)s.classList.add('active');
-      else if(i<n)s.classList.add('done');
-    }
-  }
+// ══════════════════════════════════════════
+// EMAIL / PHONE AUTH
+// ══════════════════════════════════════════
+function switchAuthTab(tab){
+  document.getElementById('tabLogin').classList.toggle('hidden',tab!=='login');
+  document.getElementById('tabRegister').classList.toggle('hidden',tab!=='register');
+  document.querySelectorAll('.auth-tab').forEach((b,i)=>b.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
 }
 
-function bkNext1(){
-  const loc=document.getElementById('bk-loc')?.value;
-  const svc=document.getElementById('bk-svc')?.value;
-  if(!loc){toast('Please select a location','error');return;}
-  if(!svc){toast('Please select a service','error');return;}
-  const l=getLocs().find(x=>x.code===loc);
-  const s=getSvcs().find(x=>x.id===svc);
-  if(!l||!s)return;
-  bookState.locCode=loc;bookState.locName=l.name;bookState.station=l.station;bookState.city=l.city;
-  bookState.svcId=svc;bookState.svcName=s.name+' '+fd(s.duration);bookState.duration=s.duration;bookState.price=s.price;
-  const durLbl=document.getElementById('bk-dur-lbl');
-  if(durLbl)durLbl.textContent=fd(s.duration)+' per slot';
-  renderBkSlots();
-  showBookStep(2);
+function doLogin(){
+  const id=document.getElementById('loginId').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(!id||!pass){toast('Enter your phone/email and password','error');return;}
+  const customers=CDB.get('customers')||[];
+  const cust=customers.find(c=>(c.phone===id||c.email?.toLowerCase()===id.toLowerCase())&&c.password===pass);
+  if(!cust){toast('Invalid credentials. Check and retry.','error');return;}
+  toast('Welcome back, '+cust.name.split(' ')[0]+'! 👋','success');
+  loginUser(cust);
 }
 
-function renderBkDateTabs(){
-  const cont=document.getElementById('bk-date-tabs');if(!cont)return;
-  const today=new Date();
-  cont.innerHTML=[0,1,2].map(i=>{
-    const d=new Date(today);d.setDate(d.getDate()+i);
-    const ds=d.toISOString().slice(0,10);
-    const wd=d.toLocaleDateString('en-IN',{weekday:'short'});
-    const dd=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-    const lbl=i===0?'Today':i===1?'Tomorrow':wd;
-    return `<button class="cat-tab${i===0?' active':''}" onclick="selectBkDate('${ds}',this)" style="min-width:90px">${lbl}<br><small style="font-weight:500;font-size:10px;opacity:.75">${dd}</small></button>`;
-  }).join('');
-  bookState.date=today.toISOString().slice(0,10);
-}
-
-function selectBkDate(ds,el){
-  bookState.date=ds;bookState.slot='';
-  document.querySelectorAll('#bk-date-tabs .cat-tab').forEach(b=>b.classList.remove('active'));
-  if(el)el.classList.add('active');
-  renderBkSlots();
-}
-
-function pseudoRand(seed){
-  let h=5381;for(let i=0;i<seed.length;i++)h=(Math.imul(31,h)+seed.charCodeAt(i))|0;
-  return(h>>>0)/4294967296;
-}
-
-function renderBkSlots(){
-  const grid=document.getElementById('bk-slots');if(!grid)return;
-  const dur=bookState.duration;
-  const startMin=7*60;const endMin=22*60;
-  const now=new Date();
-  const todayStr=now.toISOString().slice(0,10);
-  const nowMin=now.getHours()*60+now.getMinutes();
-  const slots=[];
-  for(let min=startMin;min+dur<=endMin;min+=dur){
-    const h=Math.floor(min/60);const m=min%60;
-    const ampm=h<12?'AM':'PM';
-    const label=(h%12||12)+':'+(m===0?'00':String(m).padStart(2,'0'))+' '+ampm;
-    slots.push({h,m,label,min,val:h+':'+String(m).padStart(2,'0')});
-  }
-  grid.innerHTML=slots.map(({h,m,label,min,val})=>{
-    const isPast=bookState.date===todayStr&&min<=nowMin+5;
-    const busy=!isPast&&pseudoRand(bookState.date+'|'+bookState.locCode+'|'+val)<0.22;
-    const sel=bookState.slot===val;
-    if(isPast)return `<button class="slot-btn busy" disabled>${label}<br><small style="font-size:10px">Past</small></button>`;
-    if(busy)return `<button class="slot-btn busy" disabled>${label}<br><small style="font-size:10px">Full</small></button>`;
-    return `<button class="slot-btn${sel?' selected':''}" onclick="selectBkSlot('${val}',this)">${label}</button>`;
-  }).join('');
-}
-
-function selectBkSlot(val,el){
-  bookState.slot=val;
-  document.querySelectorAll('#bk-slots .slot-btn').forEach(b=>b.classList.remove('selected'));
-  if(el)el.classList.add('selected');
-}
-
-function bkNext2(){
-  if(!bookState.slot){toast('Please select a time slot','error');return;}
-  // Pre-fill if logged in
-  const sp=localStorage.getItem('arama_cust_phone');
-  const sn=localStorage.getItem('arama_cust_name');
-  const phEl=document.getElementById('bk-phone');const nmEl=document.getElementById('bk-name');
-  if(sp&&phEl&&!phEl.value)phEl.value=sp;
-  if(sn&&nmEl&&!nmEl.value)nmEl.value=sn;
-  // Hide OTP in case of back-navigation
-  const ow=document.getElementById('bk-otp-wrap');if(ow)ow.classList.add('hidden');
-  showBookStep(3);
-}
-
-// Reset OTP when phone number changes
-function bkPhoneChanged(){
-  bookState.phone='';
-  const ow=document.getElementById('bk-otp-wrap');if(ow)ow.classList.add('hidden');
-  const d=document.getElementById('bk-otp-display');if(d)d.textContent='──────';
-}
-
-// Generate 6-digit OTP, show on screen, user WhatsApps it to prove they own the number
-function bkGetOTP(){
-  const name=(document.getElementById('bk-name')?.value||'').trim();
-  const phone=(document.getElementById('bk-phone')?.value||'').trim();
-  if(!name){toast('Please enter your full name','error');return;}
-  if(!phone||phone.length!==10||!/^\d{10}$/.test(phone)){toast('Enter a valid 10-digit phone number','error');return;}
-  bookState.name=name;bookState.phone=phone;
-  const otp=String(Math.floor(100000+Math.random()*900000));
-  localStorage.setItem('arama_otp_'+phone,JSON.stringify({otp,phone,name,ts:new Date().toISOString(),expires:Date.now()+30*60*1000}));
-  const d=document.getElementById('bk-otp-display');if(d)d.textContent=otp;
-  const ow=document.getElementById('bk-otp-wrap');if(ow)ow.classList.remove('hidden');
-  setTimeout(()=>ow?.scrollIntoView({behavior:'smooth',block:'center'}),100);
-  toast('Code generated! Send it on WhatsApp to prove you own this number','success');
-}
-
-function sendOTPWA(){
-  const otp=document.getElementById('bk-otp-display')?.textContent||'';
-  const phone=bookState.phone||document.getElementById('bk-phone')?.value?.trim()||'';
-  window.open(`https://wa.me/${ARAMA_WA}?text=${encodeURIComponent('OTP '+otp+' for ārāma booking from +91'+phone)}`,'_blank');
-}
-
-// Create the booking record, build payment summary, go to step 4
-function bkProceedPay(){
-  const name=(document.getElementById('bk-name')?.value||'').trim();
-  const phone=(document.getElementById('bk-phone')?.value||'').trim();
-  if(!name){toast('Please enter your full name','error');return;}
-  if(!phone||phone.length!==10){toast('Enter a valid 10-digit phone number','error');return;}
-  const otpData=JSON.parse(localStorage.getItem('arama_otp_'+phone)||'null');
-  if(!otpData){toast('Please generate your verification code first','error');return;}
-  bookState.name=name;bookState.phone=phone;
-  // Create booking
-  const bkId='BK-'+Date.now().toString(36).slice(-4).toUpperCase()+Math.random().toString(36).slice(2,4).toUpperCase();
-  bookState.bookingId=bkId;
-  const sp=bookState.slot.split(':');const sh=parseInt(sp[0]);const sm=parseInt(sp[1]);
-  const slotLbl=(sh%12||12)+':'+(sm===0?'00':String(sm).padStart(2,'0'))+(sh<12?' AM':' PM');
-  const dateLbl=new Date(bookState.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const booking={
-    id:bkId,phone,name,
-    locCode:bookState.locCode,locName:bookState.locName,station:bookState.station,city:bookState.city,
-    svcId:bookState.svcId,svcName:bookState.svcName,duration:bookState.duration,price:bookState.price,
-    date:bookState.date,slot:bookState.slot,
-    status:'pending_otp',payMode:'',utr:'',otp:otpData.otp,
-    ts:new Date().toISOString()
+function doRegister(){
+  const first=document.getElementById('reg_first').value.trim();
+  const last=document.getElementById('reg_last').value.trim();
+  const phone=document.getElementById('reg_phone').value.trim();
+  const email=document.getElementById('reg_email').value.trim();
+  const pass=document.getElementById('reg_pass').value;
+  if(!first||!phone){toast('First name and phone number required','error');return;}
+  if(phone.length!==10||!/^\d+$/.test(phone)){toast('Enter a valid 10-digit number','error');return;}
+  if(pass.length<6){toast('Password must be at least 6 characters','error');return;}
+  const customers=CDB.get('customers')||[];
+  if(customers.find(c=>c.phone===phone)){toast('Account with this phone exists. Sign in instead.','error');return;}
+  const newCust={
+    id:'c'+Date.now(),name:first+(last?' '+last:''),email,phone,password:pass,
+    loyaltyPts:100,
+    loyaltyHistory:[{type:'earn',pts:100,desc:'Welcome bonus',date:new Date().toISOString()}],
+    bookings:[],passes:[],
+    referralCode:'ARA'+Math.random().toString(36).substr(2,5).toUpperCase(),
+    createdAt:new Date().toISOString()
   };
-  const all=JSON.parse(localStorage.getItem('arama_bookings')||'[]');
-  all.push(booking);localStorage.setItem('arama_bookings',JSON.stringify(all));
-  localStorage.setItem('arama_cust_phone',phone);localStorage.setItem('arama_cust_name',name);
-  if(!DB.get('loyalty_'+phone)){DB.set('loyalty_'+phone,{phone,name,points:50,history:[{ts:new Date().toISOString(),pts:50,note:'Welcome bonus'}]});}
-  // Build pay summary
-  const su=document.getElementById('bk-pay-summary');
-  if(su)su.innerHTML=`<div style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:16px">
-    <div style="font-size:12px;font-weight:700;color:var(--accent3);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">📋 ${bkId}</div>
-    <div style="display:flex;flex-direction:column;gap:9px;font-size:14px">
-      <div class="flex jb"><span style="color:var(--text2)">Location</span><span style="font-weight:700;text-align:right;max-width:58%">${bookState.locName}</span></div>
-      <div class="flex jb"><span style="color:var(--text2)">Service</span><span style="font-weight:700">${bookState.svcName}</span></div>
-      <div class="flex jb"><span style="color:var(--text2)">Date</span><span style="font-weight:700">${dateLbl}</span></div>
-      <div class="flex jb"><span style="color:var(--text2)">Time</span><span style="font-weight:700">${slotLbl}</span></div>
-      <div class="flex jb" style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
-        <span style="font-weight:700;font-size:15px">Amount</span>
-        <span style="font-weight:900;font-size:22px;color:var(--gold)">${fc(bookState.price)}</span>
-      </div>
-    </div>
-  </div>`;
-  // Reset pay option cards
-  ['bk-po-online','bk-po-kiosk'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('sel-online','sel-kiosk');}});
-  ['bk-upi-sec','bk-kiosk-sec'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
-  showBookStep(4);
+  customers.push(newCust);
+  CDB.set('customers',customers);
+  toast('Account created! Welcome 🎉 +100 pts','success',3000);
+  loginUser(newCust);
 }
 
-function selectPayOpt(opt){
-  const onCard=document.getElementById('bk-po-online');
-  const kiCard=document.getElementById('bk-po-kiosk');
-  const upiSec=document.getElementById('bk-upi-sec');
-  const kiSec=document.getElementById('bk-kiosk-sec');
-  if(opt==='online'){
-    onCard?.classList.add('sel-online');onCard?.classList.remove('sel-kiosk');
-    kiCard?.classList.remove('sel-kiosk','sel-online');
-    upiSec?.classList.remove('hidden');kiSec?.classList.add('hidden');
-    bookState.payMode='online';
-    // Build UPI QR + deeplinks
-    const amt=bookState.price;
-    const tn=encodeURIComponent('arama '+bookState.bookingId);
-    const pa=encodeURIComponent(UPI_ID);
-    const pn=encodeURIComponent(UPI_NAME);
-    const upiStr=`upi://pay?pa=${pa}&pn=${pn}&am=${amt}&tn=${tn}&cu=INR`;
-    const qr=document.getElementById('bk-qr-img');
-    if(qr)qr.src=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiStr)}`;
-    const amtLbl=document.getElementById('bk-upi-amt-lbl');if(amtLbl)amtLbl.textContent=fc(amt);
-    const ppL=document.getElementById('lnk-phonepe');if(ppL)ppL.href=`phonepe://pay?pa=${pa}&pn=${pn}&am=${amt}&tn=${tn}&cu=INR`;
-    const gpL=document.getElementById('lnk-gpay');if(gpL)gpL.href=`gpay://upi/pay?pa=${pa}&pn=${pn}&am=${amt}&tn=${tn}&cu=INR`;
-    const uL=document.getElementById('lnk-upi');if(uL)uL.href=upiStr;
-    setTimeout(()=>upiSec?.scrollIntoView({behavior:'smooth',block:'start'}),100);
-  } else {
-    kiCard?.classList.add('sel-kiosk');kiCard?.classList.remove('sel-online');
-    onCard?.classList.remove('sel-online','sel-kiosk');
-    kiSec?.classList.remove('hidden');upiSec?.classList.add('hidden');
-    bookState.payMode='kiosk';
-    setTimeout(()=>kiSec?.scrollIntoView({behavior:'smooth',block:'start'}),100);
-  }
+function loginUser(cust){
+  currentUser=cust;
+  sessionStorage.setItem('arama_cust_id',cust.id);
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  updateTopBar();
+  navigate('home');
 }
 
-// UTR submitted → booking instantly confirmed (paid_online)
-function submitUTR(){
-  const utr=(document.getElementById('bk-utr')?.value||'').trim();
-  if(!utr||utr.length<8){toast('Enter your UTR / Transaction ID (min 8 characters)','error');return;}
-  if(!bookState.bookingId){toast('Session expired — please restart booking','error');return;}
-  const all=JSON.parse(localStorage.getItem('arama_bookings')||'[]');
-  const idx=all.findIndex(b=>b.id===bookState.bookingId);
-  if(idx!==-1){all[idx].status='paid_online';all[idx].payMode='online';all[idx].utr=utr;all[idx].paidAt=new Date().toISOString();localStorage.setItem('arama_bookings',JSON.stringify(all));}
-  // Loyalty points
-  const pts=Math.floor(bookState.price/10);
-  const loy=DB.get('loyalty_'+bookState.phone)||{phone:bookState.phone,name:bookState.name,points:0,history:[]};
-  loy.points=(loy.points||0)+pts;
-  loy.history.push({ts:new Date().toISOString(),pts,note:'Online pay '+bookState.bookingId});
-  DB.set('loyalty_'+bookState.phone,loy);
-  _buildStep5(true,utr);
-  showBookStep(5);
-  toast('Payment confirmed! Booking '+bookState.bookingId+' locked in 🎉','success');
+function checkSession(){
+  const id=sessionStorage.getItem('arama_cust_id');
+  if(!id)return;
+  const cust=(CDB.get('customers')||[]).find(c=>c.id===id);
+  if(cust)loginUser(cust);
 }
 
-// Kiosk reserve → pending_staff (staff must confirm at counter)
-function confirmKioskBooking(){
-  if(!bookState.bookingId){toast('Session expired — please restart booking','error');return;}
-  const all=JSON.parse(localStorage.getItem('arama_bookings')||'[]');
-  const idx=all.findIndex(b=>b.id===bookState.bookingId);
-  if(idx!==-1){all[idx].status='pending_staff';all[idx].payMode='kiosk';localStorage.setItem('arama_bookings',JSON.stringify(all));}
-  _buildStep5(false,'');
-  showBookStep(5);
-  toast('Slot reserved! Show your Booking ID at the counter','info');
-}
-
-function _buildStep5(isPaid,utr){
-  const sp2=bookState.slot.split(':');const sh2=parseInt(sp2[0]);const sm2=parseInt(sp2[1]);
-  const slotLbl=(sh2%12||12)+':'+(sm2===0?'00':String(sm2).padStart(2,'0'))+(sh2<12?' AM':' PM');
-  const dateLbl=new Date(bookState.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
-  const bkId=bookState.bookingId;
-  const p5=document.getElementById('bk-panel-5');if(!p5)return;
-  const waText=isPaid
-    ?encodeURIComponent('Hi ārāma! Paid online. Booking '+bkId+' at '+bookState.locName+' on '+bookState.date+' at '+bookState.slot+'. UTR: '+utr)
-    :encodeURIComponent('Hi ārāma! Kiosk booking '+bkId+' at '+bookState.locName+' on '+bookState.date+' at '+bookState.slot+'. Please confirm.');
-  p5.innerHTML=`<div style="text-align:center;padding:8px 0 24px">
-    <div style="font-size:56px;margin-bottom:14px;animation:float 3s ease-in-out infinite">${isPaid?'🎉':'🏪'}</div>
-    <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;color:${isPaid?'var(--green2)':'var(--gold2)'}">${isPaid?'Booking Confirmed!':'Slot Reserved!'}</h2>
-    <p style="color:var(--text2);margin-bottom:22px;font-size:14px">${isPaid?'Payment received. Your slot is locked — just show this ID at the kiosk.':'Walk to the counter, show this ID, pay &amp; enjoy your session.'}</p>
-    <div style="background:linear-gradient(140deg,var(--bg3),var(--bg4));border:2px solid ${isPaid?'var(--green)':'var(--gold)'};border-radius:16px;padding:24px 20px;margin-bottom:20px">
-      <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Booking ID</div>
-      <div style="font-size:32px;font-weight:900;color:${isPaid?'var(--green2)':'var(--gold)'};letter-spacing:.12em;margin-bottom:18px">${bkId}</div>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;text-align:left">
-        <div class="flex jb"><span style="color:var(--text2)">Name</span><span style="font-weight:700">${bookState.name}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Location</span><span style="font-weight:700;text-align:right;max-width:60%">${bookState.locName}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Service</span><span style="font-weight:700">${bookState.svcName}</span></div>
-        <div class="flex jb"><span style="color:var(--text2)">Date &amp; Time</span><span style="font-weight:700">${dateLbl} · ${slotLbl}</span></div>
-        <div class="flex jb" style="border-top:1px solid var(--border);padding-top:10px;margin-top:2px">
-          <span style="font-weight:700;color:${isPaid?'var(--green2)':'var(--gold)'}">${isPaid?'✅ Paid Online':'⏳ Pay at Kiosk'}</span>
-          <span style="font-weight:900;color:var(--gold);font-size:17px">${fc(bookState.price)}</span>
-        </div>
-        ${utr?`<div class="flex jb"><span style="color:var(--text3);font-size:12px">UTR Ref</span><span style="font-size:12px;color:var(--text3)">${utr}</span></div>`:''}
-      </div>
-    </div>
-    <div class="info-box mb16" style="text-align:left;font-size:13px;border-color:${isPaid?'rgba(16,185,129,.4)':'rgba(245,158,11,.4)'}">
-      ${isPaid?'✅ No payment needed at the kiosk — just show your Booking ID and sit down.':'⏳ Slot held for <strong>15 minutes</strong>. Pay at the counter (UPI / Cash). Staff must confirm to start your session.'}
-    </div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <a href="https://wa.me/${ARAMA_WA}?text=${waText}" target="_blank" class="btn btn-whatsapp w100 btn-lg">💬 ${isPaid?'Share on WhatsApp':'Notify on WhatsApp'}</a>
-      <button class="btn btn-secondary w100" onclick="showTab('account')">📋 View All My Bookings</button>
-      <button class="btn btn-primary w100" onclick="initBooking()">📅 Book Another Session</button>
-    </div>
-  </div>`;
-}
-
-// ── ACCOUNT ─────────────────────────────────────────────────
-function acctLogin(){
-  const phone=(document.getElementById('acct-ph')?.value||'').trim();
-  if(!phone||phone.length!==10){toast('Enter your 10-digit phone number','error');return;}
-  localStorage.setItem('arama_cust_phone',phone);
-  const loy=DB.get('loyalty_'+phone);
-  if(loy&&loy.name)localStorage.setItem('arama_cust_name',loy.name);
-  renderAccount();
-  toast('Welcome back!','success');
-}
-
-function acctLogout(){
-  localStorage.removeItem('arama_cust_phone');
-  localStorage.removeItem('arama_cust_name');
-  renderAccount();
-  ['mob-pts','hdr-pts-d'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+function logout(){
+  currentUser=null;
+  sessionStorage.removeItem('arama_cust_id');
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('authScreen').classList.remove('hidden');
   toast('Signed out','info');
 }
 
-function getMyBookings(phone){
-  const all=JSON.parse(localStorage.getItem('arama_bookings')||'[]');
-  const now=new Date();
-  const activeStatuses=['upcoming','pending_otp','pending_staff','paid_online','confirmed'];
-  return all.filter(b=>b.phone===phone).map(b=>{
-    if(activeStatuses.includes(b.status)){
-      const bDt=new Date(b.date+'T'+b.slot+':00');
-      if(bDt<now)b.status='completed'; // auto-expire to completed
-    }
-    return b;
-  }).sort((a,z)=>new Date(z.date+'T'+z.slot)-new Date(a.date+'T'+a.slot));
+function getFreshUser(){
+  return(CDB.get('customers')||[]).find(c=>c.id===currentUser?.id)||null;
 }
 
-function renderAccount(){
-  const phone=localStorage.getItem('arama_cust_phone');
-  const name=localStorage.getItem('arama_cust_name');
-  const loginEl=document.getElementById('acct-login');
-  const dashEl=document.getElementById('acct-dash');
-  if(!loginEl||!dashEl)return;
-  if(!phone){loginEl.classList.remove('hidden');dashEl.classList.add('hidden');return;}
-  loginEl.classList.add('hidden');dashEl.classList.remove('hidden');
-  const loy=DB.get('loyalty_'+phone)||{points:0,history:[]};
-  const bks=getMyBookings(phone);
-  const activeCount=bks.filter(b=>['pending_otp','pending_staff','paid_online','confirmed','upcoming'].includes(b.status)).length;
-  const doneCount=bks.filter(b=>['completed','past'].includes(b.status)).length;
-  const initials=(name||phone.slice(-4)).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const hdr=document.getElementById('acct-hdr');
-  if(hdr)hdr.innerHTML=`
-    <div class="acct-avatar">${initials}</div>
-    <div style="font-size:20px;font-weight:800;margin-bottom:3px;color:#fff">${name||'Welcome!'}</div>
-    <div style="font-size:14px;color:rgba(255,255,255,.6);margin-bottom:18px">📱 +91 ${phone}</div>
-    <div class="stat-row">
-      <div class="stat-box"><div class="sv text-gold">${(loy.points||0).toLocaleString('en-IN')}</div><div class="sl">Points</div></div>
-      <div class="stat-box"><div class="sv text-green">${activeCount}</div><div class="sl">Active</div></div>
-      <div class="stat-box"><div class="sv" style="color:var(--accent3)">${doneCount}</div><div class="sl">Past</div></div>
-    </div>`;
-  renderMyBookings(phone);
-  // Update header badges
-  if(loy.points>0){
-    ['mob-pts','hdr-pts-d'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='flex';});
-    if(document.getElementById('mob-pts-val'))document.getElementById('mob-pts-val').textContent=(loy.points||0).toLocaleString('en-IN');
-    if(document.getElementById('hdr-pts-val-d'))document.getElementById('hdr-pts-val-d').textContent=(loy.points||0).toLocaleString('en-IN');
-  }
+function updateTopBar(){
+  const u=getFreshUser();
+  if(!u)return;
+  document.getElementById('topAvatar').textContent=getInitials(u.name);
+  document.getElementById('topPts').textContent='⭐ '+(u.loyaltyPts||0)+' pts';
 }
 
-function renderMyBookings(phone){
-  const bks=getMyBookings(phone);
-  const activeStatuses=['pending_otp','pending_staff','paid_online','confirmed','upcoming'];
-  const active=bks.filter(b=>activeStatuses.includes(b.status));
-  const past=bks.filter(b=>!activeStatuses.includes(b.status)).slice(0,8);
-  const wrap=document.getElementById('acct-bookings');if(!wrap)return;
-  const stClr={
-    upcoming:'badge-green',pending_otp:'badge-gold',pending_staff:'badge-gold',
-    paid_online:'badge-green',confirmed:'badge-green',completed:'badge-grey',
-    past:'badge-grey',cancelled:'badge-red'
-  };
-  const stLbl={
-    upcoming:'Upcoming',pending_otp:'OTP Verify',pending_staff:'Kiosk Pending',
-    paid_online:'Paid ✅',confirmed:'Confirmed',completed:'Completed',
-    past:'Past',cancelled:'Cancelled'
-  };
-  const payLbl={
-    pending_otp:'⏳ OTP verification pending — send WhatsApp code',
-    pending_staff:'⏳ Pay at kiosk — staff will confirm',
-    paid_online:'✅ Paid online',
-    confirmed:'✅ Confirmed by staff',
-    completed:'✅ Session completed',
-    upcoming:'Pay at kiosk when you arrive',
-    past:'Past session',
-    cancelled:'Booking cancelled'
-  };
-  function bkHtml(b){
-    const sp=b.slot.split(':');const sh=parseInt(sp[0]);const sm=parseInt(sp[1]);
-    const slotLbl=(sh%12||12)+':'+(sm===0?'00':String(sm).padStart(2,'0'))+(sh<12?' AM':' PM');
-    const dateLbl=new Date(b.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
-    const canCancel=['pending_otp','pending_staff','upcoming'].includes(b.status);
-    const cardCls=(['paid_online','confirmed','upcoming'].includes(b.status))?'upcoming':(['cancelled'].includes(b.status)?'cancelled':'past');
-    return `<div class="bk-card ${cardCls}">
-      <div class="flex jb ac mb8">
-        <div class="bk-id">${b.id}</div>
-        <span class="badge ${stClr[b.status]||'badge-grey'}" style="font-size:11px">${stLbl[b.status]||b.status}</span>
+// ── OTP ──
+let _otpTimer=null;
+function showOTP(otp,sub=''){
+  document.getElementById('otpCode').textContent=otp;
+  document.getElementById('otpSubtext').textContent=sub||'Show this to your ārāma therapist';
+  document.getElementById('otpOverlay').classList.remove('hidden');
+  let sec=300;
+  clearInterval(_otpTimer);
+  _otpTimer=setInterval(()=>{sec--;const m=Math.floor(sec/60),s=sec%60;document.getElementById('otpTimer').textContent=`Expires in ${m}:${s.toString().padStart(2,'0')}`;if(sec<=0){clearInterval(_otpTimer);closeOTP();}},1000);
+}
+function closeOTP(){clearInterval(_otpTimer);document.getElementById('otpOverlay').classList.add('hidden');}
+
+// ── Forgot Password ──
+let _frOTP=null;
+function openForgotPass(){
+  openModal('Reset Password',`
+    <div class="form-group"><label class="form-label">Phone / Email</label><input id="fp_id" type="text" placeholder="Registered phone or email"></div>
+    <div id="fp_step2" class="hidden">
+      <div class="form-group"><label class="form-label">OTP (shown on screen)</label><input id="fp_otp" type="number"></div>
+      <div class="form-group"><label class="form-label">New Password</label><input id="fp_np" type="password" placeholder="Min 6 characters"></div>
+    </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+   <button class="btn btn-gold" id="fpBtn" onclick="sendForgotOTP()">Send OTP</button>`);
+}
+function sendForgotOTP(){
+  const id=document.getElementById('fp_id')?.value.trim();
+  if(!id){toast('Enter your phone or email','error');return;}
+  const cust=(CDB.get('customers')||[]).find(c=>c.phone===id||c.email?.toLowerCase()===id.toLowerCase());
+  if(!cust){toast('No account found','error');return;}
+  _frOTP=String(Math.floor(100000+Math.random()*900000));
+  sessionStorage.setItem('_frOTP',_frOTP);sessionStorage.setItem('_frUID',cust.id);
+  showOTP(_frOTP,'Your password reset OTP — valid 5 minutes');
+  document.getElementById('fp_step2').classList.remove('hidden');
+  document.getElementById('fpBtn').textContent='Reset Password';
+  document.getElementById('fpBtn').onclick=submitForgotPass;
+}
+function submitForgotPass(){
+  const otp=document.getElementById('fp_otp')?.value.trim();
+  const np=document.getElementById('fp_np')?.value;
+  if(otp!==sessionStorage.getItem('_frOTP')){toast('Wrong OTP','error');return;}
+  if(!np||np.length<6){toast('Password too short','error');return;}
+  const customers=CDB.get('customers')||[];
+  const idx=customers.findIndex(c=>c.id===sessionStorage.getItem('_frUID'));
+  if(idx>=0){customers[idx].password=np;CDB.set('customers',customers);}
+  sessionStorage.removeItem('_frOTP');sessionStorage.removeItem('_frUID');
+  closeModal();closeOTP();
+  toast('Password reset! Sign in with your new password.','success',3000);
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function navigate(tab){
+  currentTab=tab;
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  const content=document.getElementById('content');
+  content.innerHTML='';
+  if(tab==='home')renderHome();
+  else if(tab==='book')renderBook();
+  else if(tab==='passes')renderPasses();
+  else if(tab==='history')renderHistory();
+  else if(tab==='me')renderMe();
+  window.scrollTo(0,0);updateTopBar();
+}
+
+// ══════════════════════════════════════════
+// HOME
+// ══════════════════════════════════════════
+function renderHome(){
+  const u=getFreshUser();if(!u)return;
+  const tier=getTier(u.loyaltyPts||0);
+  const nextTier=TIERS.find(t=>t.min>(u.loyaltyPts||0));
+  const pct=nextTier?Math.min(100,((u.loyaltyPts||0)-tier.min)/(nextTier.min-tier.min)*100):100;
+  const h=new Date().getHours();
+  const bookings=CDB.get('bookings')||[];
+  const upcoming=bookings.filter(b=>b.custId===u.id&&b.status==='confirmed'&&new Date(b.datetime)>new Date()).sort((a,b)=>new Date(a.datetime)-new Date(b.datetime)).slice(0,2);
+  document.getElementById('content').innerHTML=`
+  <div class="container" style="padding-top:16px;padding-bottom:16px">
+    <div style="margin-bottom:18px">
+      <div style="font-size:22px;font-weight:800;font-family:'Alegreya',Georgia,serif">${h<12?'🌅':h<17?'☀️':'🌙'} ${h<12?'Good morning':h<17?'Good afternoon':'Good evening'}, ${u.name.split(' ')[0]}!</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:3px">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</div>
+    </div>
+    <!-- LOYALTY CARD -->
+    <div class="loyalty-card" style="margin-bottom:18px">
+      <div class="loyalty-tier">${tier.icon} ${tier.name} Member</div>
+      <div class="loyalty-pts">${(u.loyaltyPts||0).toLocaleString('en-IN')}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">Wellness Points · ≈ ₹${Math.floor((u.loyaltyPts||0)/10)} value</div>
+      <div class="loyalty-bar-wrap"><div class="loyalty-bar" style="width:${pct}%"></div></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:5px">${nextTier?nextTier.min-(u.loyaltyPts||0)+' pts to '+nextTier.icon+' '+nextTier.name:'🏆 Max tier achieved!'}</div>
+    </div>
+    <!-- QUICK ACTIONS -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+      <button onclick="navigate('book')" style="background:rgba(201,150,10,.1);border:1px solid rgba(201,150,10,.3);border-radius:var(--radius2);padding:14px 8px;text-align:center;cursor:pointer"><div style="font-size:26px;margin-bottom:5px">📅</div><div style="font-size:11px;font-weight:700;color:var(--accent3)">Book Now</div></button>
+      <button onclick="navigate('passes')" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:var(--radius2);padding:14px 8px;text-align:center;cursor:pointer"><div style="font-size:26px;margin-bottom:5px">🎟️</div><div style="font-size:11px;font-weight:700;color:var(--green2)">My Passes</div></button>
+      <button onclick="openReferral()" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:var(--radius2);padding:14px 8px;text-align:center;cursor:pointer"><div style="font-size:26px;margin-bottom:5px">🎁</div><div style="font-size:11px;font-weight:700;color:#c4b5fd">Refer & Earn</div></button>
+    </div>
+    ${upcoming.length>0?`
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-size:15px;font-weight:800;margin-bottom:12px">📅 Upcoming Sessions</div>
+      ${upcoming.map(b=>{const svc=SERVICES.find(s=>s.id===b.serviceId)||{name:b.serviceName,icon:'💆'};return`<div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg3);border-radius:var(--radius);margin-bottom:8px"><div style="font-size:26px">${svc.icon}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${svc.name}</div><div style="font-size:11px;color:var(--text3)">${b.location} · ${new Date(b.datetime).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})} ${formatTime(b.datetime)}</div></div><span class="badge badge-green">Confirmed</span></div>`;}).join('')}
+    </div>`:''}
+    <!-- POPULAR -->
+    <div style="margin-bottom:18px">
+      <div style="font-size:17px;font-weight:800;margin-bottom:12px">⭐ Book Instantly</div>
+      <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
+        ${SERVICES.filter(s=>['s1','s2','s12','s13'].includes(s.id)).map(s=>`
+        <div onclick="startBooking('${s.id}')" style="min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:14px;cursor:pointer;flex-shrink:0">
+          <div style="font-size:28px;margin-bottom:7px">${s.icon}</div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:3px">${s.name}</div>
+          <div style="font-size:15px;font-weight:800;color:var(--accent3)">₹${s.price}</div>
+          <div style="font-size:11px;color:var(--text3)">${s.duration}</div>
+        </div>`).join('')}
       </div>
-      <div class="bk-title">${b.svcName}</div>
-      <div class="bk-meta">
-        <div>📍 ${b.locName}</div>
-        <div>📅 ${dateLbl} · ⏰ ${slotLbl}</div>
-        <div style="margin-top:4px;font-size:12px;color:var(--text2)">${payLbl[b.status]||''} · ${fc(b.price)}</div>
-        ${b.utr?`<div style="font-size:11px;color:var(--text3);margin-top:2px">UTR: ${b.utr}</div>`:''}
+    </div>
+    <!-- SOCIAL PROOF -->
+    <div style="margin-bottom:18px">
+      <div style="font-size:17px;font-weight:800;margin-bottom:12px">💬 What guests say</div>
+      ${[{n:'Ananya R.',s:5,t:'Foot reflexology after shopping was exactly what I needed. Booked again next day!',l:'Inorbit Mall'},{n:'Rahul M.',s:5,t:'Chair massage in 20 mins — completely reset my afternoon. Points system is a great bonus.',l:'GVK One'}].map(r=>`
+      <div class="card" style="padding:14px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:800;color:#0f0f1a;font-size:13px">${r.n[0]}</div>
+          <div><div style="font-size:13px;font-weight:700">${r.n}</div><div style="font-size:11px;color:var(--text3)">${r.l}</div></div>
+          <div style="margin-left:auto;font-size:12px">⭐⭐⭐⭐⭐</div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);font-style:italic">"${r.t}"</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// BOOK
+// ══════════════════════════════════════════
+function renderBook(){
+  document.getElementById('content').innerHTML=`
+  <div class="container" style="padding-top:16px;padding-bottom:16px">
+    <div class="section-title">📅 Book a Session</div>
+    <div class="section-sub">Choose your service and book a slot</div>
+    <div class="chip-row">
+      ${[{k:'all',l:'All'},{k:'massage',l:'💆 Massage'},{k:'vibration',l:'⚡ Vibration'},{k:'wellness',l:'🌿 Wellness'},{k:'combo',l:'✨ Combos'}].map(c=>`
+      <button class="chip ${c.k===activeFilter?'active':''}" onclick="filterSvc('${c.k}')">${c.l}</button>`).join('')}
+    </div>
+    <div class="service-grid" id="svcGrid"></div>
+  </div>`;
+  renderSvcGrid();
+}
+function filterSvc(cat){activeFilter=cat;renderBook();}
+function renderSvcGrid(){
+  const g=document.getElementById('svcGrid');if(!g)return;
+  const list=activeFilter==='all'?SERVICES:SERVICES.filter(s=>s.cat===activeFilter);
+  g.innerHTML=list.map(s=>`
+  <div class="svc-card" onclick="startBooking('${s.id}')">
+    ${s.combo?'<div class="svc-badge">COMBO</div>':''}
+    <div style="font-size:30px;margin-bottom:8px">${s.icon}</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:4px">${s.name}</div>
+    <div style="display:flex;align-items:center;gap:6px;margin:3px 0">
+      <div style="font-size:17px;font-weight:800;color:var(--accent3)">₹${s.price}</div>
+      ${s.mrp>s.price?`<div style="font-size:11px;color:var(--text3);text-decoration:line-through">₹${s.mrp}</div>`:''}
+    </div>
+    <div style="font-size:11px;color:var(--text3)">${s.duration}</div>
+  </div>`).join('');
+}
+
+function startBooking(svcId){
+  const svc=SERVICES.find(s=>s.id===svcId);if(!svc)return;
+  bookingState={service:svc,location:null,date:null,time:null};
+  const today=new Date();
+  const dates=Array.from({length:7},(_,i)=>{const d=new Date(today);d.setDate(today.getDate()+i);return d;});
+  const times=['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00'];
+  openModal(`${svc.icon} ${svc.name}`,`
+  <div style="background:rgba(201,150,10,.08);border:1px solid rgba(201,150,10,.2);border-radius:10px;padding:12px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between">
+    <div><div style="font-size:13px;font-weight:700">${svc.name}</div><div style="font-size:11px;color:var(--text3)">${svc.duration} · ${svc.desc}</div></div>
+    <div style="font-size:19px;font-weight:800;color:var(--accent3)">₹${svc.price}</div>
+  </div>
+  <div style="margin-bottom:16px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px">📍 Location</div>
+    <select id="bk_loc" style="margin-bottom:0"><option value="">— Select kiosk —</option>${LOCATIONS.map(l=>`<option value="${l}">${l}</option>`).join('')}</select>
+  </div>
+  <div style="margin-bottom:16px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px">📅 Date</div>
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
+      ${dates.map(d=>`<button style="min-width:60px;padding:8px 6px;border-radius:10px;border:2px solid var(--border2);background:var(--bg3);font-size:12px;font-weight:600;text-align:center;cursor:pointer;flex-shrink:0;transition:all .15s" onclick="selectDate(this,'${d.toISOString().slice(0,10)}')" class="slot-btn">
+        <div style="font-size:9px;color:var(--text3)">${d.toLocaleDateString('en-IN',{weekday:'short'})}</div>
+        <div style="font-size:15px;font-weight:800">${d.getDate()}</div>
+        <div style="font-size:9px;color:var(--text3)">${d.toLocaleDateString('en-IN',{month:'short'})}</div>
+      </button>`).join('')}
+    </div>
+  </div>
+  <div>
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px">⏰ Time</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      ${times.map(t=>`<button style="padding:10px 6px;border-radius:10px;border:2px solid var(--border2);background:var(--bg3);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s" onclick="selectTime(this,'${t}')" class="slot-btn">${t}</button>`).join('')}
+    </div>
+  </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+   <button class="btn btn-gold" onclick="confirmBooking()">Confirm →</button>`);
+}
+
+function selectDate(el,date){
+  el.closest('#modal').querySelectorAll('.slot-btn').forEach(b=>{if(['09:00','09:30','10:00'].some(t=>b.textContent.trim()===t)||b.querySelector('div'))b.style.borderColor='var(--border2)';});
+  el.style.borderColor='var(--accent2)';el.style.background='rgba(201,150,10,.12)';el.style.color='var(--accent3)';
+  bookingState.date=date;
+}
+function selectTime(el,time){
+  el.closest('#modal').querySelectorAll('.slot-btn').forEach(b=>{if(!b.querySelector('div')){b.style.borderColor='var(--border2)';b.style.background='var(--bg3)';b.style.color='var(--text)';}});
+  el.style.borderColor='var(--accent2)';el.style.background='rgba(201,150,10,.12)';el.style.color='var(--accent3)';
+  bookingState.time=time;
+}
+
+function confirmBooking(){
+  const loc=document.getElementById('bk_loc')?.value;
+  if(!loc){toast('Select a location','error');return;}
+  if(!bookingState.date){toast('Select a date','error');return;}
+  if(!bookingState.time){toast('Select a time slot','error');return;}
+  const u=getFreshUser();if(!u)return;
+  const svc=bookingState.service;
+  const booking={id:'bk'+Date.now(),custId:u.id,custName:u.name,serviceId:svc.id,serviceName:svc.name,price:svc.price,location:loc,datetime:bookingState.date+'T'+bookingState.time+':00',status:'confirmed',createdAt:new Date().toISOString()};
+  const bookings=CDB.get('bookings')||[];bookings.push(booking);CDB.set('bookings',bookings);
+  const earnPts=Math.floor(svc.price*0.1);
+  const customers=CDB.get('customers')||[];
+  const idx=customers.findIndex(c=>c.id===u.id);
+  if(idx>=0){customers[idx].loyaltyPts=(customers[idx].loyaltyPts||0)+earnPts;customers[idx].loyaltyHistory=customers[idx].loyaltyHistory||[];customers[idx].loyaltyHistory.push({type:'earn',pts:earnPts,desc:'Booking: '+svc.name,date:new Date().toISOString()});CDB.set('customers',customers);currentUser=customers[idx];}
+  closeModal();toast(`Booked! ✅ +${earnPts} pts earned`,'success',3500);navigate('history');
+}
+
+// ══════════════════════════════════════════
+// PASSES
+// ══════════════════════════════════════════
+function renderPasses(){
+  const u=getFreshUser();
+  const myPasses=(u?.passes||[]).filter(p=>p.remaining>0&&new Date(p.expiry)>new Date());
+  document.getElementById('content').innerHTML=`
+  <div class="container" style="padding-top:16px;padding-bottom:16px">
+    <div class="section-title">🎟️ Session Passes</div>
+    <div class="section-sub">Save up to 30% with multi-session passes</div>
+    ${myPasses.length>0?`
+    <div class="card" style="margin-bottom:18px;border-color:rgba(201,150,10,.3)">
+      <div style="font-size:14px;font-weight:800;margin-bottom:12px;color:var(--accent3)">✅ Active Passes</div>
+      ${myPasses.map(mp=>{const def=PASSES.find(p=>p.id===mp.passId)||{};const pct=def.sessions===999?0:((def.sessions-mp.remaining)/def.sessions*100);return`<div style="background:var(--bg3);border-radius:var(--radius);padding:12px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:13px">${mp.name}</div><span class="badge badge-gold">${mp.remaining===999?'Unlimited':mp.remaining+' left'}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--text3);margin-top:5px">Expires ${formatDate(mp.expiry)}</div></div>`;}).join('')}
+    </div>`:''}
+    ${PASSES.map(p=>`
+    <div class="pass-card ${p.color}" onclick="buyPass('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div><div style="font-size:18px;font-weight:800;margin-bottom:4px">${p.icon} ${p.name}</div><div style="font-size:12px;color:var(--text2)">${p.desc}</div></div>
+        <div style="text-align:right;flex-shrink:0"><div style="font-size:26px;font-weight:900;color:var(--accent3)">₹${p.price}</div>${p.mrp>p.price?`<div style="font-size:11px;color:var(--text3);text-decoration:line-through">₹${p.mrp}</div>`:''}<div style="font-size:10px;color:var(--green2)">+${p.pts} pts</div></div>
       </div>
-      ${canCancel?`<div class="flex gap8 mt12">
-        <button class="btn btn-secondary btn-sm" style="flex:1;color:var(--red2);border-color:rgba(239,68,68,.25)" onclick="cancelBooking('${b.id}')">Cancel</button>
-        <a href="https://wa.me/${ARAMA_WA}?text=${encodeURIComponent('Hi ārāma! Query about booking '+b.id)}" target="_blank" class="btn btn-whatsapp btn-sm" style="flex:1">💬 Help</a>
-      </div>`:''}
-    </div>`;
-  }
-  if(!bks.length){
-    wrap.innerHTML=`<div class="card" style="text-align:center;padding:32px 20px">
-      <div style="font-size:40px;margin-bottom:12px">📅</div>
-      <div style="font-weight:700;font-size:16px;margin-bottom:8px">No bookings yet</div>
-      <div style="font-size:14px;color:var(--text2);margin-bottom:18px">Book your first session and it will appear here.</div>
-      <button class="btn btn-primary" onclick="showTab('book')">📅 Book a Session</button>
-    </div>`;return;
-  }
-  wrap.innerHTML=
-    (active.length?`<div style="font-size:15px;font-weight:700;margin-bottom:12px">📅 Active Bookings (${active.length})</div>${active.map(bkHtml).join('')}`:'<div class="card" style="text-align:center;padding:20px;margin-bottom:16px;border-style:dashed"><div style="font-size:14px;color:var(--text2)">No active bookings</div><button class="btn btn-primary btn-sm mt8" onclick="showTab(\'book\')">Book Now</button></div>')+
-    (past.length?`<div style="font-size:15px;font-weight:700;margin-bottom:12px;margin-top:${active.length?'16px':'0'}">🕐 Past Sessions</div>${past.map(bkHtml).join('')}`:'');
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:11px;color:var(--text2)">Valid ${p.validity} days</div>
+        <div style="background:rgba(201,150,10,.2);border:1px solid rgba(201,150,10,.4);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--accent3)">Buy →</div>
+      </div>
+    </div>`).join('')}
+  </div>`;
 }
 
-function cancelBooking(bkId){
-  if(!confirm('Cancel booking '+bkId+'?\n\nThis cannot be undone.'))return;
-  const all=JSON.parse(localStorage.getItem('arama_bookings')||'[]');
-  const idx=all.findIndex(b=>b.id===bkId);
-  if(idx!==-1){all[idx].status='cancelled';localStorage.setItem('arama_bookings',JSON.stringify(all));}
-  toast('Booking cancelled','info');
-  const ph=localStorage.getItem('arama_cust_phone');
-  if(ph){renderMyBookings(ph);renderAccount();}
+function buyPass(passId){
+  const pass=PASSES.find(p=>p.id===passId);if(!pass)return;
+  openModal(`Buy ${pass.icon} ${pass.name}`,`
+  <div style="text-align:center;padding:6px 0">
+    <div style="font-size:44px;margin-bottom:10px">${pass.icon}</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:6px">${pass.name}</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:18px">${pass.desc}</div>
+    <div style="background:rgba(201,150,10,.08);border:1px solid rgba(201,150,10,.2);border-radius:var(--radius);padding:14px;margin-bottom:14px">
+      <div style="font-size:34px;font-weight:900;color:var(--accent3)">₹${pass.price}</div>
+      ${pass.mrp>pass.price?`<div style="font-size:13px;color:var(--text3);text-decoration:line-through">₹${pass.mrp}</div>`:''}
+      <div style="font-size:12px;color:var(--green2);margin-top:4px">+${pass.pts} loyalty pts</div>
+    </div>
+    <div style="font-size:12px;color:var(--text2)">${pass.sessions===999?'Unlimited sessions':'${pass.sessions} sessions'} · Valid ${pass.validity} days</div>
+  </div>
+  <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:10px;margin-top:14px;font-size:12px;color:var(--text2)">💳 Pay at kiosk or show OTP to activate. We generate an activation OTP for you.</div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+   <button class="btn btn-gold" onclick="activatePass('${passId}')">Generate OTP →</button>`);
 }
 
-// ── INIT ─────────────────────────────────────────────────────
-function init(){
-  showTab('services');
-  // Restore loyalty badge
-  const sp=localStorage.getItem('arama_cust_phone');
-  if(sp){const m=DB.get('loyalty_'+sp);if(m&&m.points>0){['mob-pts','hdr-pts-d'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='flex';});if(document.getElementById('mob-pts-val'))document.getElementById('mob-pts-val').textContent=(m.points||0).toLocaleString('en-IN');if(document.getElementById('hdr-pts-val-d'))document.getElementById('hdr-pts-val-d').textContent=(m.points||0).toLocaleString('en-IN');}}
+function activatePass(passId){
+  const pass=PASSES.find(p=>p.id===passId);const u=getFreshUser();if(!u||!pass)return;
+  const customers=CDB.get('customers')||[];const idx=customers.findIndex(c=>c.id===u.id);if(idx<0)return;
+  const expiry=new Date(Date.now()+pass.validity*86400000).toISOString();
+  const np={id:'up'+Date.now(),passId:pass.id,name:pass.name,sessions:pass.sessions,remaining:pass.sessions,expiry,purchasedAt:new Date().toISOString()};
+  customers[idx].passes=customers[idx].passes||[];customers[idx].passes.push(np);
+  customers[idx].loyaltyPts=(customers[idx].loyaltyPts||0)+pass.pts;
+  customers[idx].loyaltyHistory=customers[idx].loyaltyHistory||[];
+  customers[idx].loyaltyHistory.push({type:'earn',pts:pass.pts,desc:'Pass: '+pass.name,date:new Date().toISOString()});
+  CDB.set('customers',customers);currentUser=customers[idx];
+  closeModal();
+  showOTP(String(Math.floor(100000+Math.random()*900000)),'Show this OTP to staff to activate your '+pass.name);
+  toast('Show OTP to kiosk staff to activate your pass!','success',4000);
 }
-init();
+
+// ══════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════
+function renderHistory(){
+  const u=getFreshUser();
+  const bookings=(CDB.get('bookings')||[]).filter(b=>b.custId===u?.id).sort((a,b)=>new Date(b.datetime)-new Date(a.datetime));
+  document.getElementById('content').innerHTML=`
+  <div class="container" style="padding-top:16px;padding-bottom:16px">
+    <div class="section-title">📋 My History</div>
+    <div class="section-sub">Bookings and session visits</div>
+    ${bookings.length===0?`<div class="empty-state"><div style="font-size:48px;margin-bottom:12px">📅</div><div style="font-size:16px;font-weight:700;margin-bottom:8px">No bookings yet</div><div style="font-size:13px;color:var(--text3);margin-bottom:18px">Book your first wellness session!</div><button class="btn btn-gold" onclick="navigate('book')">Book Now →</button></div>`:`
+    <div class="card" style="padding:0;overflow:hidden">
+      ${bookings.map((b,i)=>{const svc=SERVICES.find(s=>s.id===b.serviceId)||{name:b.serviceName,icon:'💆'};const past=new Date(b.datetime)<new Date();return`
+      <div style="padding:14px;${i>0?'border-top:1px solid var(--border)':''}">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:44px;height:44px;background:rgba(201,150,10,.1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${svc.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700">${svc.name}</div>
+            <div style="font-size:11px;color:var(--text3)">📍 ${b.location||'ārāma Kiosk'}</div>
+            <div style="font-size:11px;color:var(--text3)">${new Date(b.datetime).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})} · ${formatTime(b.datetime)}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:14px;font-weight:800;color:var(--accent3)">₹${b.price||0}</div>
+            <span class="badge ${b.status==='confirmed'?'badge-green':'badge-gold'}" style="font-size:10px">${past&&b.status==='confirmed'?'Done':b.status==='confirmed'?'Upcoming':'Pending'}</span>
+          </div>
+        </div>
+        ${past&&b.status==='confirmed'&&!b.reviewed?`<button onclick="openReview('${b.id}')" style="margin-top:8px;width:100%;padding:8px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer">⭐ Leave a Review (+25 pts)</button>`:''}
+        ${b.reviewed?`<div style="margin-top:6px;font-size:11px;color:var(--text3)">⭐ Reviewed · Thank you!</div>`:''}
+      </div>`;}).join('')}
+    </div>`}
+  </div>`;
+}
+
+function openReview(bId){
+  sessionStorage.setItem('_rev_rating','5');
+  openModal('Leave a Review',`
+  <div style="text-align:center;margin-bottom:18px">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px">How was your session?</div>
+    <div style="display:flex;gap:8px;justify-content:center;font-size:28px" id="starRow">
+      ${[1,2,3,4,5].map(i=>`<span style="cursor:pointer;transition:transform .1s" onclick="setRating(${i})">⭐</span>`).join('')}
+    </div>
+  </div>
+  <textarea id="rv_text" placeholder="Share your experience (optional)..." style="height:90px;resize:none"></textarea>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+   <button class="btn btn-gold" onclick="submitReview('${bId}')">Submit ⭐</button>`);
+}
+function setRating(n){sessionStorage.setItem('_rev_rating',n);document.querySelectorAll('#starRow span').forEach((s,i)=>s.style.opacity=i<n?'1':'.3');}
+function submitReview(bId){
+  const rating=parseInt(sessionStorage.getItem('_rev_rating')||'5');
+  const text=document.getElementById('rv_text')?.value.trim()||'';
+  const bookings=CDB.get('bookings')||[];const idx=bookings.findIndex(b=>b.id===bId);
+  if(idx>=0){bookings[idx].reviewed=true;bookings[idx].rating=rating;bookings[idx].reviewText=text;CDB.set('bookings',bookings);}
+  const u=getFreshUser();const customers=CDB.get('customers')||[];const cidx=customers.findIndex(c=>c.id===u?.id);
+  if(cidx>=0){customers[cidx].loyaltyPts=(customers[cidx].loyaltyPts||0)+25;customers[cidx].loyaltyHistory=customers[cidx].loyaltyHistory||[];customers[cidx].loyaltyHistory.push({type:'earn',pts:25,desc:'Review submitted',date:new Date().toISOString()});CDB.set('customers',customers);currentUser=customers[cidx];}
+  closeModal();toast('Thank you! ⭐ +25 pts','success',3000);renderHistory();
+}
+
+// ══════════════════════════════════════════
+// ME
+// ══════════════════════════════════════════
+function renderMe(){
+  const u=getFreshUser();if(!u)return;
+  const tier=getTier(u.loyaltyPts||0);
+  const nextTier=TIERS.find(t=>t.min>(u.loyaltyPts||0));
+  const hist=(u.loyaltyHistory||[]).slice().reverse().slice(0,6);
+  document.getElementById('content').innerHTML=`
+  <div class="container" style="padding-top:16px;padding-bottom:16px">
+    <!-- PROFILE -->
+    <div class="card" style="margin-bottom:14px;text-align:center;padding:24px 18px">
+      <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#0f0f1a;margin:0 auto 12px">${getInitials(u.name)}</div>
+      <div style="font-size:19px;font-weight:800;margin-bottom:3px">${u.name}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">${u.phone||u.email||u.socialProvider||'—'}</div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(201,150,10,.12);border:1px solid rgba(201,150,10,.3);border-radius:20px;padding:5px 14px">
+        <span>${tier.icon}</span><span style="font-size:12px;font-weight:700;color:var(--accent3)">${tier.name} Member</span>
+      </div>
+      ${u.socialProvider?`<div style="margin-top:8px;font-size:11px;color:var(--text3)">Signed in via ${u.socialProvider.charAt(0).toUpperCase()+u.socialProvider.slice(1)}</div>`:''}
+    </div>
+    <!-- LOYALTY -->
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:15px;font-weight:800;margin-bottom:12px">⭐ Loyalty Points</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div><div style="font-size:32px;font-weight:900;color:var(--accent3)">${(u.loyaltyPts||0).toLocaleString('en-IN')}</div><div style="font-size:11px;color:var(--text3)">Total points</div></div>
+        <div style="text-align:right"><div style="font-size:15px;font-weight:700">≈ ₹${Math.floor((u.loyaltyPts||0)/10)}</div><div style="font-size:11px;color:var(--text3)">Redeem value</div></div>
+      </div>
+      ${nextTier?`<div class="loyalty-bar-wrap" style="margin-bottom:6px"><div class="loyalty-bar" style="width:${Math.min(100,((u.loyaltyPts||0)-tier.min)/(nextTier.min-tier.min)*100)}%"></div></div><div style="font-size:11px;color:var(--text3)">${nextTier.min-(u.loyaltyPts||0)} pts to ${nextTier.icon} ${nextTier.name}</div>`:''}
+      ${hist.length>0?`<div style="margin-top:14px">${hist.map(h=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px"><div><div style="font-weight:600">${h.desc}</div><div style="font-size:10px;color:var(--text3)">${formatDate(h.date)}</div></div><div style="font-weight:700;color:${h.type==='earn'?'var(--green2)':'var(--red)'}"><span>${h.type==='earn'?'+':'-'}${h.pts} pts</span></div></div>`).join('')}</div>`:''}
+    </div>
+    <!-- REFERRAL -->
+    <div class="referral-card" style="margin-bottom:14px">
+      <div style="font-size:15px;font-weight:800;margin-bottom:4px;color:var(--green2)">🎁 Refer & Earn</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:4px">Both you and your friend get 200 pts when they register!</div>
+      <div class="ref-code" onclick="copyRefCode()">${u.referralCode||'ARA'+u.id.slice(-5).toUpperCase()}</div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:12px">Tap to copy</div>
+      <button class="btn btn-green btn-w" onclick="shareReferral()">💬 Share on WhatsApp</button>
+    </div>
+    <!-- EDIT PROFILE -->
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:15px;font-weight:800;margin-bottom:12px">✏️ Edit Profile</div>
+      <div class="form-group"><label class="form-label">Name</label><input id="pf_name" value="${u.name}" type="text"></div>
+      <div class="form-group"><label class="form-label">Phone</label><input id="pf_phone" value="${u.phone||''}" type="tel"></div>
+      <div class="form-group"><label class="form-label">Email</label><input id="pf_email" value="${u.email||''}" type="email"></div>
+      ${u.socialProvider?'':`<div class="form-group"><label class="form-label">New Password</label><input id="pf_pass" type="password" placeholder="Leave blank to keep"></div>`}
+      <button class="btn btn-gold btn-w" onclick="saveProfile()">Save Changes</button>
+    </div>
+    <!-- ID PROOF -->
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:15px;font-weight:800;margin-bottom:6px">📋 ID Verification</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Upload one ID for faster kiosk check-in (optional)</div>
+      ${u.idProof?`<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:10px;font-size:12px;color:var(--green2)">✅ ID proof submitted — under review</div>`:`
+      <div style="background:var(--bg3);border:2px dashed var(--border2);border-radius:var(--radius);padding:18px;text-align:center;cursor:pointer" onclick="document.getElementById('idFile').click()">
+        <div style="font-size:28px;margin-bottom:6px">📸</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">Upload ID Proof</div>
+        <div style="font-size:11px;color:var(--text3)">Aadhaar / PAN / Bank Statement / Address Proof</div>
+        <input type="file" id="idFile" accept="image/*,.pdf" style="display:none" onchange="uploadId(this)">
+      </div>`}
+    </div>
+    <!-- SIGN OUT -->
+    <button class="btn btn-red btn-w" style="margin-bottom:6px" onclick="logout()">Sign Out</button>
+    <div style="font-size:11px;color:var(--text3);text-align:center;padding:6px">ārāma Wellness · <a href="mailto:care@arama.asia" style="color:var(--accent3)">care@arama.asia</a></div>
+  </div>`;
+}
+
+function saveProfile(){
+  const name=document.getElementById('pf_name')?.value.trim();
+  if(!name){toast('Name required','error');return;}
+  const customers=CDB.get('customers')||[];const idx=customers.findIndex(c=>c.id===currentUser?.id);if(idx<0)return;
+  const pass=document.getElementById('pf_pass')?.value;
+  customers[idx]={...customers[idx],name,phone:document.getElementById('pf_phone')?.value.trim()||customers[idx].phone,email:document.getElementById('pf_email')?.value.trim()||customers[idx].email,...(pass?{password:pass}:{})};
+  CDB.set('customers',customers);currentUser=customers[idx];
+  toast('Profile saved!','success');updateTopBar();
+}
+
+function uploadId(input){
+  const file=input.files?.[0];if(!file)return;
+  if(file.size>5*1024*1024){toast('Max file size 5MB','error');return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const customers=CDB.get('customers')||[];const idx=customers.findIndex(c=>c.id===currentUser?.id);
+    if(idx>=0){customers[idx].idProof='uploaded:'+file.name;CDB.set('customers',customers);currentUser=customers[idx];}
+    toast('ID proof uploaded! Admin will verify shortly.','success',3000);renderMe();
+  };
+  reader.readAsDataURL(file);
+}
+
+function copyRefCode(){
+  const u=getFreshUser();const code=u?.referralCode||'';
+  navigator.clipboard?.writeText(code).then(()=>toast('Referral code copied!','success')).catch(()=>toast(code,'info',4000));
+}
+function shareReferral(){
+  const u=getFreshUser();const code=u?.referralCode||'';
+  const msg=encodeURIComponent('Hey! Try ārāma Wellness kiosks — quick massages inside malls, starts ₹80! 💆\n\nUse my code *'+code+'* to get 200 bonus pts when you register!\n\n'+window.location.href.split('?')[0]);
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+function openReferral(){
+  const u=getFreshUser();const code=u?.referralCode||'ARA'+u?.id?.slice(-5).toUpperCase();
+  openModal('🎁 Refer & Earn',`
+  <div style="text-align:center;padding:8px 0">
+    <div style="font-size:44px;margin-bottom:10px">🎁</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:6px">Invite friends, earn together!</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:18px">You both get <strong style="color:var(--accent3)">200 wellness pts</strong> — enough for a free session!</div>
+    <div class="ref-code" onclick="copyRefCode()" style="font-size:28px;letter-spacing:8px">${code}</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:16px">Tap code to copy</div>
+    <button class="btn btn-green btn-w" onclick="shareReferral()">💬 Share on WhatsApp</button>
+  </div>`,
+  `<button class="btn btn-outline btn-w" onclick="closeModal()">Close</button>`);
+}
+
+// ══════════════════════════════════════════
+// OAUTH CALLBACK HANDLER
+// ══════════════════════════════════════════
+async function handleOAuthCallback(){
+  const params=new URLSearchParams(window.location.search);
+  const code=params.get('code');
+  const state=params.get('state');
+  const error=params.get('error');
+  if(error){toast('Social login cancelled','info');cleanOAuthParams();return;}
+  if(!code||!state)return;
+  const provider=sessionStorage.getItem('_pkce_provider');
+  if(provider==='x')await handleXCallback(code,state);
+  else if(provider==='linkedin')await handleLinkedinCallback(code,state);
+  else cleanOAuthParams();
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',async()=>{
+  // Handle OAuth redirect callbacks first
+  await handleOAuthCallback();
+  // Check ref in URL
+  const params=new URLSearchParams(window.location.search);
+  const ref=params.get('ref');
+  if(ref){sessionStorage.setItem('_reg_ref',ref);switchAuthTab('register');}
+  // Init Google Auth
+  const initG=()=>{if(typeof google!=='undefined')initGoogleAuth();else setTimeout(initG,500);};
+  initG();
+  // Check existing session
+  checkSession();
+});
 </script>
 </body>
 </html>

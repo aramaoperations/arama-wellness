@@ -998,6 +998,7 @@ const DEFAULT_CONFIG = {
     {id:'P004',name:'Corporate Annual',sessions:100,duration:15,fullPrice:20000,discountedPrice:14999,validity:365,loyaltyBonus:8000,active:true}
   ],
   loyalty:{signupBonus:100,referralPts:2026,socialSharePts:50,reviewPts:50,videoReviewPts:200,purchasePtsPerHundred:10,conversion:100,conversionValue:5,minPurchaseRedeem:499,maxRedeemPct:20,validityMonths:12},
+  googleClientId:'983210226770-6gs5e6q6oos50h098j9v1de5ddgcieqk.apps.googleusercontent.com',
   whatsappApiKey:'',gupshupUrl:'https://api.gupshup.io/sm/api/v1/msg',
   reportRecipients:['7090090100','8866666687','8951516190'],
   ambassadorTiers:[
@@ -1056,6 +1057,67 @@ function _doLogoutSilent(){
   document.getElementById('app').classList.remove('visible');
   document.getElementById('loginScreen').style.display='flex';
 }
+
+// ═══════════════════════════════════════════════
+// ATTENDANCE — Clock In / Clock Out
+// ═══════════════════════════════════════════════
+function clockIn(){
+  const s=currentSession;
+  if(!s){toast('Not logged in','error');return;}
+  const log=DB.get('attendanceLog')||[];
+  const todayStr=new Date().toDateString();
+  const todayLog=log.filter(e=>e.userId===s.id&&new Date(e.time).toDateString()===todayStr);
+  const lastIn=todayLog.slice().reverse().find(e=>e.type==='in');
+  const lastOut=todayLog.slice().reverse().find(e=>e.type==='out'&&(!lastIn||new Date(e.time)>new Date(lastIn.time)));
+  if(lastIn&&!lastOut){toast('Already clocked in! Clock out first.','info');return;}
+  const locs=DB.get('locations')||[];
+  const activeLoc=locs.find(l=>l.code===(window.activeLocationCode||s.locations?.[0]))||locs[0]||{};
+  const entry={
+    id:'att'+Date.now(),
+    userId:s.id,
+    userName:s.name,
+    locCode:activeLoc.code||'',
+    locName:activeLoc.name||'',
+    type:'in',
+    time:new Date().toISOString()
+  };
+  log.push(entry);
+  DB.set('attendanceLog',log);
+  toast('✅ Clocked in at '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),'success');
+  // Update header button if present
+  const btn=document.getElementById('attendanceBtn');
+  if(btn){btn.textContent='⏱ Clock Out';btn.onclick=clockOut;}
+}
+
+function clockOut(){
+  const s=currentSession;
+  if(!s){toast('Not logged in','error');return;}
+  const log=DB.get('attendanceLog')||[];
+  const todayStr=new Date().toDateString();
+  const todayLog=log.filter(e=>e.userId===s.id&&new Date(e.time).toDateString()===todayStr);
+  const lastIn=todayLog.slice().reverse().find(e=>e.type==='in');
+  const lastOut=todayLog.slice().reverse().find(e=>e.type==='out'&&(!lastIn||new Date(e.time)>new Date(lastIn.time)));
+  if(!lastIn||lastOut){toast('You are not clocked in.','info');return;}
+  const shiftMs=Date.now()-new Date(lastIn.time).getTime();
+  const shiftHrs=(shiftMs/3600000).toFixed(1);
+  const locs=DB.get('locations')||[];
+  const activeLoc=locs.find(l=>l.code===lastIn.locCode)||{};
+  const entry={
+    id:'att'+Date.now(),
+    userId:s.id,
+    userName:s.name,
+    locCode:lastIn.locCode||activeLoc.code||'',
+    locName:lastIn.locName||activeLoc.name||'',
+    type:'out',
+    time:new Date().toISOString(),
+    shiftHrs:parseFloat(shiftHrs)
+  };
+  log.push(entry);
+  DB.set('attendanceLog',log);
+  toast('👋 Clocked out — '+shiftHrs+'h shift recorded','success');
+  const btn=document.getElementById('attendanceBtn');
+  if(btn){btn.textContent='⏱ Clock In';btn.onclick=clockIn;}
+}
 // Track user interactions
 ['click','keydown','touchstart','mousemove'].forEach(evt=>{
   document.addEventListener(evt, refreshActivity, {passive:true});
@@ -1066,8 +1128,8 @@ function seedIfEmpty(){
     DB.set('locations',DEFAULT_LOCATIONS);
     DB.set('config',DEFAULT_CONFIG);
     const users=[
-      {id:'u1',username:'superadmin',password:'Arama@2026!',name:'Super Admin',email:'aramakiosks@gmail.com',phone:'7090090100',role:'superadmin',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{aadhaar:true,pv:true,medical:true,uniform:true,icard:true}},
-      {id:'u2',username:'admin',password:'Admin@123',name:'Admin User',email:'admin@arama.asia',phone:'8866666687',role:'admin',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{aadhaar:true,pv:true,medical:true,uniform:true,icard:true}}
+      {id:'u1',username:'superadmin',password:'Arama@2026!',name:'Super Admin',email:'aramakiosks@gmail.com',phone:'7090090100',role:'superadmin',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{idProof:true}},
+      {id:'u2',username:'admin',password:'Admin@123',name:'Admin User',email:'admin@arama.asia',phone:'8866666687',role:'admin',active:true,locations:[],createdAt:new Date().toISOString(),compliance:{idProof:true}}
     ];
     DB.set('users',users);
     DB.set('transactions',[]);
@@ -1167,7 +1229,7 @@ function loginUser(user){
     const d=user._complianceWarning;
     setTimeout(()=>{
       if(d<=0){
-        toast('⚠️ Compliance docs overdue — please upload Aadhaar & selfie in My Profile. POS & access still active.','info');
+        toast('⚠️ ID proof overdue — please upload any one: Aadhaar/PAN/Bank/Address proof in My Profile. POS & access still active.','info');
       } else {
         toast('⏳ '+d+' day'+(d===1?'':'s')+' left to upload compliance docs. Go to My Profile → Documents.','info');
       }
@@ -1235,7 +1297,7 @@ function socialLogin(provider){
 }
 function initGoogleSignIn(){
   const cfg=DB.get('config')||{};
-  const clientId=cfg.googleClientId||'';
+  const clientId=cfg.googleClientId||DEFAULT_CONFIG.googleClientId||'';
   if(!clientId){
     openModal('🔧 Google Sign-In Setup',`
       <div style="padding:8px 0">
@@ -1766,31 +1828,30 @@ function renderStaffPersonalDashboard(){
   document.getElementById('dashSubtitle').textContent=dayStr+' · '+(activeLocation?.name||s.locations?.[0]||'ārāma');
 
   // ── Compliance banner ──
-  const me=DB.get('users')||[];
-  const myProfile=me.find(u=>u.id===s.id)||{};
+  const allUsers=DB.get('users')||[];
+  const myProfile=allUsers.find(u=>u.id===s.id)||{};
   let compBanner='';
   if(myProfile.compliancePending){
     const graceLeft=myProfile.complianceDeadline?Math.ceil((myProfile.complianceDeadline-Date.now())/(86400000)):0;
     const docs=myProfile.compliance||{};
-    const uploaded=Object.values(docs).filter(Boolean).length;
-    const total=Object.keys(docs).length||6;
+    const idDone=docs.idProof||Object.values(docs).some(Boolean);
     if(graceLeft>0){
       compBanner=`<div style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <div style="font-size:22px">⏳</div>
         <div style="flex:1">
-          <div style="font-weight:700;font-size:13px;color:#fde68a">Complete your profile — ${graceLeft} day${graceLeft===1?'':'s'} remaining</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Upload your selfie &amp; Aadhaar to complete compliance. ${uploaded}/${total} documents done.</div>
+          <div style="font-weight:700;font-size:13px;color:#fde68a">Upload your ID proof — ${graceLeft} day${graceLeft===1?'':'s'} remaining</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${idDone?'✅ ID proof received — compliance complete!':'Upload any one: Aadhaar / PAN / Bank Statement / Address Proof. POS &amp; access active.'}</div>
         </div>
-        <button class="btn btn-accent btn-sm" onclick="navigate('hrms')">Upload Docs →</button>
+        ${idDone?'':'<button class="btn btn-accent btn-sm" onclick="navigate(\'hrms\')">Upload ID →</button>'}
       </div>`;
     } else {
       compBanner=`<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <div style="font-size:22px">⚠️</div>
         <div style="flex:1">
-          <div style="font-weight:700;font-size:13px;color:#fca5a5">Compliance docs overdue — please upload now</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">POS &amp; access still active. Upload selfie &amp; Aadhaar to clear this. ${uploaded}/${total} documents done.</div>
+          <div style="font-weight:700;font-size:13px;color:#fca5a5">ID proof overdue — please upload now</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">POS &amp; access still active. Upload any one ID: Aadhaar / PAN / Bank Statement / Address Proof.</div>
         </div>
-        <button class="btn btn-red btn-sm" onclick="navigate('hrms')">Upload Now →</button>
+        <button class="btn btn-red btn-sm" onclick="navigate('hrms')">Upload ID →</button>
       </div>`;
     }
   }
@@ -3394,7 +3455,7 @@ function openAddUser(){
     </select>
   </div>
   <div style="background:rgba(201,150,10,.08);border:1px solid rgba(201,150,10,.25);border-radius:8px;padding:10px;font-size:12px;color:var(--accent3)">
-    ℹ️ Staff can login immediately. They get <strong>7 days</strong> to upload compliance docs (selfie, Aadhaar). POS &amp; all assigned access will work right away.
+    ℹ️ Staff can login immediately. They get <strong>7 days</strong> to upload any ONE ID proof (Aadhaar / PAN / Bank statement / Address proof). POS &amp; all assigned access work right away.
   </div>`,
   `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
    <button class="btn btn-accent" onclick="saveNewUser()">Create &amp; Activate</button>`);
@@ -3429,7 +3490,7 @@ function saveNewUser(){
     createdAt:new Date().toISOString(),
     compliancePending:true,
     complianceDeadline,
-    compliance:{selfie:false,aadhaar:false,pv:false,medical:false,uniform:false,icard:false}
+    compliance:{idProof:false}
   };
   users.push(newUser);
   DB.set('users',users);
@@ -3437,7 +3498,7 @@ function saveNewUser(){
   renderUsers();
   // Show password card so admin can share with staff
   const waText=encodeURIComponent(
-    'Hi '+name+'! Your ārāma staff account is ready.\n\nLogin at: '+window.location.href+'\nUsername: '+uname+'\nPassword: '+pass+'\n\n⏳ Please upload your selfie & Aadhaar in My Profile within 7 days.\n— ārāma Operations Team'
+    'Hi '+name+'! Your ārāma staff account is ready.\n\nLogin at: '+window.location.href+'\nUsername: '+uname+'\nPassword: '+pass+'\n\n⏳ Please upload any ONE ID proof (Aadhaar/PAN/Bank/Address proof) in My Profile within 7 days. POS & access work immediately!\n— ārāma Operations Team'
   );
   openModal('✅ User Created — '+name,
     '<div style="text-align:center;padding:16px">'+
@@ -3450,7 +3511,7 @@ function saveNewUser(){
     '<div style="font-size:12px;color:var(--text3);margin:8px 0 2px">Password</div>'+
     '<div style="font-size:22px;font-weight:800;font-family:monospace;letter-spacing:3px;color:var(--gold2)">'+pass+'</div>'+
     '</div>'+
-    '<div style="font-size:11px;color:#fde68a;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:8px;margin-bottom:12px">⏳ Staff has <strong>7 days</strong> to upload selfie &amp; Aadhaar. POS &amp; access work immediately.</div>'+
+    '<div style="font-size:11px;color:#fde68a;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:8px;margin-bottom:12px">⏳ Staff has <strong>7 days</strong> to upload any one ID proof (Aadhaar / PAN / Bank statement / Address proof). POS &amp; access work immediately.</div>'+
     '<a href="https://wa.me/91'+phone+'?text='+waText+'" target="_blank" class="btn btn-green" style="width:100%;justify-content:center;margin-bottom:6px">💬 Send via WhatsApp</a>'+
     '</div>',
     '<button class="btn btn-accent" onclick="closeModal()">Done ✓</button>');
@@ -3533,9 +3594,9 @@ function approveStaff(idx){
     position:app.position||'Staff',
     createdAt:new Date().toISOString(),
     approvedAt:new Date().toISOString(),
-    complianceDeadline,          // 10-day grace period to upload docs
+    complianceDeadline,          // 7-day grace period to upload ID proof
     compliancePending:true,      // flag: compliance not yet complete
-    compliance:{aadhaar:false,pv:false,medical:false,uniform:false,icard:false}
+    compliance:{idProof:false}   // any ONE doc clears compliance
   };
   users.push(newUser);
   DB.set('users',users);
@@ -3547,7 +3608,7 @@ function approveStaff(idx){
     'Login URL: '+window.location.href+'\n'+
     'Username: '+app.phone+'\n'+
     'Password: '+pass+'\n\n'+
-    '⏳ Please upload your selfie & Aadhaar in My Profile within '+daysLeft+' days. POS & access work immediately.\n\n'+
+    '⏳ Please upload any ONE ID proof (Aadhaar/PAN/Bank statement/Address proof) in My Profile within '+daysLeft+' days. POS & access work immediately!\n\n'+
     '— ārāma Operations Team'
   );
   openModal('Staff Approved ✓',
@@ -3557,7 +3618,7 @@ function approveStaff(idx){
     '<div style="font-size:13px;color:var(--text2);margin-bottom:4px">Username: <code>'+app.phone+'</code></div>'+
     '<div style="font-size:12px;color:var(--text3);margin-bottom:6px">Temporary password — share securely:</div>'+
     '<div style="font-size:32px;font-weight:800;font-family:monospace;letter-spacing:4px;color:var(--accent3);background:rgba(201,150,10,.1);padding:16px 24px;border-radius:12px;margin:10px 0">'+pass+'</div>'+
-    '<div style="margin:12px 0;padding:10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:12px;color:#fde68a">⏳ Staff has <strong>10 days</strong> to upload compliance documents (Aadhaar, PV, Medical). Account will show warning after grace period.</div>'+
+    '<div style="margin:12px 0;padding:10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:12px;color:#fde68a">⏳ Staff has <strong>7 days</strong> to upload any ONE ID proof (Aadhaar / PAN / Bank statement / Address proof). POS &amp; access active immediately.</div>'+
     '<a href="https://wa.me/91'+app.phone+'?text='+waText+'" target="_blank" class="btn btn-green" style="margin-top:8px;width:100%;justify-content:center">💬 Send Login via WhatsApp</a>'+
     '</div>',
     '<button class="btn btn-accent" onclick="closeModal()">Noted ✓</button>');
@@ -3621,7 +3682,7 @@ function renderHRMS(){
         <td><span class="badge badge-purple">${ROLE_LABELS[u.role]}</span></td>
         <td>${u.phone||'-'}</td>
         <td style="font-size:11px">${u.locations?.join(', ')||'All'}</td>
-        ${['aadhaar','pv','medical','uniform','icard'].map(k=>`<td>${c[k]?'<span class="badge badge-green">✓</span>':'<span class="badge badge-red">✗</span>'}`).join('')}
+        <td>${(c.idProof||Object.values(c).some(Boolean))?'<span class="badge badge-green">✓ ID</span>':'<span class="badge badge-red">✗ ID</span>'}</td>
         <td style="display:flex;gap:4px"><button class="btn btn-accent btn-sm" onclick="openStaffCompliance('${u.id}')">Compliance</button><button class="btn btn-outline btn-sm" onclick="viewStaffPerf('${u.id}')">📊 Perf</button><button class="btn btn-outline btn-sm" onclick="openEditUser('${u.id}')">✏️</button></td>
       </tr>`;}).join('')}</tbody></table>
     </div>
@@ -3706,13 +3767,26 @@ function openStaffCompliance(id){
   const u=users.find(x=>x.id===id);
   if(!u)return;
   const c=u.compliance||{};
-  const fields=[{k:'aadhaar',l:'Aadhaar Verified'},{k:'pv',l:'PV Certificate'},{k:'medical',l:'Medical Fitness'},{k:'uniform',l:'Uniform Issued'},{k:'icard',l:'I-Card with QR'}];
+  const idDone=c.idProof||Object.values(c).some(Boolean);
+  const graceLeft=u.complianceDeadline?Math.ceil((u.complianceDeadline-Date.now())/(86400000)):0;
+  const statusLabel=idDone?'<span class="badge badge-green">✅ ID Proof Submitted</span>':'<span class="badge badge-red">⚠️ No ID Proof Yet</span>';
   openModal('Compliance — '+u.name,`
-  ${fields.map(f=>`<div class="form-check" style="margin-bottom:12px;padding:10px;background:var(--bg3);border-radius:8px">
-    <input type="checkbox" id="comp_${f.k}" ${c[f.k]?'checked':''}>
-    <label style="font-size:14px;font-weight:500">${f.l}</label>
-    ${c[f.k]?'<span class="badge badge-green" style="margin-left:auto">✓ Complete</span>':'<span class="badge badge-red" style="margin-left:auto">Pending</span>'}
-  </div>`).join('')}`,
+  <div style="margin-bottom:14px;padding:12px;background:var(--bg3);border-radius:8px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:6px">ID Proof Status ${statusLabel}</div>
+    <div style="font-size:12px;color:var(--text3)">Staff needs to submit any ONE of: Aadhaar / PAN card / Bank statement / Address proof</div>
+    ${u.compliancePending&&!idDone?`<div style="font-size:11px;color:${graceLeft>0?'#fde68a':'#fca5a5'};margin-top:6px">${graceLeft>0?graceLeft+' days remaining in grace period':'Grace period expired — follow up with staff'}</div>`:''}
+  </div>
+  <div class="form-check" style="margin-bottom:12px;padding:12px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;gap:10px">
+    <input type="checkbox" id="comp_idProof" ${idDone?'checked':''} style="width:18px;height:18px">
+    <label style="font-size:14px;font-weight:500;cursor:pointer" for="comp_idProof">ID Proof Verified by Admin</label>
+  </div>
+  <div class="form-check" style="margin-bottom:12px;padding:12px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;gap:10px">
+    <input type="checkbox" id="comp_clearAll" ${!u.compliancePending?'checked':''} style="width:18px;height:18px">
+    <label style="font-size:14px;font-weight:500;cursor:pointer" for="comp_clearAll">Grant full compliance clearance (admin override)</label>
+  </div>
+  <div style="font-size:11px;color:var(--text3);padding:8px;background:rgba(201,150,10,.06);border-radius:6px">
+    Checking "Grant full clearance" removes the compliance warning permanently from staff dashboard. POS & access remain active regardless.
+  </div>`,
   `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
    <button class="btn btn-accent" onclick="saveCompliance('${id}')">Save</button>`);
 }
@@ -3720,7 +3794,13 @@ function saveCompliance(id){
   const users=DB.get('users')||[];
   const idx=users.findIndex(u=>u.id===id);
   if(idx<0)return;
-  users[idx].compliance={aadhaar:document.getElementById('comp_aadhaar').checked,pv:document.getElementById('comp_pv').checked,medical:document.getElementById('comp_medical').checked,uniform:document.getElementById('comp_uniform').checked,icard:document.getElementById('comp_icard').checked};
+  const idProof=document.getElementById('comp_idProof').checked;
+  const clearAll=document.getElementById('comp_clearAll').checked;
+  users[idx].compliance={idProof};
+  if(clearAll||idProof){
+    users[idx].compliancePending=false;
+    delete users[idx].complianceDeadline;
+  }
   DB.set('users',users);closeModal();renderHRMS();toast('Compliance updated','success');
 }
 
@@ -4937,10 +5017,7 @@ function renderProfile(){
       </div>
       <div style="margin-top:14px">
         <div style="font-weight:700;font-size:13px;margin-bottom:8px">Compliance Status</div>
-        ${Object.entries(u.compliance||{}).map(([k,v])=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:12px">
-          ${v?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">✗</span>'}
-          <span style="color:var(--text2)">${{aadhaar:'Aadhaar',pv:'PV Certificate',medical:'Medical Fitness',uniform:'Uniform',icard:'I-Card'}[k]||k}</span>
-        </div>`).join('')||'<span style="color:var(--text3);font-size:12px">No compliance data</span>'}
+        ${(()=>{const c=u.compliance||{};const done=c.idProof||Object.values(c).some(Boolean);const graceLeft=u.complianceDeadline?Math.ceil((u.complianceDeadline-Date.now())/86400000):0;if(!u.compliancePending||done)return'<div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="color:var(--green)">✅</span><span style="color:var(--text2)">ID Proof Submitted — Compliant</span></div>';return'<div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="color:'+(graceLeft>0?'#fbbf24':'var(--red)')+'">'+( graceLeft>0?'⏳':'⚠️')+'</span><span style="color:var(--text2)">ID proof pending — '+(graceLeft>0?graceLeft+' days left':'overdue')+'</span></div>';})()}
       </div>
       <div style="margin-top:14px">
         <div style="font-weight:700;font-size:13px;margin-bottom:6px">Login Info</div>
@@ -5157,444 +5234,6 @@ function daysAgo(iso){
   return d+'d ago';
 }
 
-// ═══════════════════════════════════════════════
-// SERVICE WORKER REGISTRATION (PWA)
-// ═══════════════════════════════════════════════
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    // Minimal inline SW via blob for offline support
-    const sw=`
-      const CACHE='arama-v1';
-      self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/']))));
-      self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
-    `;
-    const blob=new Blob([sw],{type:'application/javascript'});
-    const url=URL.createObjectURL(blob);
-    navigator.serviceWorker.register(url).catch(()=>{});
-  });
-}
-
-// ═══════════════════════════════════════════════
-// KEYBOARD SHORTCUTS
-// ═══════════════════════════════════════════════
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){
-    const overlay=document.getElementById('modalOverlay');
-    if(overlay&&overlay.style.display!=='none')closeModal();
-  }
-  if((e.ctrlKey||e.metaKey)&&e.key==='k'){
-    e.preventDefault();
-    if(currentSession){
-      const sidebar=document.getElementById('sidebar');
-      if(sidebar)sidebar.querySelector('.sidebar-search input')?.focus();
-    }
-  }
-});
-
-// ═══════════════════════════════════════════════
-// STARTUP — DOM READY
-// ═══════════════════════════════════════════════
-
-// ═══════════════════════════════════════════════
-// AUTH HELPERS
-// ═══════════════════════════════════════════════
-function showLogin(){
-  document.getElementById('loginScreen').style.display='flex';
-  const appEl=document.getElementById('app');
-  if(appEl)appEl.classList.remove('visible');
-  currentSession=null;
-  DB.remove('session');
-  sessionStorage.removeItem('arama_sess');
-}
-
-function checkSession(){
-  // Try sessionStorage first (tab-level)
-  const ss=sessionStorage.getItem('arama_sess');
-  if(ss){
-    try{
-      const s=JSON.parse(ss);
-      // Hard expiry check
-      if(s.expiresAt && Date.now() > s.expiresAt){
-        sessionStorage.removeItem('arama_sess');
-        DB.remove('session');
-        showLogin();
-        return;
-      }
-      // Idle check
-      const idle = Date.now() - (s.lastActivity || Date.now());
-      if(idle > SESSION_TIMEOUT_MS){
-        sessionStorage.removeItem('arama_sess');
-        DB.remove('session');
-        showLogin();
-        return;
-      }
-      // Verify user still exists and is active
-      const users=DB.get('users')||[];
-      const stillValid=users.find(u=>u.id===s.id&&u.active!==false);
-      if(stillValid){loginUser({...stillValid,loginAt:s.loginAt,expiresAt:s.expiresAt});return;}
-    }catch(e){}
-  }
-  // Try localStorage token (lightweight, non-sensitive)
-  const ls=DB.get('session');
-  if(ls){
-    // Hard expiry
-    if(ls.expiresAt && Date.now() > ls.expiresAt){
-      DB.remove('session');
-      showLogin();
-      return;
-    }
-    const idle = Date.now() - (ls.lastActivity || Date.now());
-    if(idle > SESSION_TIMEOUT_MS){
-      DB.remove('session');
-      showLogin();
-      return;
-    }
-    const users=DB.get('users')||[];
-    const stillValid=users.find(u=>u.id===ls.id&&u.active!==false);
-    if(stillValid){loginUser({...stillValid,loginAt:ls.loginAt,expiresAt:ls.expiresAt});return;}
-  }
-  showLogin();
-}
-
-document.addEventListener('DOMContentLoaded',()=>{
-  // Seed initial data if first run
-  seedIfEmpty();
-
-  // Init Google Drive sync
-  setTimeout(initGAuth, 1500); // after GIS lib loads
-
-  // Restore session
-  checkSession();
-
-  // Modal close on backdrop click
-  document.getElementById('modalOverlay').addEventListener('click',function(e){
-    if(e.target===this)closeModal();
-  });
-
-  // Handle PWA install prompt
-  let deferredInstall;
-  window.addEventListener('beforeinstallprompt',e=>{
-    e.preventDefault();
-    deferredInstall=e;
-    // Show install button if in profile page
-    const btn=document.getElementById('pwaInstallBtn');
-    if(btn){btn.style.display='inline-flex';btn.onclick=()=>{deferredInstall.prompt();deferredInstall=null;btn.style.display='none';};}
-  });
-
-  // Live clock (optional — used in daily report header)
-  setInterval(()=>{
-    const el=document.getElementById('liveClock');
-    if(el)el.textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  },1000);
-
-  console.log('%c ārāma Wellness OS v8.3 loaded','color:#c084fc;font-size:14px;font-weight:bold;');
-  console.log('%c Build: '+new Date().toISOString().split('T')[0],'color:#a78bfa;font-size:11px;');
-});
-
-
-// ══════════════════════════════════════════════
-// STAFF ATTENDANCE & PERFORMANCE
-// ══════════════════════════════════════════════
-function clockIn(){
-  const s=currentSession;
-  if(!s)return;
-  const log=DB.get('attendanceLog')||[];
-  const today=new Date().toDateString();
-  const alreadyIn=log.find(e=>e.userId===s.id&&e.type==='in'&&new Date(e.time).toDateString()===today&&!log.find(o=>o.userId===s.id&&o.type==='out'&&new Date(o.time)>new Date(e.time)));
-  if(alreadyIn){toast('Already clocked in today. Clock out first.','info');return;}
-  log.push({id:'atd'+Date.now(),userId:s.id,userName:s.name,locCode:activeLocation?.code||'',locName:activeLocation?.name||'',type:'in',time:new Date().toISOString()});
-  DB.set('attendanceLog',log);
-  toast('✅ Clocked IN at '+new Date().toLocaleTimeString('en-IN'),'success');
-  updateAttendanceBtn();
-}
-function clockOut(){
-  const s=currentSession;
-  if(!s)return;
-  const log=DB.get('attendanceLog')||[];
-  const today=new Date().toDateString();
-  const lastIn=log.slice().reverse().find(e=>e.userId===s.id&&e.type==='in'&&new Date(e.time).toDateString()===today);
-  if(!lastIn){toast('You have not clocked in today','error');return;}
-  log.push({id:'atd'+Date.now(),userId:s.id,userName:s.name,locCode:activeLocation?.code||'',locName:activeLocation?.name||'',type:'out',time:new Date().toISOString()});
-  DB.set('attendanceLog',log);
-  const hrs=((Date.now()-new Date(lastIn.time))/3600000).toFixed(1);
-  toast('👋 Clocked OUT — '+hrs+' hrs worked','success');
-  updateAttendanceBtn();
-}
-function updateAttendanceBtn(){
-  const btn=document.getElementById('attendanceBtn');
-  if(!btn||!currentSession)return;
-  const log=DB.get('attendanceLog')||[];
-  const today=new Date().toDateString();
-  const logs=log.filter(e=>e.userId===currentSession.id&&new Date(e.time).toDateString()===today);
-  const lastEntry=logs[logs.length-1];
-  const inNow=lastEntry?.type==='in';
-  btn.textContent=inNow?'🟢 Clock Out':'⏱ Clock In';
-  btn.onclick=inNow?clockOut:clockIn;
-  btn.style.background=inNow?'rgba(239,68,68,.15)':'rgba(16,185,129,.15)';
-}
-function renderStaffPerformance(userId){
-  const u=(DB.get('users')||[]).find(x=>x.id===userId)||currentSession;
-  if(!u)return;
-  const txns=DB.get('transactions')||[];
-  const myTxns=txns.filter(t=>t.createdBy===u.name||t.createdBy===u.username);
-  const log=DB.get('attendanceLog')||[];
-  const myLog=log.filter(e=>e.userId===u.id);
-  // Calculate hours worked
-  let totalMins=0;
-  const days={};
-  myLog.filter(e=>e.type==='in').forEach(inE=>{
-    const outE=myLog.find(o=>o.type==='out'&&new Date(o.time)>new Date(inE.time)&&new Date(o.time).toDateString()===new Date(inE.time).toDateString());
-    if(outE){
-      const mins=(new Date(outE.time)-new Date(inE.time))/60000;
-      totalMins+=mins;
-      days[new Date(inE.time).toDateString()]=(days[new Date(inE.time).toDateString()]||0)+mins;
-    }
-  });
-  const daysWorked=Object.keys(days).length;
-  const totalRev=myTxns.reduce((s,t)=>s+(t.total||t.amount||0),0);
-  const sessionCount=myTxns.filter(t=>t.type==='service').length;
-  openModal('📊 Performance — '+u.name,`
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-    <div style="background:rgba(124,58,237,.1);border-radius:10px;padding:14px;text-align:center">
-      <div style="font-size:28px;font-weight:800;color:var(--accent3)">${sessionCount}</div>
-      <div style="font-size:12px;color:var(--text2)">Sessions Done</div>
-    </div>
-    <div style="background:rgba(245,158,11,.1);border-radius:10px;padding:14px;text-align:center">
-      <div style="font-size:28px;font-weight:800;color:var(--gold)">₹${(totalRev/1000).toFixed(1)}K</div>
-      <div style="font-size:12px;color:var(--text2)">Revenue Generated</div>
-    </div>
-    <div style="background:rgba(16,185,129,.1);border-radius:10px;padding:14px;text-align:center">
-      <div style="font-size:28px;font-weight:800;color:var(--green)">${daysWorked}</div>
-      <div style="font-size:12px;color:var(--text2)">Days Worked</div>
-    </div>
-    <div style="background:rgba(59,130,246,.1);border-radius:10px;padding:14px;text-align:center">
-      <div style="font-size:28px;font-weight:800;color:#60a5fa">${(totalMins/60).toFixed(1)}h</div>
-      <div style="font-size:12px;color:var(--text2)">Total Hours Logged</div>
-    </div>
-  </div>
-  <div style="font-weight:700;margin-bottom:8px;font-size:13px">Recent Attendance (last 10)</div>
-  <div style="max-height:200px;overflow-y:auto">
-    ${myLog.slice(-10).reverse().map(e=>`
-    <div style="display:flex;justify-content:space-between;padding:6px 10px;border-radius:6px;margin-bottom:4px;background:rgba(${e.type==='in'?'16,185,129':'239,68,68'},.08)">
-      <span style="font-size:12px">${e.type==='in'?'🟢 Clock In':'🔴 Clock Out'} · ${e.locName||e.locCode||'-'}</span>
-      <span style="font-size:12px;color:var(--text2)">${new Date(e.time).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</span>
-    </div>`).join('')||'<div style="color:var(--text3);font-size:13px">No attendance records yet</div>'}
-  </div>`,
-  `<button class="btn btn-accent" onclick="closeModal()">Close</button>`);
-}
-
-// ══════════════════════════════════════════════
-// VENDOR PORTAL — render when vendor logs in
-// ══════════════════════════════════════════════
-function renderVendorDashboard(){
-  const s=currentSession;
-  const locs=DB.get('locations')||[];
-  const myLocs=locs.filter(l=>s.locations.includes(l.code));
-  const stock=DB.get('locationStock')||{};
-  const txns=DB.get('transactions')||[];
-  const vendorReqs=DB.get('vendorRequests')||[];
-  const myReqs=vendorReqs.filter(r=>r.vendorId===s.id);
-  document.getElementById('dashContent').innerHTML=`
-  <div style="margin-bottom:20px">
-    <div style="font-size:18px;font-weight:700">Vendor Portal — ${s.name}</div>
-    <div style="font-size:13px;color:var(--text2)">Assigned locations: ${myLocs.map(l=>l.name).join(', ')||'None assigned'}</div>
-  </div>
-  <div class="tabs" style="margin-bottom:16px">
-    <button class="tab-btn active" onclick="vendorTab(this,'vtStock')">📦 Stock Levels</button>
-    <button class="tab-btn" onclick="vendorTab(this,'vtInvoice')">🧾 Submit Invoice</button>
-    <button class="tab-btn" onclick="vendorTab(this,'vtRequests')">📋 My Requests (${myReqs.length})</button>
-    <button class="tab-btn" onclick="vendorTab(this,'vtSales')">📊 Location Sales</button>
-  </div>
-
-  <div id="vtStock">
-    ${myLocs.length===0?'<div class="alert alert-info">No locations assigned. Contact admin.</div>':
-    myLocs.map(l=>`
-    <div class="card" style="margin-bottom:12px">
-      <div style="font-weight:700;margin-bottom:10px">${l.name} — Stock</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
-        ${Object.entries(stock[l.code]||{chairs:l.chairs,legMassagers:0,gunStations:0}).map(([item,qty])=>`
-        <div style="background:rgba(124,58,237,.08);border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:20px;font-weight:800;color:${qty<2?'var(--red)':'var(--green)'}">${qty}</div>
-          <div style="font-size:11px;color:var(--text2)">${item.replace(/([A-Z])/g,' $1').trim()}</div>
-        </div>`).join('')}
-      </div>
-    </div>`).join('')}
-  </div>
-
-  <div id="vtInvoice" style="display:none">
-    <div class="card">
-      <div style="font-weight:700;margin-bottom:14px">Submit Delivery Invoice</div>
-      <div class="form-row">
-        <div class="form-group"><label>Location</label>
-          <select class="form-control" id="vLoc">${myLocs.map(l=>`<option value="${l.code}">${l.name}</option>`).join('')}</select>
-        </div>
-        <div class="form-group"><label>Invoice Number</label><input class="form-control" id="vInvNo" placeholder="INV-001"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Item / Description</label><input class="form-control" id="vItem" placeholder="Massage chairs x2"></div>
-        <div class="form-group"><label>Amount (₹)</label><input type="number" class="form-control" id="vAmt" placeholder="25000"></div>
-      </div>
-      <div class="form-group"><label>Notes</label><textarea class="form-control" id="vNotes" rows="2" placeholder="Delivery details, condition notes…"></textarea></div>
-      <button class="btn btn-accent" onclick="submitVendorInvoice()" style="margin-top:8px">Submit Invoice</button>
-    </div>
-  </div>
-
-  <div id="vtRequests" style="display:none">
-    ${myReqs.length===0?'<div class="alert alert-info">No requests submitted yet</div>':
-    myReqs.map(r=>`<div class="card" style="margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between">
-        <div><div style="font-weight:700">${r.item}</div><div style="font-size:12px;color:var(--text2)">${r.invNo||''} · ₹${(r.amount||0).toLocaleString('en-IN')} · ${r.locCode}</div></div>
-        <span class="badge ${r.status==='approved'?'badge-green':r.status==='rejected'?'badge-red':'badge-purple'}">${r.status||'pending'}</span>
-      </div>
-      ${r.notes?`<div style="font-size:12px;color:var(--text2);margin-top:4px">${r.notes}</div>`:''}
-    </div>`).join('')}
-  </div>
-
-  <div id="vtSales" style="display:none">
-    ${myLocs.map(l=>{
-      const locTxns=txns.filter(t=>t.locCode===l.code);
-      const rev=locTxns.reduce((s,t)=>s+(t.total||t.amount||0),0);
-      return `<div class="card" style="margin-bottom:12px">
-        <div style="font-weight:700;margin-bottom:8px">${l.name}</div>
-        <div style="display:flex;gap:16px;flex-wrap:wrap">
-          <div><div style="font-size:22px;font-weight:800;color:var(--gold)">₹${(rev/1000).toFixed(1)}K</div><div style="font-size:11px;color:var(--text2)">Total Revenue</div></div>
-          <div><div style="font-size:22px;font-weight:800;color:var(--accent3)">${locTxns.length}</div><div style="font-size:11px;color:var(--text2)">Transactions</div></div>
-        </div>
-      </div>`;
-    }).join('')||'<div class="alert alert-info">No locations assigned</div>'}
-  </div>`;
-}
-function vendorTab(btn,id){
-  ['vtStock','vtInvoice','vtRequests','vtSales'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
-  document.getElementById(id).style.display='block';
-  document.querySelectorAll('.tabs .tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-}
-function submitVendorInvoice(){
-  const item=document.getElementById('vItem')?.value.trim();
-  const amt=parseFloat(document.getElementById('vAmt')?.value||0);
-  const locCode=document.getElementById('vLoc')?.value;
-  const invNo=document.getElementById('vInvNo')?.value.trim();
-  const notes=document.getElementById('vNotes')?.value.trim();
-  if(!item||!locCode){toast('Fill in item and location','error');return;}
-  const reqs=DB.get('vendorRequests')||[];
-  reqs.push({id:'vr'+Date.now(),vendorId:currentSession.id,vendorName:currentSession.name,locCode,item,amount:amt,invNo,notes,status:'pending',createdAt:new Date().toISOString()});
-  DB.set('vendorRequests',reqs);
-  toast('Invoice submitted — awaiting admin approval','success');
-  renderVendorDashboard();
-}
-
-// ══════════════════════════════════════════════
-// COMBO AUTO-CALCULATION IN POS
-// ══════════════════════════════════════════════
-function calcComboSavings(cart,services){
-  // Find all combos in service catalogue
-  const combos=(services||DB.get('services')||[]).filter(s=>s.type==='combo'||s.isCombo);
-  let totalIndividual=0;
-  let totalCombo=0;
-  let savings=[];
-  cart.forEach(item=>{
-    const svc=(services||DB.get('services')||[]).find(s=>s.id===item.id);
-    if(svc&&(svc.type==='combo'||svc.isCombo)&&svc.includes?.length){
-      // Calculate individual price of component services
-      let indivTotal=0;
-      const included=svc.includes.map(inc=>{
-        const base=(services||DB.get('services')||[]).find(s=>s.id===inc||s.name===inc);
-        const price=base?.price||0;
-        indivTotal+=price;
-        return {name:base?.name||inc,price};
-      });
-      const save=indivTotal-item.price;
-      if(save>0){
-        savings.push({combo:item.name,items:included,individual:indivTotal,combo_price:item.price,saving:save,pct:Math.round(save/indivTotal*100)});
-      }
-    }
-  });
-  return savings;
-}
-function renderCartSavings(){
-  const services=DB.get('services')||[];
-  const savings=calcComboSavings(posCart,services);
-  const el=document.getElementById('cartSavingsBox');
-  if(!el)return;
-  if(!savings.length){el.style.display='none';return;}
-  el.style.display='block';
-  el.innerHTML=savings.map(s=>`
-  <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:12px">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <span style="font-weight:600;color:var(--green)">🎁 ${s.combo}</span>
-      <span style="font-weight:700;color:var(--green)">Save ₹${s.saving} (${s.pct}% off)</span>
-    </div>
-    <div style="color:var(--text3);margin-top:2px">${s.items.map(i=>i.name+' ₹'+i.price).join(' + ')} = ₹${s.individual} individually → <strong>₹${s.combo_price} combo</strong></div>
-  </div>`).join('');
-}
-
-// ══════════════════════════════════════════════
-// SERVICE IMAGES & PRICE FETCH FROM ARAMA.ASIA
-// ══════════════════════════════════════════════
-async function fetchAramaPrices(){
-  toast('Fetching prices from arama.asia…','info');
-  try{
-    const r=await fetch('https://www.arama.asia',{signal:AbortSignal.timeout(8000)});
-    const html=await r.text();
-    const parser=new DOMParser();
-    const doc=parser.parseFromString(html,'text/html');
-    // Try to find price elements — common patterns: .price, [class*="price"], data-price
-    const priceEls=[...doc.querySelectorAll('[class*="price"],[class*="Price"],[data-price]')];
-    const names=[...doc.querySelectorAll('[class*="service"],[class*="Service"],[class*="product"]')];
-    if(priceEls.length===0){toast('Could not auto-detect prices from website. Enter prices manually.','info');return;}
-    const extracted=priceEls.slice(0,20).map((el,i)=>({
-      rawText:el.textContent.trim(),
-      price:parseInt((el.textContent.match(/[\d,]+/)||[])[0]?.replace(',','')||0),
-      name:names[i]?.textContent.trim()||'Service '+(i+1)
-    })).filter(x=>x.price>0);
-    if(!extracted.length){toast('Prices found but could not parse. Please enter manually.','info');return;}
-    openModal('Prices from arama.asia',`
-    <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Found ${extracted.length} price entries. Review and import:</div>
-    <div style="max-height:300px;overflow-y:auto">
-      ${extracted.map((e,i)=>`<div style="display:flex;gap:8px;margin-bottom:6px;align-items:center">
-        <input type="checkbox" id="fp_${i}" checked style="width:15px;height:15px">
-        <input class="form-control" style="flex:2;padding:4px 8px;font-size:12px" value="${e.name}" id="fn_${i}">
-        <input type="number" class="form-control" style="width:90px;padding:4px 8px;font-size:12px" value="${e.price}" id="fp2_${i}">
-      </div>`).join('')}
-    </div>`,
-    `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-     <button class="btn btn-accent" onclick="applyFetchedPrices(${extracted.length})">Apply Selected</button>`);
-  }catch(e){
-    toast('Could not reach arama.asia — check internet or enter prices manually','error');
-    console.warn('Fetch error:',e);
-  }
-}
-function applyFetchedPrices(count){
-  const services=DB.get('services')||[];
-  let updated=0;
-  for(let i=0;i<count;i++){
-    const checked=document.getElementById('fp_'+i)?.checked;
-    if(!checked)continue;
-    const name=document.getElementById('fn_'+i)?.value.trim();
-    const price=parseInt(document.getElementById('fp2_'+i)?.value||0);
-    if(!name||!price)continue;
-    const idx=services.findIndex(s=>s.name.toLowerCase()===name.toLowerCase());
-    if(idx>=0){services[idx].price=price;updated++;}
-    else{services.push({id:'fs_'+Date.now()+'_'+i,name,price,type:'service',duration:30,active:true});updated++;}
-  }
-  DB.set('services',services);closeModal();
-  toast(updated+' service prices updated','success');
-}
-
-// Render service card with image in POS
-function renderServiceCard(s){
-  const img=s.imageUrl?`<img src="${s.imageUrl}" style="width:100%;height:60px;object-fit:cover;border-radius:6px 6px 0 0" onerror="this.style.display='none'" loading="lazy">`:'';
-  return `<div class="service-card" onclick="addToCart('${s.id}')">
-    ${img}
-    <div style="padding:${s.imageUrl?'6px 8px':'10px 8px'}">
-      <div style="font-weight:600;font-size:13px;margin-bottom:2px">${s.name}</div>
-      ${s.duration?`<div style="font-size:11px;color:var(--text3)">${s.duration} min</div>`:''}
-      <div style="font-weight:800;color:var(--gold);font-size:15px;margin-top:4px">₹${s.price}</div>
-      ${s.originalPrice&&s.originalPrice>s.price?`<div style="font-size:10px;color:var(--text3);text-decoration:line-through">₹${s.originalPrice}</div>`:''}
-    </div>
-  </div>`;
-}
 
 </script>
 </body>
