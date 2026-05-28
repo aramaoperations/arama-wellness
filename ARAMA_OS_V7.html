@@ -294,6 +294,7 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
 }
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
@@ -332,20 +333,35 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
         <a href="javascript:openPasswordResetModal()" style="color:var(--accent2);text-decoration:underline;font-weight:600">Forgot password?</a>
       </div>
       <div class="social-divider">or continue with</div>
-      <div class="social-btns">
-        <button class="social-btn" onclick="socialLogin('google')">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Google
+      <!-- Row 1: Google full-width -->
+      <button class="social-btn" style="width:100%;margin-bottom:8px;justify-content:center" onclick="socialLogin('google')">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <!-- Row 2: 2×2 grid -->
+      <div class="social-btns" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <button class="social-btn" style="background:#1877F2;border-color:#1877F2;color:#fff;justify-content:center" onclick="socialLogin('facebook')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.883v2.271h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+          Facebook
         </button>
-        <button class="social-btn" onclick="socialLogin('apple')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-          Apple
+        <button class="social-btn" style="background:linear-gradient(135deg,#833AB4,#FD1D1D,#FCB045);border-color:transparent;color:#fff;justify-content:center" onclick="socialLogin('instagram')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          Instagram
         </button>
-        <button class="social-btn" onclick="switchLoginTab('otp')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.0 2.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-          OTP
+        <button class="social-btn" style="background:#0A66C2;border-color:#0A66C2;color:#fff;justify-content:center" onclick="socialLogin('linkedin')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </button>
+        <button class="social-btn" style="background:#000;border-color:#333;color:#fff;justify-content:center" onclick="socialLogin('x')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          X (Twitter)
         </button>
       </div>
+      <!-- OTP fallback -->
+      <button class="social-btn" style="width:100%;justify-content:center" onclick="switchLoginTab('otp')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.0 2.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        Login with OTP
+      </button>
     </div>
     <!-- Customer login removed — customers use customer.html portal directly -->
     <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(201,150,10,.2);text-align:center;font-size:12px;color:var(--text3)">
@@ -1288,13 +1304,162 @@ function closeOTPPopup(){
 }
 
 // ═══════════════════════════════════════════════
-// GOOGLE SIGN-IN (GSI)
+// SOCIAL LOGIN CONFIG
 // ═══════════════════════════════════════════════
+const STAFF_SOCIAL={
+  facebook:{appId:''},   // developers.facebook.com → App ID
+  x:{clientId:''},       // developer.twitter.com → OAuth 2.0 Client ID
+  linkedin:{clientId:''} // linkedin.com/developers → Client ID
+};
+
+// PKCE helpers (X and LinkedIn)
+function _genRand(len=64){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';const a=new Uint8Array(len);crypto.getRandomValues(a);return Array.from(a).map(b=>c[b%c.length]).join('');}
+async function _sha256(plain){const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(plain));return h;}
+function _b64url(arr){return btoa(String.fromCharCode(...new Uint8Array(arr))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+async function _buildPKCE(){const v=_genRand(64);const c=_b64url(await _sha256(v));return{verifier:v,challenge:c};}
+function _redirectUri(){return window.location.origin+window.location.pathname;}
+function _cleanOAuth(){const u=new URL(window.location.href);['code','state','error'].forEach(k=>u.searchParams.delete(k));window.history.replaceState({},'',u.toString());['_pkce_v','_pkce_s','_pkce_p'].forEach(k=>sessionStorage.removeItem(k));}
+
+// SOCIAL LOGIN DISPATCHER
 function socialLogin(provider){
   if(provider==='google'){initGoogleSignIn();return;}
-  if(provider==='apple'){toast('Apple Sign-In coming soon. Use phone OTP instead.','info');return;}
-  toast(provider+' login coming soon.','info');
+  if(provider==='facebook'){_staffFBLogin();return;}
+  if(provider==='instagram'){_staffIGLogin();return;}
+  if(provider==='x'){_staffXLogin();return;}
+  if(provider==='linkedin'){_staffLinkedInLogin();return;}
 }
+
+// ── FACEBOOK ──
+window.fbAsyncInit=function(){
+  if(!STAFF_SOCIAL.facebook.appId)return;
+  FB.init({appId:STAFF_SOCIAL.facebook.appId,cookie:true,xfbml:false,version:'v19.0'});
+};
+function _staffFBLogin(){
+  if(!STAFF_SOCIAL.facebook.appId){_showSocialSetup('facebook');return;}
+  if(typeof FB==='undefined'){toast('Facebook SDK loading — try again in a moment','info');return;}
+  FB.login(resp=>{
+    if(resp.authResponse){
+      FB.api('/me',{fields:'name,email'},user=>{
+        _handleStaffSocial('facebook',{email:user.email||'',name:user.name||''});
+      });
+    }else{toast('Facebook login cancelled','info');}
+  },{scope:'email'});
+}
+
+// ── INSTAGRAM (via FB SDK) ──
+function _staffIGLogin(){
+  if(!STAFF_SOCIAL.facebook.appId){_showSocialSetup('instagram');return;}
+  if(typeof FB==='undefined'){toast('Facebook/Instagram SDK loading — try again','info');return;}
+  FB.login(resp=>{
+    if(resp.authResponse){
+      FB.api('/me',{fields:'name,email'},user=>{
+        _handleStaffSocial('instagram',{email:user.email||'',name:user.name||''});
+      });
+    }else{toast('Instagram login cancelled','info');}
+  },{scope:'email,instagram_basic'});
+}
+
+// ── X / TWITTER (PKCE) ──
+async function _staffXLogin(){
+  if(!STAFF_SOCIAL.x.clientId){_showSocialSetup('x');return;}
+  const{verifier,challenge}=await _buildPKCE();
+  const state=_genRand(16);
+  sessionStorage.setItem('_pkce_v',verifier);
+  sessionStorage.setItem('_pkce_s',state);
+  sessionStorage.setItem('_pkce_p','x');
+  window.location.href='https://twitter.com/i/oauth2/authorize?'+new URLSearchParams({
+    response_type:'code',client_id:STAFF_SOCIAL.x.clientId,
+    redirect_uri:_redirectUri(),scope:'tweet.read users.read offline.access',
+    state,code_challenge:challenge,code_challenge_method:'S256'
+  });
+}
+async function _handleXCallback(code,state){
+  if(state!==sessionStorage.getItem('_pkce_s')){toast('X login failed: state mismatch','error');return;}
+  try{
+    const resp=await fetch('https://api.twitter.com/2/oauth2/token',{method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams({code,grant_type:'authorization_code',
+        client_id:STAFF_SOCIAL.x.clientId,redirect_uri:_redirectUri(),
+        code_verifier:sessionStorage.getItem('_pkce_v'),client_type:'public_client'})});
+    const data=await resp.json();
+    if(!data.access_token){toast('X login failed — check Client ID setup','error');return;}
+    const me=await fetch('https://api.twitter.com/2/users/me?user.fields=name,profile_image_url',
+      {headers:{Authorization:'Bearer '+data.access_token}}).then(r=>r.json());
+    const u=me.data||{};
+    _handleStaffSocial('x',{email:'',name:u.name||u.username||''});
+  }catch(e){toast('X token exchange failed. Check redirect URI in Twitter Dev Console.','error');}
+}
+
+// ── LINKEDIN (PKCE) ──
+async function _staffLinkedInLogin(){
+  if(!STAFF_SOCIAL.linkedin.clientId){_showSocialSetup('linkedin');return;}
+  const{verifier,challenge}=await _buildPKCE();
+  const state=_genRand(16);
+  sessionStorage.setItem('_pkce_v',verifier);
+  sessionStorage.setItem('_pkce_s',state);
+  sessionStorage.setItem('_pkce_p','linkedin');
+  window.location.href='https://www.linkedin.com/oauth/v2/authorization?'+new URLSearchParams({
+    response_type:'code',client_id:STAFF_SOCIAL.linkedin.clientId,
+    redirect_uri:_redirectUri(),scope:'openid profile email',
+    state,code_challenge:challenge,code_challenge_method:'S256'
+  });
+}
+async function _handleLinkedInCallback(code,state){
+  if(state!==sessionStorage.getItem('_pkce_s')){toast('LinkedIn login failed: state mismatch','error');return;}
+  toast('LinkedIn: token exchange requires a backend proxy. Use email/OTP login instead.','info',5000);
+  _cleanOAuth();
+}
+
+// ── COMMON HANDLER — matches social email to existing staff account ──
+function _handleStaffSocial(provider,{email,name}){
+  _cleanOAuth();
+  const users=DB.get('users')||[];
+  const providerLabel=provider.charAt(0).toUpperCase()+provider.slice(1);
+  if(!email){
+    showLoginMsg('Could not read email from '+providerLabel+' account. Ask admin to link your account manually.','error');
+    return;
+  }
+  const user=users.find(u=>(u.email||'').toLowerCase()===email.toLowerCase());
+  if(!user){
+    showLoginMsg('No ārāma staff account linked to '+email+'. Contact admin to add your '+providerLabel+' email to your profile.','error');
+    return;
+  }
+  if(user.active===false){showLoginMsg('Account deactivated. Contact admin.','error');return;}
+  if(!user.socialEmail){user.socialEmail=email;DB.set('users',users);}
+  loginUser(user);
+  toast('Signed in with '+providerLabel+' — Welcome, '+(name||user.name).split(' ')[0]+'! 👋','success');
+}
+
+// ── OAUTH REDIRECT CALLBACK ──
+async function _handleStaffOAuthCallback(){
+  const params=new URLSearchParams(window.location.search);
+  const code=params.get('code'),state=params.get('state'),error=params.get('error');
+  if(error){toast('Social login cancelled','info');_cleanOAuth();return;}
+  if(!code||!state)return;
+  const provider=sessionStorage.getItem('_pkce_p');
+  if(provider==='x')await _handleXCallback(code,state);
+  else if(provider==='linkedin')await _handleLinkedInCallback(code,state);
+  else _cleanOAuth();
+}
+
+// ── SETUP GUIDE (if App ID / Client ID not yet configured) ──
+function _showSocialSetup(provider){
+  const guides={
+    facebook:{name:'Facebook / Instagram',steps:['Go to <b>developers.facebook.com</b> → Create App → Consumer','Add product: <b>Facebook Login</b>','Copy <b>App ID</b> from Settings → Basic','Add this page URL as <b>Valid OAuth Redirect URI</b>','Paste App ID into <code>STAFF_SOCIAL.facebook.appId</code>']},
+    instagram:{name:'Instagram',steps:['Instagram uses the same <b>Facebook App ID</b>','Add product: <b>Instagram Basic Display</b>','Same App ID → paste into <code>STAFF_SOCIAL.facebook.appId</code>']},
+    x:{name:'X (Twitter)',steps:['Go to <b>developer.twitter.com</b> → Create App','Enable <b>OAuth 2.0</b>, App Type: <b>Native App</b>','Add this page URL as <b>Redirect URI</b>','Copy <b>Client ID</b> (no secret needed)','Paste into <code>STAFF_SOCIAL.x.clientId</code>']},
+    linkedin:{name:'LinkedIn',steps:['Go to <b>linkedin.com/developers</b> → Create app','Add product: <b>Sign In with LinkedIn using OpenID Connect</b>','Add this page URL as <b>Redirect URL</b>','Copy <b>Client ID</b> from Auth tab','Paste into <code>STAFF_SOCIAL.linkedin.clientId</code>','<b>Note:</b> Token exchange needs a backend proxy for production.']}
+  };
+  const g=guides[provider];if(!g)return;
+  openModal('⚙️ Set up '+g.name+' Login',
+    `<div style="font-size:13px;color:var(--text2);margin-bottom:14px">One-time setup, takes ~5 minutes:</div>`+
+    g.steps.map((s,i)=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><div style="min-width:20px;height:20px;border-radius:50%;background:rgba(201,150,10,.2);color:var(--accent3);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div><div>${s}</div></div>`).join(''),
+    `<button class="btn btn-outline" onclick="closeModal()">Close</button>`);
+}
+
+// ═══════════════════════════════════════════════
+// GOOGLE SIGN-IN (GSI)
+// ═══════════════════════════════════════════════
 function initGoogleSignIn(){
   const cfg=DB.get('config')||{};
   const clientId=cfg.googleClientId||DEFAULT_CONFIG.googleClientId||'';
@@ -5234,6 +5399,15 @@ function daysAgo(iso){
   return d+'d ago';
 }
 
+// ═══════════════════════════════════════════════
+// STARTUP — handle OAuth redirects on page load
+// ═══════════════════════════════════════════════
+(async function initOAuth(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('code')||params.get('error')){
+    await _handleStaffOAuthCallback();
+  }
+})();
 
 </script>
 </body>
