@@ -422,18 +422,18 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       </div>
       <div class="sidebar-section" id="navOps">
         <div class="sidebar-section-label">Operations</div>
-        <button class="nav-item" data-page="locations" onclick="navigate('locations')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Locations</button>
-        <button class="nav-item" data-page="users" onclick="navigate('users')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users & Roles</button>
-        <button class="nav-item" data-page="hrms" onclick="navigate('hrms')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>HRMS</button>
-        <button class="nav-item" data-page="inventory" onclick="navigate('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Inventory / ERP</button>
-        <button class="nav-item" data-page="esp32" onclick="navigate('esp32')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>ESP32 Console</button>
+        <button id="navBtnLocations" class="nav-item" data-page="locations" onclick="navigate('locations')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Locations</button>
+        <button id="navBtnUsers" class="nav-item" data-page="users" onclick="navigate('users')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users & Roles</button>
+        <button id="navBtnHRMS" class="nav-item" data-page="hrms" onclick="navigate('hrms')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>HRMS</button>
+        <button id="navBtnInventory" class="nav-item" data-page="inventory" onclick="navigate('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Inventory / ERP</button>
+        <button id="navBtnESP32" class="nav-item" data-page="esp32" onclick="navigate('esp32')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>ESP32 Console</button>
       </div>
       <div class="sidebar-section" id="navCommercial">
         <div class="sidebar-section-label">Commercial</div>
-        <button class="nav-item" data-page="crm" onclick="navigate('crm')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 0112 18.84 19.5 19.5 0 015.34 15a19.79 19.79 0 01-2.76-7.43A2 2 0 014.37 5.5h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 13.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>CRM / Telecalling</button>
-        <button class="nav-item" data-page="passes" onclick="navigate('passes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Pass Admin</button>
-        <button class="nav-item" data-page="loyalty" onclick="navigate('loyalty')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Loyalty Admin</button>
-        <button class="nav-item" data-page="ambassador" onclick="navigate('ambassador')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Ambassadors</button>
+        <button id="navBtnCRM" class="nav-item" data-page="crm" onclick="navigate('crm')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 0112 18.84 19.5 19.5 0 015.34 15a19.79 19.79 0 01-2.76-7.43A2 2 0 014.37 5.5h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 13.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>CRM / Telecalling</button>
+        <button id="navBtnPasses" class="nav-item" data-page="passes" onclick="navigate('passes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Pass Admin</button>
+        <button id="navBtnLoyalty" class="nav-item" data-page="loyalty" onclick="navigate('loyalty')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Loyalty Admin</button>
+        <button id="navBtnAmbassadors" class="nav-item" data-page="ambassador" onclick="navigate('ambassador')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Ambassadors</button>
       </div>
       <div class="sidebar-section" id="navReports">
         <div class="sidebar-section-label">Reports</div>
@@ -442,7 +442,7 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       </div>
       <div class="sidebar-section" id="navAdmin">
         <div class="sidebar-section-label">Admin</div>
-        <button class="nav-item" data-page="config" onclick="navigate('config')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M2 12h2M20 12h2"/></svg>Admin Config</button>
+        <button id="navBtnConfig" class="nav-item" data-page="config" onclick="navigate('config')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M2 12h2M20 12h2"/></svg>Admin Config</button>
         <button class="nav-item" data-page="calendar" onclick="navigate('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Festival Calendar</button>
         <button class="nav-item" data-page="training" onclick="navigate('training')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Training SOPs</button>
         <button class="nav-item" data-page="profile" onclick="navigate('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</button>
@@ -1732,14 +1732,30 @@ function canSeeAllLocs(){return ['superadmin','admin'].includes(currentSession?.
 /* hasRole defined below */
 
 function buildSidebar(){
-  const r=currentSession?.role;
   const isAdmin=hasRole('superadmin','admin');
   const isManager=hasRole('superadmin','admin','manager');
   const isSup=hasRole('superadmin','admin','manager','supervisor');
-  document.getElementById('navOps').style.display=isManager?'block':'none';
+  const show=id=>{const e=document.getElementById(id);if(e)e.style.display='';};
+  const hide=id=>{const e=document.getElementById(id);if(e)e.style.display='none';};
+
+  // Operations: section visible to supervisor+ (they get HRMS); individual items gated below
+  document.getElementById('navOps').style.display=isSup?'block':'none';
+  isManager?show('navBtnLocations'):hide('navBtnLocations');
+  isManager?show('navBtnUsers'):hide('navBtnUsers');
+  isSup?show('navBtnHRMS'):hide('navBtnHRMS');         // supervisor gets HRMS
+  isManager?show('navBtnInventory'):hide('navBtnInventory');
+  isAdmin?show('navBtnESP32'):hide('navBtnESP32');     // hardware console: admin+ only
+
+  // Commercial: CRM/Passes/Loyalty open to supervisor+; Ambassadors is manager+
   document.getElementById('navCommercial').style.display=isSup?'block':'none';
+  isManager?show('navBtnAmbassadors'):hide('navBtnAmbassadors');
+
+  // Reports
   document.getElementById('navReports').style.display=isSup?'block':'none';
+
+  // Admin section always visible; Admin Config hidden from non-admins
   document.getElementById('navAdmin').style.display='block';
+  isAdmin?show('navBtnConfig'):hide('navBtnConfig');
 }
 
 function navigate(page){
@@ -3824,14 +3840,19 @@ function rejectStaff(idx){
 // ═══════════════════════════════════════════════
 function renderHRMS(){
   const users=DB.get('users')||[];
-  const staff=users.filter(u=>['staff','supervisor','manager'].includes(u.role));
+  const _supOnly=hasRole('supervisor'); // pure supervisor — not manager/admin
+  const _mgrUp=hasRole('superadmin','admin','manager');
+  // Supervisor sees only their assigned locations' staff; manager+ sees all
+  const myLocs=currentSession?.locations||[];
+  const staff=users.filter(u=>['staff','supervisor','manager'].includes(u.role)&&
+    (_mgrUp?true:(u.locations||[]).some(l=>myLocs.includes(l))));
   document.getElementById('hrmsContent').innerHTML=`
   <div class="tabs"><button class="tab-btn active" onclick="hrmsTab(this,'hrmsStaff')">Staff</button>
-    <button class="tab-btn" onclick="hrmsTab(this,'hrmsPayroll')">Payroll</button>
+    ${!_supOnly?`<button class="tab-btn" onclick="hrmsTab(this,'hrmsPayroll')">Payroll</button>`:''}
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsAttendance');renderAttendanceLog()">Attendance</button>
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsLeaveRequests');renderLeaveRequests()">Leave Requests</button>
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsTargets');renderStaffTargets()">Targets</button>
-    <button class="tab-btn" onclick="hrmsTab(this,'hrmsCompliance')">Compliance</button>
+    ${!_supOnly?`<button class="tab-btn" onclick="hrmsTab(this,'hrmsCompliance')">Compliance</button>`:''}
     <button class="tab-btn" onclick="hrmsTab(this,'hrmsTrainingTab')">Training</button>
   </div>
   <div id="hrmsStaff">
@@ -3920,7 +3941,7 @@ function renderHRMS(){
   </div>`;
 }
 function hrmsTab(btn,id){
-  ['hrmsStaff','hrmsPayroll','hrmsAttendance','hrmsCompliance','hrmsTrainingTab'].forEach(t=>{
+  ['hrmsStaff','hrmsPayroll','hrmsAttendance','hrmsLeaveRequests','hrmsTargets','hrmsCompliance','hrmsTrainingTab'].forEach(t=>{
     const e=document.getElementById(t);if(e)e.style.display='none';
   });
   document.getElementById(id).style.display='block';
@@ -5364,51 +5385,18 @@ function exportToCSV(data,filename){
     return v;
   }).join(','))].join('\n');
   const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');
+  const a=document.createElement(a');
   a.href=URL.createObjectURL(blob);
   a.download=filename||'export.csv';
   a.click();
 }
 
-function exportJSON(data,filename){
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=filename||'export.json';
-  a.click();
-}
-
-function searchFilter(arr,query,fields){
-  if(!query)return arr;
-  const q=query.toLowerCase();
-  return arr.filter(item=>fields.some(f=>{
-    const v=item[f];
-    return v&&String(v).toLowerCase().includes(q);
-  }));
-}
-
-function getInitials(name=''){
-  return name.trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().substr(0,2)||'??';
-}
-
-function daysAgo(iso){
-  if(!iso)return'—';
-  const d=Math.floor((Date.now()-new Date(iso).getTime())/86400000);
-  if(d===0)return'Today';
-  if(d===1)return'Yesterday';
-  return d+'d ago';
-}
-
-// ═══════════════════════════════════════════════
-// STARTUP — handle OAuth redirects on page load
-// ═══════════════════════════════════════════════
 (async function initOAuth(){
   const params=new URLSearchParams(window.location.search);
   if(params.get('code')||params.get('error')){
     await _handleStaffOAuthCallback();
   }
 })();
-
 </script>
 </body>
 </html>
