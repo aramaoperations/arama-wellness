@@ -39,21 +39,23 @@ a{text-decoration:none;color:inherit}
 .login-logo{text-align:center;margin-bottom:28px}
 .login-logo .brand{font-size:38px;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;font-family:'Alegreya',Georgia,serif}
 .login-logo .tagline{font-size:12px;color:#c4b5fd;margin-top:4px;letter-spacing:1px}
-.login-tabs{display:flex;background:rgba(0,0,0,.3);border-radius:var(--radius2);padding:3px;margin-bottom:24px}
-.login-tab{flex:1;padding:7px 4px;text-align:center;border:none;background:transparent;color:var(--text2);border-radius:6px;font-size:12px;font-weight:600;transition:.2s;letter-spacing:.2px}
-.login-tab.active{background:var(--accent);color:#fff}
+.login-tabs{display:flex;background:rgba(0,0,0,.35);border-radius:var(--radius2);padding:4px;margin-bottom:24px;gap:4px}
+.login-tab{flex:1;padding:9px 4px;text-align:center;border:none;background:transparent;color:var(--text2);border-radius:6px;font-size:13px;font-weight:600;transition:.2s;letter-spacing:.2px;cursor:pointer}
+.login-tab:hover:not(.active){background:rgba(255,255,255,.06);color:var(--text)}
+.login-tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a0f00;box-shadow:0 2px 10px rgba(201,150,10,.35)}
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-size:12px;font-weight:600;color:var(--accent3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
 .form-group input,.form-group select{width:100%;padding:12px 16px;background:rgba(15,12,0,.6);border:1px solid rgba(201,150,10,.3);border-radius:var(--radius2);color:#f1f5f9;outline:none;transition:.2s}
 .form-group input::placeholder{color:rgba(148,163,184,.5)}
 .form-group input:focus,.form-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,150,10,.25)}
-.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:var(--radius2);color:#1a0f00;font-weight:700;font-size:15px;letter-spacing:.5px;transition:.2s;box-shadow:0 4px 15px rgba(201,150,10,.4)}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,150,10,.5)}
-.social-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#94a3b8;font-size:12px}
-.social-divider::before,.social-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.social-btns{display:flex;gap:10px}
-.social-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(201,150,10,.25);border-radius:var(--radius2);color:#e2e8f0;font-size:13px;font-weight:500;transition:.2s}
-.social-btn:hover{background:rgba(255,255,255,.1);border-color:var(--accent3)}
+.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:var(--radius2);color:#1a0f00;font-weight:800;font-size:15px;letter-spacing:.3px;transition:.2s;box-shadow:0 4px 15px rgba(201,150,10,.35);cursor:pointer}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(201,150,10,.55)}
+.btn-primary:active{transform:translateY(0);box-shadow:0 2px 8px rgba(201,150,10,.3)}
+.social-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:#64748b;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.social-divider::before,.social-divider::after{content:'';flex:1;height:1px;background:rgba(201,150,10,.2)}
+.social-btns{display:flex;gap:8px}
+.social-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(201,150,10,.2);border-radius:var(--radius2);color:#e2e8f0;font-size:12px;font-weight:600;transition:.2s;cursor:pointer}
+.social-btn:hover{background:rgba(255,255,255,.09);border-color:rgba(201,150,10,.5);transform:translateY(-1px)}
 .otp-row{display:flex;gap:8px}
 .otp-row input{flex:1;padding:12px 16px;background:rgba(15,12,0,.6);border:1px solid rgba(201,150,10,.3);border-radius:var(--radius2);color:#f1f5f9;outline:none}.otp-row input::placeholder{color:rgba(148,163,184,.5)}
 .otp-row button{padding:12px 16px;background:var(--accent);border:none;border-radius:var(--radius2);color:#1a0f00;font-weight:700;white-space:nowrap;font-size:13px}
@@ -243,12 +245,13 @@ textarea.form-control{resize:vertical;min-height:80px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* TOAST */
-#toast{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast-item{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius2);padding:12px 16px;font-size:13px;box-shadow:var(--shadow);animation:slideIn .3s ease;max-width:300px}
-.toast-item.success{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.1)}
-.toast-item.error{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.1)}
-.toast-item.info{border-color:rgba(59,130,246,.5)}
-@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+#toast{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:320px}
+.toast-item{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius2);padding:13px 18px;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:slideIn .35s cubic-bezier(.175,.885,.32,1.275);transition:opacity .35s,transform .35s;line-height:1.4;pointer-events:auto}
+.toast-item.success{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.12);color:#6ee7b7}
+.toast-item.error{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.12);color:#fca5a5}
+.toast-item.info{border-color:rgba(201,150,10,.5);background:rgba(201,150,10,.1);color:var(--accent3)}
+.toast-item.warn{border-color:rgba(249,115,22,.5);background:rgba(249,115,22,.1);color:#fdba74}
+@keyframes slideIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
 
 /* SCROLL AREAS */
 .scroll-y{overflow-y:auto}
@@ -273,6 +276,15 @@ select,select.form-control,select.header-loc-select{color-scheme:dark}
 select option{background:#1e293b!important;color:#f1f5f9!important}
 select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight:700}
 .header-loc-select option{background:#1a1040!important;color:#f1f5f9!important}
+
+/* LOGIN MSG IMPROVED */
+.login-msg{margin-top:14px;padding:10px 14px;border-radius:var(--radius2);font-size:13px;display:none;animation:slideIn .25s ease}
+
+/* ADMIN CONFIG — CARD HEADINGS */
+.cfg-section-title{font-size:15px;font-weight:800;color:var(--accent3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(201,150,10,.2)}
+
+/* IMPROVED INPUT FOCUS */
+.form-group input:focus,.form-group select:focus,.form-control:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,150,10,.15);outline:none}
 
 /* RESPONSIVE */
 @media(max-width:768px){
@@ -300,7 +312,7 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
 <body>
 
 <!-- TOAST -->
-<div id="toastContainer"></div>
+<div id="toast"></div>
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen">
@@ -327,6 +339,12 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       <button class="btn-primary" onclick="doLogin()">Sign In to Ops Portal →</button>
       <div id="loginMsg" class="login-msg error"></div>
       <div id="loginAdminHint" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:12px;color:#fde68a;text-align:center">🔐 Admin access restricted to authorised personnel only.</div>
+      <div id="loginFirstRunHint" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:8px;font-size:12px;color:#6ee7b7">
+        <div style="font-weight:700;margin-bottom:4px">🚀 First-time setup — default credentials:</div>
+        <div>Staff: <code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">admin / Admin@123</code></div>
+        <div style="margin-top:2px">Super Admin: <code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">superadmin / Arama@2026!</code></div>
+        <div style="margin-top:6px;color:rgba(110,231,183,.6);font-size:11px">Change your password after first login via Forgot Password.</div>
+      </div>
       <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--text3)">
         New staff? <a href="staff-register.html" target="_blank" style="color:var(--accent3);text-decoration:underline">Register here</a>
         &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -1167,25 +1185,36 @@ function seedIfEmpty(){
 // AUTH & NAVIGATION
 // ═══════════════════════════════════════════════
 function switchLoginTab(tab){
-  // Update tab button states (staff / admin only — customer uses customer.html)
+  // Update tab button states (staff / admin / otp)
   ['staff','admin'].forEach(t=>{
     const el=document.getElementById('ltab-'+t);
     if(el)el.classList.toggle('active',t===tab);
   });
   // Show/hide panels
-  document.getElementById('tabStaff').style.display=(tab==='staff'||tab==='admin')?'block':'none';
-  document.getElementById('tabOTP').style.display=tab==='otp'?'block':'none';
+  const staffPanel=document.getElementById('tabStaff');
+  const otpPanel=document.getElementById('tabOTP');
+  if(staffPanel)staffPanel.style.display=(tab==='staff'||tab==='admin')?'block':'none';
+  if(otpPanel)otpPanel.style.display=tab==='otp'?'block':'none';
   // Update sign-in button text
   const btn=document.querySelector('#tabStaff .btn-primary');
   if(btn){
-    if(tab==='admin')btn.textContent='Sign In to Admin Portal →';
-    else btn.textContent='Sign In to Ops Portal →';
+    btn.textContent=tab==='admin'?'Sign In to Admin Portal →':'Sign In to Ops Portal →';
   }
   // Store current tab context
   window._loginTabContext=tab;
-  // Show/hide admin-only hint
-  const hint=document.getElementById('loginAdminHint');
-  if(hint)hint.style.display=tab==='admin'?'block':'none';
+  // Show/hide hints
+  const adminHint=document.getElementById('loginAdminHint');
+  if(adminHint)adminHint.style.display=tab==='admin'?'block':'none';
+  // Show first-run hint only when no custom users have been created
+  const firstRunHint=document.getElementById('loginFirstRunHint');
+  if(firstRunHint){
+    const users=DB.get('users')||[];
+    const isFirstRun=users.length<=2&&!users.some(u=>u.passwordChangedAt);
+    firstRunHint.style.display=(tab==='admin'&&isFirstRun)?'block':'none';
+  }
+  // Clear any previous error messages when switching tabs
+  const msg=document.getElementById('loginMsg');
+  if(msg)msg.style.display='none';
 }
 function doLogin(){
   try{
@@ -1196,10 +1225,16 @@ function doLogin(){
     if(!users.length){seedIfEmpty();users=DB.get('users')||[];}
     // Match by username, phone, or email — case-insensitive
     const uLower=u.toLowerCase();
-    const user=users.find(x=>
-      ((x.username||'').toLowerCase()===uLower||(x.email||'').toLowerCase()===uLower||(x.phone||'')===u)
-      &&x.password===p
+    // Find by username/email/phone first, then verify password
+    const matchUser=users.find(x=>
+      (x.username||'').toLowerCase()===uLower||(x.email||'').toLowerCase()===uLower||(x.phone||'')===u
     );
+    // If found but password was changed and they're trying the old default password → specific message
+    if(matchUser&&matchUser.passwordChangedAt&&matchUser.passwordChangedFrom===p){
+      showLoginMsg('Your password was reset. Please use your new password.','error');
+      return;
+    }
+    const user=matchUser&&matchUser.password===p?matchUser:null;
     if(!user){
       showLoginMsg('Invalid credentials. Please check your details.','error');
       return;
@@ -1304,13 +1339,33 @@ function closeOTPPopup(){
 }
 
 // ═══════════════════════════════════════════════
-// SOCIAL LOGIN CONFIG
+// SOCIAL LOGIN CONFIG — DB-backed (set in Admin Config → Social Login)
 // ═══════════════════════════════════════════════
-const STAFF_SOCIAL={
-  facebook:{appId:''},   // developers.facebook.com → App ID
-  x:{clientId:''},       // developer.twitter.com → OAuth 2.0 Client ID
-  linkedin:{clientId:''} // linkedin.com/developers → Client ID
+let STAFF_SOCIAL={
+  facebook:{appId:''},
+  x:{clientId:''},
+  linkedin:{clientId:''}
 };
+function _loadSocialCredsFromDB(){
+  const sc=DB.get('socialConfig');
+  if(!sc)return;
+  if(sc.facebookAppId)STAFF_SOCIAL.facebook.appId=sc.facebookAppId;
+  if(sc.xClientId)STAFF_SOCIAL.x.clientId=sc.xClientId;
+  if(sc.linkedinClientId)STAFF_SOCIAL.linkedin.clientId=sc.linkedinClientId;
+  // Re-init FB SDK if appId was set
+  if(STAFF_SOCIAL.facebook.appId&&typeof FB!=='undefined'){
+    FB.init({appId:STAFF_SOCIAL.facebook.appId,cookie:true,xfbml:false,version:'v19.0'});
+  }
+}
+function saveSocialConfig(){
+  const fApp=(document.getElementById('cfg_fbAppId')?.value||'').trim();
+  const xCid=(document.getElementById('cfg_xClientId')?.value||'').trim();
+  const liCid=(document.getElementById('cfg_liClientId')?.value||'').trim();
+  const sc={facebookAppId:fApp,xClientId:xCid,linkedinClientId:liCid,updatedAt:new Date().toISOString()};
+  DB.set('socialConfig',sc);
+  _loadSocialCredsFromDB();
+  toast('✅ Social login credentials saved. Google uses the Client ID from Brand config.','success');
+}
 
 // PKCE helpers (X and LinkedIn)
 function _genRand(len=64){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';const a=new Uint8Array(len);crypto.getRandomValues(a);return Array.from(a).map(b=>c[b%c.length]).join('');}
@@ -4746,8 +4801,10 @@ function renderConfig(){
   <div class="tabs">
     <button class="tab-btn active" onclick="cfgTab(this,'cfgBrand')">Brand</button>
     <button class="tab-btn" onclick="cfgTab(this,'cfgServices')">Services</button>
+    <button class="tab-btn" onclick="cfgTab(this,'cfgSocial')">🔑 Social Login</button>
     <button class="tab-btn" onclick="cfgTab(this,'cfgWhatsApp')">WhatsApp API</button>
-    <button class="tab-btn" onclick="cfgTab(this,'cfgDanger')">Danger Zone</button><button class="tab-btn" onclick="cfgTab(this,'cfgDrive');updateDriveStatusLine()">☁️ Drive Sync</button>
+    <button class="tab-btn" onclick="cfgTab(this,'cfgDrive');updateDriveStatusLine()">☁️ Drive Sync</button>
+    <button class="tab-btn" onclick="cfgTab(this,'cfgDanger')">⚠️ Danger Zone</button>
   </div>
 
   <div id="cfgBrand">
@@ -4779,7 +4836,50 @@ function renderConfig(){
         </div>
       </div>
     </div>
-    <button class="btn btn-accent" style="margin-top:4px" onclick="saveBrandConfig()">Save Brand Config</button>
+    <div class="card" style="margin-top:14px">
+      <div style="font-weight:700;margin-bottom:14px">⚙️ Portal Settings</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Session Timeout (hours)</label>
+          <input type="number" class="form-control" id="cfg_sessionHrs" min="1" max="24" value="${cfg.sessionTimeoutHrs||8}" placeholder="8">
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Staff auto-logout after this many hours of inactivity.</div>
+        </div>
+        <div class="form-group">
+          <label>Default Login Role</label>
+          <select class="form-control" id="cfg_defaultRole">
+            <option value="staff" ${(cfg.defaultLoginRole||'staff')==='staff'?'selected':''}>Staff (default)</option>
+            <option value="admin" ${(cfg.defaultLoginRole||'')==='admin'?'selected':''}>Admin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Allow Staff Self-Registration</label>
+          <select class="form-control" id="cfg_selfReg">
+            <option value="1" ${cfg.allowSelfReg!==false?'selected':''}>✅ Enabled (via staff-register.html)</option>
+            <option value="0" ${cfg.allowSelfReg===false?'selected':''}>🔒 Disabled (admin adds staff only)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>POS Tax Display</label>
+          <select class="form-control" id="cfg_taxMode">
+            <option value="inclusive" ${(cfg.taxMode||'inclusive')==='inclusive'?'selected':''}>Tax Inclusive (prices shown as-is)</option>
+            <option value="exclusive" ${(cfg.taxMode||'')==='exclusive'?'selected':''}>Tax Exclusive (add GST on top)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Currency Symbol</label>
+          <input class="form-control" id="cfg_currency" value="${cfg.currency||'₹'}" placeholder="₹" style="max-width:80px">
+        </div>
+        <div class="form-group">
+          <label>Timezone</label>
+          <select class="form-control" id="cfg_tz">
+            <option value="Asia/Kolkata" ${(cfg.timezone||'Asia/Kolkata')==='Asia/Kolkata'?'selected':''}>India (IST)</option>
+            <option value="Asia/Dubai">Dubai (GST)</option>
+            <option value="UTC">UTC</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-accent" style="margin-top:4px" onclick="saveBrandConfig()">💾 Save All Config</button>
   </div>
 
   <div id="cfgServices" style="display:none">
@@ -4817,6 +4917,47 @@ function renderConfig(){
         </tbody></table>
       </div>
       <button class="btn btn-accent" style="margin-top:12px" onclick="saveServicePricing()">Save Pricing</button>
+    </div>
+  </div>
+
+  <div id="cfgSocial" style="display:none">
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-weight:700;margin-bottom:6px;font-size:15px">🔑 Social Login Credentials</div>
+      <div class="alert alert-info" style="margin-bottom:14px">Configure App IDs and Client IDs so staff can sign in using social accounts. Staff must have a matching email in their ārāma user profile to be authorised.</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-weight:700;color:var(--accent3);margin-bottom:10px">Google Sign-In</div>
+          <div class="alert alert-success" style="font-size:12px;margin-bottom:10px">✅ Google uses the <strong>OAuth Client ID</strong> set in the Brand tab above. No separate config needed here.</div>
+          <div style="font-size:12px;color:var(--text3)">Steps: <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--accent3)">Google Cloud Console</a> → Create Credentials → OAuth 2.0 Client ID (Web) → Paste in Brand → Integrations.</div>
+        </div>
+        <div>
+          <div style="font-weight:700;color:#1877F2;margin-bottom:10px">Facebook &amp; Instagram Login</div>
+          <div class="form-group"><label>Facebook App ID <small style="color:var(--text3)">(also powers Instagram login)</small></label>
+            <input class="form-control" id="cfg_fbAppId" placeholder="e.g. 123456789012345" value="${DB.get('socialConfig')?.facebookAppId||''}">
+            <div style="font-size:11px;color:var(--text3);margin-top:4px"><a href="https://developers.facebook.com" target="_blank" style="color:var(--accent3)">developers.facebook.com</a> → My Apps → Create App → Consumer → copy App ID. Add your page URL as Valid OAuth Redirect URI.</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:700;margin-bottom:10px">✕ X (Twitter) Login</div>
+          <div class="form-group"><label>X OAuth 2.0 Client ID</label>
+            <input class="form-control" id="cfg_xClientId" placeholder="e.g. xxxxxxxxxxxxxxxxxxxx" value="${DB.get('socialConfig')?.xClientId||''}">
+            <div style="font-size:11px;color:var(--text3);margin-top:4px"><a href="https://developer.twitter.com/en/portal/dashboard" target="_blank" style="color:var(--accent3)">developer.twitter.com</a> → App Settings → OAuth 2.0 → Client ID. Set App Type to "Native App". No client secret needed.</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:700;color:#0A66C2;margin-bottom:10px">LinkedIn Login</div>
+          <div class="form-group"><label>LinkedIn Client ID</label>
+            <input class="form-control" id="cfg_liClientId" placeholder="e.g. 86abcdefghijklmn" value="${DB.get('socialConfig')?.linkedinClientId||''}">
+            <div style="font-size:11px;color:var(--text3);margin-top:4px"><a href="https://linkedin.com/developers" target="_blank" style="color:var(--accent3)">linkedin.com/developers</a> → Create App → Auth tab → Client ID. Add product: Sign In with LinkedIn using OpenID Connect.</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-accent" onclick="saveSocialConfig()">💾 Save Social Login Config</button>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:10px">📋 Redirect URI for all providers</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-family:monospace;font-size:13px;color:var(--accent3);word-break:break-all">${window.location.origin+window.location.pathname}</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:8px">Add this exact URL as the authorised redirect URI / callback URL in each provider's developer console.</div>
     </div>
   </div>
 
@@ -4898,7 +5039,7 @@ function updateDriveStatusLine(){
 }
 
 function cfgTab(btn,id){
-  ['cfgBrand','cfgServices','cfgWhatsApp','cfgDanger','cfgDrive'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
+  ['cfgBrand','cfgServices','cfgSocial','cfgWhatsApp','cfgDanger','cfgDrive'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
   document.getElementById(id).style.display='block';
   document.querySelectorAll('#configContent .tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -5031,7 +5172,18 @@ function saveBrandConfig(){
   cfg.emailOps=document.getElementById('cfg_eOps').value;
   cfg.reportRecipients=document.getElementById('cfg_recipients').value.split(',').map(s=>s.trim()).filter(Boolean);
   cfg.googleClientId=(document.getElementById('cfg_googleClientId')?.value||'').trim();
-  DB.set('config',cfg);toast('Brand config saved','success');
+  // Portal settings
+  const sessionHrs=parseFloat(document.getElementById('cfg_sessionHrs')?.value)||8;
+  cfg.sessionTimeoutHrs=Math.min(24,Math.max(1,sessionHrs));
+  cfg.defaultLoginRole=document.getElementById('cfg_defaultRole')?.value||'staff';
+  cfg.allowSelfReg=document.getElementById('cfg_selfReg')?.value!=='0';
+  cfg.taxMode=document.getElementById('cfg_taxMode')?.value||'inclusive';
+  cfg.currency=document.getElementById('cfg_currency')?.value||'₹';
+  cfg.timezone=document.getElementById('cfg_tz')?.value||'Asia/Kolkata';
+  DB.set('config',cfg);
+  // Apply Google Client ID immediately
+  if(cfg.googleClientId){GOOGLE_CLIENT_ID=cfg.googleClientId;localStorage.setItem('arama_gclientid',cfg.googleClientId);}
+  toast('✅ Config saved successfully','success');
 }
 function saveServicePricing(){
   const cfg=DB.get('config')||DEFAULT_CONFIG;
@@ -5187,9 +5339,22 @@ function renderProfile(){
       <div class="form-group"><label>Full Name</label><input class="form-control" id="pf_name" value="${u.name}"></div>
       <div class="form-group"><label>Phone</label><input type="tel" class="form-control" id="pf_phone" value="${u.phone||''}"></div>
       <div class="form-group"><label>Email</label><input type="email" class="form-control" id="pf_email" value="${u.email||''}"></div>
-      <div class="form-group"><label>New Password (leave blank to keep)</label><input type="password" class="form-control" id="pf_pass"></div>
-      <button class="btn btn-accent" onclick="saveProfile()">Save Profile</button>
-      <button id="attendanceBtn" onclick="clockIn()" style="margin-right:8px;padding:5px 10px;border-radius:8px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.1);color:#6ee7b7;font-size:11px;cursor:pointer;font-weight:600">⏱ Clock In</button><button id="syncBtn" class="sync-btn offline" onclick="requestDriveAccess()" title="Sync to Google Drive"><span class="dot"></span><span id="syncLabel">Drive</span></button><button class="btn btn-red" style="margin-left:8px" onclick="doLogout()">Sign Out</button>
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;margin-bottom:14px">
+        <div style="font-weight:700;font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">🔒 Change Password</div>
+        <div class="form-group" style="margin-bottom:10px"><label>New Password <small style="color:var(--text3)">(leave blank to keep current)</small></label>
+          <div style="position:relative">
+            <input type="password" class="form-control" id="pf_pass" placeholder="Min 6 characters" style="padding-right:44px">
+            <button type="button" onclick="const f=document.getElementById('pf_pass');f.type=f.type==='password'?'text':'password'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px">👁</button>
+          </div>
+        </div>
+        ${u.passwordChangedAt?`<div style="font-size:11px;color:var(--text3)">Last changed: ${new Date(u.passwordChangedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>`:'<div style="font-size:11px;color:var(--orange)">⚠️ Using default password — please change it now.</div>'}
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-accent" onclick="saveProfile()">💾 Save Profile</button>
+        <button id="attendanceBtn" onclick="clockIn()" style="padding:8px 14px;border-radius:8px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.1);color:#6ee7b7;font-size:12px;cursor:pointer;font-weight:700">⏱ Clock In</button>
+        <button id="syncBtn" class="sync-btn offline" onclick="requestDriveAccess()" title="Sync to Google Drive" style="padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer">☁️ <span id="syncLabel">Drive</span></button>
+        <button class="btn btn-red" onclick="doLogout()">Sign Out</button>
+      </div>
     </div>
     <div class="card">
       <div style="font-weight:700;margin-bottom:14px">📊 My Activity</div>
@@ -5216,13 +5381,31 @@ function saveProfile(){
   const users=DB.get('users')||[];
   const idx=users.findIndex(u=>u.id===currentSession.id);
   if(idx<0)return;
-  const pass=document.getElementById('pf_pass').value;
-  users[idx]={...users[idx],name:document.getElementById('pf_name').value,phone:document.getElementById('pf_phone').value,email:document.getElementById('pf_email').value,...(pass?{password:pass}:{})};
+  const pass=(document.getElementById('pf_pass')?.value||'').trim();
+  if(pass&&pass.length<6){toast('New password must be at least 6 characters','error');return;}
+  const passChanges=pass?{
+    passwordChangedFrom:users[idx].password,
+    password:pass,
+    passwordChangedAt:new Date().toISOString()
+  }:{};
+  users[idx]={...users[idx],
+    name:document.getElementById('pf_name').value.trim()||users[idx].name,
+    phone:(document.getElementById('pf_phone')?.value||'').trim(),
+    email:(document.getElementById('pf_email')?.value||'').trim(),
+    ...passChanges
+  };
   DB.set('users',users);
-  currentSession={...currentSession,...users[idx]};
-  DB.set('session',currentSession);
-  document.getElementById('headerAvatar').textContent=users[idx].name[0].toUpperCase();
-  toast('Profile saved','success');
+  // Update session (without password)
+  const{password:_pw,...safeUser}=users[idx];
+  currentSession={...currentSession,...safeUser};
+  try{sessionStorage.setItem('arama_sess',JSON.stringify(currentSession));}catch(e){}
+  document.getElementById('headerAvatar').textContent=(users[idx].name||'?')[0].toUpperCase();
+  toast(pass?'✅ Profile & password saved successfully':'✅ Profile saved','success');
+  if(pass){
+    // Clear password field after save
+    const pf=document.getElementById('pf_pass');
+    if(pf)pf.value='';
+  }
 }
 
 // ═══════════════════════════════════════════════
@@ -5318,12 +5501,15 @@ function compressImage(file,cb){
   reader.readAsDataURL(file);
 }
 
-function toast(msg,type='info',duration=3000){
+function toast(msg,type='info',duration=3500){
+  const c=document.getElementById('toast');
+  if(!c)return;
   const t=document.createElement('div');
-  t.className='toast toast-'+type;
-  t.textContent=msg;
-  document.getElementById('toastContainer').appendChild(t);
-  setTimeout(()=>t.remove(),duration);
+  t.className='toast-item '+(type||'info');
+  t.innerHTML='<span>'+msg+'</span>';
+  c.appendChild(t);
+  // auto-dismiss with fade
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(110%)';setTimeout(()=>t.remove(),350);},duration);
 }
 
 function openModal(title,body,footer=''){
@@ -5385,7 +5571,7 @@ function exportToCSV(data,filename){
     return v;
   }).join(','))].join('\n');
   const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement(a');
+  const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download=filename||'export.csv';
   a.click();
@@ -5397,6 +5583,68 @@ function exportToCSV(data,filename){
     await _handleStaffOAuthCallback();
   }
 })();
+
+// ═══════════════════════════════════════════════
+// APP INITIALIZATION
+// ═══════════════════════════════════════════════
+function checkSession(){
+  try{
+    const raw=sessionStorage.getItem('arama_sess');
+    if(raw){
+      const sess=JSON.parse(raw);
+      if(sess&&sess.expiresAt&&Date.now()<sess.expiresAt){
+        currentSession=sess;
+        refreshActivity();
+        document.getElementById('loginScreen').style.display='none';
+        document.getElementById('app').classList.add('visible');
+        setupApp();
+        navigate('dashboard');
+        startActivityMonitor();
+        return true;
+      } else {
+        sessionStorage.removeItem('arama_sess');
+        DB.remove('session');
+      }
+    }
+  }catch(e){console.warn('Session restore error',e);}
+  // No valid session — show login
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('app').classList.remove('visible');
+  return false;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  // 1. Seed default data if first launch
+  seedIfEmpty();
+
+  // 2. Load social credentials from DB config
+  _loadSocialCredsFromDB();
+
+  // 3. Restore session if still valid
+  const restored=checkSession();
+
+  // 4. Init Google Auth (Drive sync)
+  initGAuth();
+
+  // 5. Modal backdrop — click outside to close
+  document.getElementById('modalOverlay').addEventListener('click',(e)=>{
+    if(e.target===document.getElementById('modalOverlay'))closeModal();
+  });
+
+  // 6. Keyboard shortcut: Escape closes modal / OTP popup
+  document.addEventListener('keydown',(e)=>{
+    if(e.key==='Escape'){
+      closeModal();
+      closeOTPPopup();
+    }
+  });
+
+  // 7. If not restored, set default tab context
+  if(!restored){
+    window._loginTabContext='staff';
+    switchLoginTab('staff');
+  }
+});
 </script>
 </body>
 </html>
