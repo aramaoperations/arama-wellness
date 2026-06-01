@@ -457,6 +457,7 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
         <div class="sidebar-section-label">Reports</div>
         <button class="nav-item" data-page="reports" onclick="navigate('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</button>
         <button class="nav-item" data-page="datahistory" onclick="navigate('datahistory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1.5-4.03L3 20"/><path d="M3 9l-1-2 1.5 4.5"/></svg>Data History</button>
+        <button id="navBtnAudit" class="nav-item" data-page="audit" onclick="navigate('audit')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Audit Trail</button>
       </div>
       <div class="sidebar-section" id="navAdmin">
         <div class="sidebar-section-label">Admin</div>
@@ -599,6 +600,26 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
         <div id="datahistoryContent"></div>
       </div>
 
+      <!-- AUDIT TRAIL -->
+      <div class="page" id="page-audit">
+        <div class="page-header">
+          <div class="page-title">🛡 Audit Trail</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <input type="text" class="search-input" id="auditSearch" placeholder="Search actions, staff…" oninput="renderAudit()" style="max-width:200px">
+            <select class="search-input" id="auditModFilter" style="max-width:130px" onchange="renderAudit()">
+              <option value="">All Modules</option>
+              <option>Auth</option><option>POS</option><option>Attendance</option>
+              <option>Users</option><option>HRMS</option><option>Locations</option>
+            </select>
+            <input type="date" class="search-input" id="auditDateFrom" style="max-width:140px" onchange="renderAudit()">
+            <input type="date" class="search-input" id="auditDateTo" style="max-width:140px" onchange="renderAudit()">
+            <button class="btn btn-outline btn-sm" onclick="exportAuditCSV()">⬇ Export CSV</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('auditSearch').value='';document.getElementById('auditModFilter').value='';document.getElementById('auditDateFrom').value='';document.getElementById('auditDateTo').value='';renderAudit()">Clear</button>
+          </div>
+        </div>
+        <div id="auditContent"></div>
+      </div>
+
       <!-- CONFIG -->
       <div class="page" id="page-config">
         <div class="page-header"><div class="page-title">⚙️ Admin Config</div></div>
@@ -689,6 +710,30 @@ const DB = {
     syncTimer=setTimeout(()=>saveToDrive(),6000);
   }
 };
+
+// ── AUDIT LOG ──
+function logAction(module, action, details){
+  try{
+    const s=currentSession||{};
+    const entry={
+      id:'AL'+Date.now()+Math.random().toString(36).slice(2,6),
+      ts:new Date().toISOString(),
+      userId:s.id||'system',
+      userName:s.name||'System',
+      userRole:s.role||'',
+      module,action,
+      details:details||{}
+    };
+    const log=DB.get('auditLog')||[];
+    log.push(entry);
+    // Keep max 5000 entries (drop oldest)
+    if(log.length>5000)log.splice(0,log.length-5000);
+    // Write directly to localStorage (bypass dirty timer to avoid loop)
+    try{localStorage.setItem('arama_auditLog',JSON.stringify(log));}catch(e){}
+    // Trigger Drive sync
+    DB._dirty();
+  }catch(e){console.warn('Audit log error',e);}
+}
 
 // ── SYNC UI ──
 function updateSyncStatus(state){
@@ -1117,6 +1162,7 @@ function clockIn(){
   };
   log.push(entry);
   DB.set('attendanceLog',log);
+  logAction('Attendance','clock.in',{location:entry.locName,time:entry.time});
   toast('✅ Clocked in at '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),'success');
   // Update header button if present
   const btn=document.getElementById('attendanceBtn');
@@ -1148,6 +1194,7 @@ function clockOut(){
   };
   log.push(entry);
   DB.set('attendanceLog',log);
+  logAction('Attendance','clock.out',{location:entry.locName,shiftHrs:parseFloat(shiftHrs),time:entry.time});
   toast('👋 Clocked out — '+shiftHrs+'h shift recorded','success');
   const btn=document.getElementById('attendanceBtn');
   if(btn){btn.textContent='⏱ Clock In';btn.onclick=clockIn;}
@@ -1177,6 +1224,7 @@ function seedIfEmpty(){
     DB.set('locationStock',{});
     DB.set('b2bLeads',[]);
     DB.set('esp32Logs',[]);
+    DB.set('auditLog',[]);
     DB.set('seeded_v83',true);
   }
 }
@@ -1274,6 +1322,7 @@ function loginUser(user){
   document.getElementById('app').classList.add('visible');
   setupApp();
   navigate('dashboard');
+  logAction('Auth','login',{method:'password',role:user.role});
   toast('Welcome back, '+user.name+'! 👋','success');
   // Show compliance warning — never blocks access
   if(user._complianceWarning!==undefined){
@@ -1294,6 +1343,7 @@ function showLoginMsg(msg,type){
 }
 function doLogout(){
   if(!confirm('Sign out?'))return;
+  logAction('Auth','logout',{});
   sessionStorage.removeItem('arama_sess');
   DB.remove('session');
   currentSession=null;
@@ -1811,6 +1861,8 @@ function buildSidebar(){
   // Admin section always visible; Admin Config hidden from non-admins
   document.getElementById('navAdmin').style.display='block';
   isAdmin?show('navBtnConfig'):hide('navBtnConfig');
+  // Audit Trail: visible to admin + manager only
+  isManager?show('navBtnAudit'):hide('navBtnAudit');
 }
 
 function navigate(page){
@@ -1829,7 +1881,7 @@ function renderPage(page){
     dailyreport:renderDailyReport,leads:renderLeads,locations:renderLocations,
     users:renderUsers,hrms:renderHRMS,inventory:renderInventory,esp32:renderESP32,
     crm:renderCRM,passes:renderPasses,loyalty:renderLoyalty,ambassador:renderAmbassador,
-    reports:renderReports,datahistory:renderDataHistory,config:renderConfig,
+    reports:renderReports,datahistory:renderDataHistory,audit:renderAudit,config:renderConfig,
     calendar:renderCalendar,training:renderTraining,profile:renderProfile,
     notifications:renderNotifications
   };
@@ -2860,6 +2912,7 @@ function processPayment(){
     type:posCart.some(i=>i.duration>0)?'service':'product'
   };
   DB.push('transactions',txn);
+  logAction('POS','sale',{txnId:txn.id,total:txn.total,payMode:txn.payMode,items:txn.items.length,location:txn.locName});
   // Log to Google Sheets (location-wise)
   logTransactionToSheets(txn).catch(e=>console.warn('Sheet log:',e));
   // Show receipt
@@ -3168,14 +3221,16 @@ function addRemark(code){
   if(!remarks[code])remarks[code]=[];
   remarks[code].push({text,by:currentSession.name,role:currentSession.role,timestamp:new Date().toISOString(),resolved:false,resolvedBy:''});
   DB.set('locationRemarks',remarks);
+  logAction('Locations','remark.add',{locCode:code,text});
   toast('Remark added','success');openLocationDetail(code);
 }
 function resolveRemark(code,idx){
   const remarks=DB.get('locationRemarks')||{};
   if(remarks[code]&&remarks[code][idx]){
-    remarks[code][idx].resolved=true;
-    remarks[code][idx].resolvedBy=currentSession.name;
+    const rmk=remarks[code][idx];
+    rmk.resolved=true;rmk.resolvedBy=currentSession.name;
     DB.set('locationRemarks',remarks);
+    logAction('Locations','remark.resolve',{locCode:code,text:rmk.text});
     toast('Remark resolved','success');openLocationDetail(code);
   }
 }
@@ -3320,10 +3375,12 @@ function updateLeave(id,status){
   const reqs=DB.get('leaveRequests')||[];
   const idx=reqs.findIndex(r=>r.id===id);
   if(idx<0)return;
-  reqs[idx].status=status;
-  reqs[idx].resolvedBy=currentSession?.name||'Admin';
-  reqs[idx].resolvedAt=new Date().toISOString();
+  const r=reqs[idx];
+  r.status=status;
+  r.resolvedBy=currentSession?.name||'Admin';
+  r.resolvedAt=new Date().toISOString();
   DB.set('leaveRequests',reqs);
+  logAction('HRMS','leave.'+status,{staffName:r.staffName,type:r.type,from:r.from,to:r.to});
   toast('Leave request '+status,'success');
   renderLeaveRequests();
 }
@@ -3790,19 +3847,32 @@ function updateUser(id){
     email:document.getElementById('eu_email').value,
     locations:[...sel.selectedOptions].map(o=>o.value),
     ...(pass?{password:pass}:{})};
-  DB.set('users',users);closeModal();renderUsers();toast('User updated','success');
+  const updated=users[idx];
+  DB.set('users',users);
+  logAction('Users','user.edit',{userId:id,name:updated.name,role:updated.role,passChanged:!!pass});
+  closeModal();renderUsers();toast('User updated','success');
 }
 function deactivateUser(id){
   if(!confirm('Deactivate this user?'))return;
   const reason=prompt('Reason for deactivation:');
   const users=DB.get('users')||[];
   const idx=users.findIndex(u=>u.id===id);
-  if(idx>=0){users[idx].active=false;users[idx].deactivateReason=reason||'Admin action';DB.set('users',users);renderUsers();toast('User deactivated (data preserved)','success');}
+  if(idx>=0){
+    users[idx].active=false;users[idx].deactivateReason=reason||'Admin action';
+    DB.set('users',users);
+    logAction('Users','user.deactivate',{userId:id,name:users[idx].name,reason:reason||'Admin action'});
+    renderUsers();toast('User deactivated (data preserved)','success');
+  }
 }
 function reactivateUser(id){
   const users=DB.get('users')||[];
   const idx=users.findIndex(u=>u.id===id);
-  if(idx>=0){users[idx].active=true;delete users[idx].deactivateReason;DB.set('users',users);renderUsers();toast('User reactivated','success');}
+  if(idx>=0){
+    users[idx].active=true;delete users[idx].deactivateReason;
+    DB.set('users',users);
+    logAction('Users','user.reactivate',{userId:id,name:users[idx].name});
+    renderUsers();toast('User reactivated','success');
+  }
 }
 function viewStaffPerf(uid){renderStaffPerformance(uid);}
 function approveStaff(idx){
@@ -3836,6 +3906,7 @@ function approveStaff(idx){
   };
   users.push(newUser);
   DB.set('users',users);
+  logAction('Users','user.created',{userId:newUser.id,name:newUser.name,role:newUser.role,location:newUser.locations[0]||''});
   pending.splice(idx,1);DB.set('pending-staff',pending);
   renderUsers();
   const daysLeft=7;
@@ -4789,6 +4860,87 @@ async function activateESP32(location,channel,durationSec,token){
     const res=await fetch(`http://${esp.ip}:${esp.port}/activate`,{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':esp.apiKey},body:JSON.stringify({channel,duration:durationSec,token}),signal:AbortSignal.timeout(3000)});
     return await res.json();
   }catch(e){return{success:false,reason:'ESP32 unreachable — '+e.message};}
+}
+
+// ═══════════════════════════════════════════════
+// AUDIT TRAIL
+// ═══════════════════════════════════════════════
+const MODULE_ICONS={Auth:'🔐',POS:'🧾',Attendance:'⏱',Users:'👤',HRMS:'📋',Locations:'📍',default:'📝'};
+const ACTION_COLORS={
+  'login':'badge-green','logout':'badge-blue',
+  'sale':'badge-gold',
+  'clock.in':'badge-green','clock.out':'badge-blue',
+  'user.created':'badge-green','user.edit':'badge-orange','user.deactivate':'badge-red','user.reactivate':'badge-green',
+  'leave.approved':'badge-green','leave.rejected':'badge-red',
+  'remark.add':'badge-orange','remark.resolve':'badge-green',
+  'default':'badge-blue'
+};
+function renderAudit(){
+  if(!hasRole('superadmin','admin','manager')){
+    document.getElementById('auditContent').innerHTML='<div class="alert alert-error">Access restricted to admin / manager</div>';return;
+  }
+  let log=(DB.get('auditLog')||[]).slice().reverse();
+  const q=(document.getElementById('auditSearch')?.value||'').toLowerCase();
+  const mod=(document.getElementById('auditModFilter')?.value||'');
+  const df=document.getElementById('auditDateFrom')?.value;
+  const dt=document.getElementById('auditDateTo')?.value;
+  if(q)log=log.filter(e=>e.userName.toLowerCase().includes(q)||e.action.toLowerCase().includes(q)||e.module.toLowerCase().includes(q)||JSON.stringify(e.details).toLowerCase().includes(q));
+  if(mod)log=log.filter(e=>e.module===mod);
+  if(df)log=log.filter(e=>e.ts>=df);
+  if(dt)log=log.filter(e=>e.ts<=(dt+'T23:59:59'));
+  const total=log.length;
+  const shown=log.slice(0,200);
+  document.getElementById('auditContent').innerHTML=`
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+    <div class="kpi-card" style="flex:1;min-width:120px"><div class="kpi-label">Total Entries</div><div class="kpi-value">${(DB.get('auditLog')||[]).length.toLocaleString()}</div></div>
+    <div class="kpi-card" style="flex:1;min-width:120px"><div class="kpi-label">Filtered</div><div class="kpi-value">${total.toLocaleString()}</div></div>
+    <div class="kpi-card" style="flex:1;min-width:120px"><div class="kpi-label">Showing</div><div class="kpi-value">${Math.min(total,200)}</div></div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Time</th><th>Staff</th><th>Role</th><th>Module</th><th>Action</th><th>Details</th></tr></thead>
+        <tbody>
+        ${shown.length===0?'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">No entries match the current filter</td></tr>':''}
+        ${shown.map(e=>{
+          const dt2=new Date(e.ts);
+          const timeStr=dt2.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+dt2.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+          const icon=MODULE_ICONS[e.module]||MODULE_ICONS.default;
+          const color=ACTION_COLORS[e.action]||ACTION_COLORS.default;
+          const det=Object.entries(e.details||{}).map(([k,v])=>`<span style="font-size:10px;color:var(--text2)">${k}:</span><span style="font-size:11px;font-weight:600;color:var(--text1)"> ${v}</span>`).join('  ');
+          return `<tr>
+            <td style="font-size:11px;white-space:nowrap;color:var(--text2)">${timeStr}</td>
+            <td style="font-weight:600;font-size:12px">${e.userName}</td>
+            <td><span class="badge badge-blue" style="font-size:10px">${e.userRole}</span></td>
+            <td>${icon} <span style="font-size:12px">${e.module}</span></td>
+            <td><span class="badge ${color}" style="font-size:10px">${e.action}</span></td>
+            <td style="font-size:11px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${det||'—'}</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>
+    ${total>200?`<div style="text-align:center;color:var(--text3);font-size:12px;padding:10px">Showing latest 200 of ${total} entries. Use filters or export CSV for full log.</div>`:''}
+  </div>`;
+}
+function exportAuditCSV(){
+  let log=(DB.get('auditLog')||[]).slice().reverse();
+  const q=(document.getElementById('auditSearch')?.value||'').toLowerCase();
+  const mod=(document.getElementById('auditModFilter')?.value||'');
+  const df=document.getElementById('auditDateFrom')?.value;
+  const dt=document.getElementById('auditDateTo')?.value;
+  if(q)log=log.filter(e=>e.userName.toLowerCase().includes(q)||e.action.toLowerCase().includes(q)||e.module.toLowerCase().includes(q));
+  if(mod)log=log.filter(e=>e.module===mod);
+  if(df)log=log.filter(e=>e.ts>=df);
+  if(dt)log=log.filter(e=>e.ts<=(dt+'T23:59:59'));
+  const rows=[['Timestamp','UserId','UserName','Role','Module','Action','Details']];
+  log.forEach(e=>rows.push([e.ts,e.userId,e.userName,e.userRole,e.module,e.action,JSON.stringify(e.details||{})]));
+  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='audit_trail_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('Audit log exported as CSV','success');
 }
 
 // ═══════════════════════════════════════════════
