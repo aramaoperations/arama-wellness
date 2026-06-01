@@ -339,11 +339,19 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       <button class="btn-primary" onclick="doLogin()">Sign In to Ops Portal →</button>
       <div id="loginMsg" class="login-msg error"></div>
       <div id="loginAdminHint" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:12px;color:#fde68a;text-align:center">🔐 Admin access restricted to authorised personnel only.</div>
-      <div id="loginFirstRunHint" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:8px;font-size:12px;color:#6ee7b7">
-        <div style="font-weight:700;margin-bottom:4px">🚀 First-time setup — default credentials:</div>
-        <div>Staff: <code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">admin / Admin@123</code></div>
-        <div style="margin-top:2px">Super Admin: <code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">superadmin / Arama@2026!</code></div>
-        <div style="margin-top:6px;color:rgba(110,231,183,.6);font-size:11px">Change your password after first login via Forgot Password.</div>
+      <div id="loginFirstRunHint" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:12px;color:#fbbf24">
+        <div style="font-weight:700;margin-bottom:6px">🔐 First-time setup — click to reveal credentials</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="color:rgba(251,191,36,.7)">Super Admin</span>
+            <span id="saCredSpan" style="font-family:monospace;background:rgba(0,0,0,.35);padding:2px 8px;border-radius:4px;cursor:pointer;letter-spacing:2px;color:rgba(251,191,36,.4)" onclick="this.textContent='superadmin / Arama@2026!';this.style.color='#fbbf24';this.style.letterSpacing='0'">● ● ● ● ● ● ● ●</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="color:rgba(251,191,36,.7)">Admin</span>
+            <span id="adCredSpan" style="font-family:monospace;background:rgba(0,0,0,.35);padding:2px 8px;border-radius:4px;cursor:pointer;letter-spacing:2px;color:rgba(251,191,36,.4)" onclick="this.textContent='admin / Admin@123';this.style.color='#fbbf24';this.style.letterSpacing='0'">● ● ● ● ● ● ● ●</span>
+          </div>
+        </div>
+        <div style="margin-top:8px;color:rgba(251,191,36,.55);font-size:10px">⚠️ Change passwords immediately after first login — Admin Config → Users & Roles</div>
       </div>
       <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--text3)">
         New staff? <a href="staff-register.html" target="_blank" style="color:var(--accent3);text-decoration:underline">Register here</a>
@@ -464,6 +472,7 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
         <button id="navBtnConfig" class="nav-item" data-page="config" onclick="navigate('config')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M2 12h2M20 12h2"/></svg>Admin Config</button>
         <button class="nav-item" data-page="calendar" onclick="navigate('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Festival Calendar</button>
         <button class="nav-item" data-page="training" onclick="navigate('training')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Training SOPs</button>
+        <button class="nav-item" data-page="mykpis" onclick="navigate('mykpis')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>My KPIs</button>
         <button class="nav-item" data-page="profile" onclick="navigate('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</button>
         <button class="nav-item" onclick="doLogout()" style="color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
       </div>
@@ -639,6 +648,15 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       </div>
 
       <!-- PROFILE -->
+      <!-- MY KPIs -->
+      <div class="page" id="page-mykpis">
+        <div class="page-header">
+          <div class="page-title">📈 My KPIs</div>
+          <button class="btn btn-outline btn-sm" onclick="renderMyKPIs()">⟳ Refresh</button>
+        </div>
+        <div id="mykpisContent"></div>
+      </div>
+
       <div class="page" id="page-profile">
         <div class="page-header"><div class="page-title">👤 My Profile</div></div>
         <div id="profileContent"></div>
@@ -991,6 +1009,17 @@ async function sheetsAppend(tab,rows){
        body:JSON.stringify({values:rows})});
   }catch(e){console.warn('Sheets append error',e);}
 }
+async function logAttendanceToSheets(entry){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('ATTENDANCE','Attendance Log');
+  // Ensure header if fresh tab
+  await sheetsAppend('ATTENDANCE',[[
+    entry.ts,entry.userName,entry.userId,entry.locCode,entry.locName,
+    entry.type==='in'?'Clock In':'Clock Out',
+    entry.shiftHrs||'',entry.autoClockOut?'Auto':'Manual'
+  ]]);
+}
 async function logTransactionToSheets(txn){
   if(!gAccessToken)return;
   const sid=await getSheetsId();
@@ -1121,7 +1150,105 @@ function startActivityMonitor(){
       toast('Signed out due to inactivity.','info');
       setTimeout(()=>_doLogoutSilent(), 2000);
     }
+    // Run auto-features every 5 min
+    runAutoFeatures();
   }, 60000);
+  // Also run once shortly after login
+  setTimeout(runAutoFeatures, 8000);
+}
+
+// ── AUTO FEATURES ENGINE ──
+let _lastAutoRun=0;
+function runAutoFeatures(){
+  if(!currentSession)return;
+  const now=Date.now();
+  if(now-_lastAutoRun < 4*60*1000)return; // max once per 4 min
+  _lastAutoRun=now;
+  const s=currentSession;
+  const todayStr=new Date().toDateString();
+  const att=DB.get('attendanceLog')||[];
+
+  // 1. AUTO CLOCK-OUT — if still clocked in past shift end (12hr default)
+  const myLog=att.filter(e=>e.userId===s.id&&new Date(e.time).toDateString()===todayStr);
+  const lastIn=myLog.slice().reverse().find(e=>e.type==='in');
+  const lastOut=myLog.slice().reverse().find(e=>e.type==='out'&&(!lastIn||new Date(e.time)>new Date(lastIn.time)));
+  if(lastIn&&!lastOut){
+    const shiftMs=now-new Date(lastIn.time).getTime();
+    const shiftHrs=shiftMs/3600000;
+    if(shiftHrs>=12){
+      // Auto clock-out after 12 hours
+      const locs=DB.get('locations')||[];
+      const activeLoc=locs.find(l=>l.code===lastIn.locCode)||{};
+      const entry={id:'att'+Date.now(),userId:s.id,userName:s.name,locCode:lastIn.locCode||'',locName:lastIn.locName||'',type:'out',time:new Date().toISOString(),shiftHrs:parseFloat(shiftHrs.toFixed(1)),autoClockOut:true};
+      const log=DB.get('attendanceLog')||[];log.push(entry);DB.set('attendanceLog',log);
+      logAction('Attendance','clock.out.auto',{shiftHrs:shiftHrs.toFixed(1)});
+      toast('⏱ Auto clocked out after 12h shift','info');
+    } else if(shiftHrs>=8&&!window._shiftSummaryShown){
+      // 2. END-OF-SHIFT SUMMARY at ~8 hours
+      window._shiftSummaryShown=true;
+      const txns=DB.get('transactions')||[];
+      const myTxns=txns.filter(t=>(t.createdBy===s.name||t.staffId===s.id)&&new Date(t.createdAt).toDateString()===todayStr);
+      const rev=myTxns.reduce((a,t)=>a+(t.total||t.amount||0),0);
+      openModal('📊 Shift Summary',`
+        <div style="text-align:center;padding:10px">
+          <div style="font-size:28px;margin-bottom:8px">🌟</div>
+          <div style="font-size:16px;font-weight:700;color:var(--gold);margin-bottom:4px">Great shift, ${s.name.split(' ')[0]}!</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:16px">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+            <div class="kpi-card"><div class="kpi-label">Customers Served</div><div class="kpi-value" style="color:var(--accent3)">${myTxns.length}</div></div>
+            <div class="kpi-card"><div class="kpi-label">Revenue Generated</div><div class="kpi-value" style="color:var(--green)">₹${rev.toLocaleString('en-IN')}</div></div>
+            <div class="kpi-card"><div class="kpi-label">Shift Duration</div><div class="kpi-value">${shiftHrs.toFixed(1)}h</div></div>
+            <div class="kpi-card"><div class="kpi-label">Avg Ticket</div><div class="kpi-value" style="color:var(--gold)">₹${myTxns.length?Math.round(rev/myTxns.length):0}</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3)">Don't forget to clock out before leaving!</div>
+        </div>`,
+        '<button class="btn btn-accent" onclick="clockOut();closeModal()">Clock Out Now</button><button class="btn btn-outline" onclick="closeModal()">Continue Working</button>');
+    }
+  } else {
+    window._shiftSummaryShown=false;
+  }
+
+  // 3. COMPLIANCE WARNING (staff only) — if compliance deadline passed
+  if(['staff','supervisor'].includes(s.role)&&s.compliancePending){
+    const graceLeft=s.complianceDeadline?Math.ceil((s.complianceDeadline-now)/86400000):0;
+    if(graceLeft<=0&&!window._complianceAlertShown){
+      window._complianceAlertShown=true;
+      toast('⚠️ Compliance overdue! Please upload ID proof in My Profile → Documents. POS access remains active.','info');
+    }
+  }
+
+  // 4. ABSENT ALERT (supervisor / manager) — staff not clocked in 45 min after shift start (9am default)
+  if(['supervisor','manager'].includes(s.role)){
+    const hr=new Date().getHours();
+    const mn=new Date().getMinutes();
+    if(hr===9&&mn>=45&&!window._absentAlertShown){
+      window._absentAlertShown=true;
+      const users=DB.get('users')||[];
+      const myLocCodes=s.locations||[];
+      const team=users.filter(u=>u.role==='staff'&&u.active!==false&&(u.locations||[]).some(l=>myLocCodes.includes(l)));
+      const ins=new Set(att.filter(e=>new Date(e.time).toDateString()===todayStr&&e.type==='in').map(e=>e.userId));
+      const outs=new Set(att.filter(e=>new Date(e.time).toDateString()===todayStr&&e.type==='out').map(e=>e.userId));
+      const absent=team.filter(u=>!ins.has(u.id)||(ins.has(u.id)&&outs.has(u.id)));
+      if(absent.length>0){
+        toast('⚠️ '+absent.length+' staff not yet clocked in: '+absent.map(u=>u.name.split(' ')[0]).join(', '),'info');
+      }
+    }
+    // Reset absent alert next day
+    if(hr<9)window._absentAlertShown=false;
+  }
+
+  // 5. HOUSEKEEPING REMINDER — at 10am if not submitted
+  if(['supervisor'].includes(s.role)){
+    const hr=new Date().getHours();
+    if(hr===10&&!window._hkReminderShown){
+      window._hkReminderShown=true;
+      const myLocCodes=s.locations||[];
+      const hk=DB.get('housekeepingLog')||[];
+      const done=myLocCodes.some(c=>hk.some(h=>h.locCode===c&&new Date(h.ts).toDateString()===todayStr));
+      if(!done)toast('🧹 Housekeeping checklist not submitted yet for today!','info');
+    }
+    if(new Date().getHours()<10)window._hkReminderShown=false;
+  }
 }
 function refreshActivity(){
   if(!currentSession)return;
@@ -1163,6 +1290,8 @@ function clockIn(){
   log.push(entry);
   DB.set('attendanceLog',log);
   logAction('Attendance','clock.in',{location:entry.locName,time:entry.time});
+  // Sync clock-in to Google Sheets
+  logAttendanceToSheets(entry).catch(e=>console.warn('Sheets att:',e));
   toast('✅ Clocked in at '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),'success');
   // Update header button if present
   const btn=document.getElementById('attendanceBtn');
@@ -1195,6 +1324,7 @@ function clockOut(){
   log.push(entry);
   DB.set('attendanceLog',log);
   logAction('Attendance','clock.out',{location:entry.locName,shiftHrs:parseFloat(shiftHrs),time:entry.time});
+  logAttendanceToSheets(entry).catch(e=>console.warn('Sheets att:',e));
   toast('👋 Clocked out — '+shiftHrs+'h shift recorded','success');
   const btn=document.getElementById('attendanceBtn');
   if(btn){btn.textContent='⏱ Clock In';btn.onclick=clockIn;}
@@ -1225,6 +1355,9 @@ function seedIfEmpty(){
     DB.set('b2bLeads',[]);
     DB.set('esp32Logs',[]);
     DB.set('auditLog',[]);
+    DB.set('meterLog',[]);
+    DB.set('housekeepingLog',[]);
+    DB.set('kpiAssignments',{});
     DB.set('seeded_v83',true);
   }
 }
@@ -1253,12 +1386,18 @@ function switchLoginTab(tab){
   // Show/hide hints
   const adminHint=document.getElementById('loginAdminHint');
   if(adminHint)adminHint.style.display=tab==='admin'?'block':'none';
-  // Show first-run hint only when no custom users have been created
+  // Show first-run hint only when superadmin password has never been changed
   const firstRunHint=document.getElementById('loginFirstRunHint');
   if(firstRunHint){
     const users=DB.get('users')||[];
-    const isFirstRun=users.length<=2&&!users.some(u=>u.passwordChangedAt);
+    const sa=users.find(u=>u.role==='superadmin');
+    const isFirstRun=!sa?.passwordChangedAt;
     firstRunHint.style.display=(tab==='admin'&&isFirstRun)?'block':'none';
+    // Reset masked spans each time hint is shown
+    const saS=document.getElementById('saCredSpan');
+    const adS=document.getElementById('adCredSpan');
+    if(saS){saS.textContent='● ● ● ● ● ● ● ●';saS.style.color='rgba(251,191,36,.4)';saS.style.letterSpacing='2px';}
+    if(adS){adS.textContent='● ● ● ● ● ● ● ●';adS.style.color='rgba(251,191,36,.4)';adS.style.letterSpacing='2px';}
   }
   // Clear any previous error messages when switching tabs
   const msg=document.getElementById('loginMsg');
@@ -1881,7 +2020,7 @@ function renderPage(page){
     dailyreport:renderDailyReport,leads:renderLeads,locations:renderLocations,
     users:renderUsers,hrms:renderHRMS,inventory:renderInventory,esp32:renderESP32,
     crm:renderCRM,passes:renderPasses,loyalty:renderLoyalty,ambassador:renderAmbassador,
-    reports:renderReports,datahistory:renderDataHistory,audit:renderAudit,config:renderConfig,
+    reports:renderReports,datahistory:renderDataHistory,audit:renderAudit,mykpis:renderMyKPIs,config:renderConfig,
     calendar:renderCalendar,training:renderTraining,profile:renderProfile,
     notifications:renderNotifications
   };
@@ -2412,6 +2551,41 @@ function getAnnouncements(locCodes){
     return new Date(b.postedAt)-new Date(a.postedAt);
   }).slice(0,8);
 }
+// ── METER LOG ──
+function submitMeterLog(locCode){
+  const type=document.getElementById('meterType')?.value||'electricity';
+  const val=parseFloat(document.getElementById('meterVal')?.value||'0');
+  const note=(document.getElementById('meterNote')?.value||'').trim();
+  if(!val){toast('Enter a reading or amount','error');return;}
+  const entry={id:'ML'+Date.now(),locCode,type,ts:new Date().toISOString(),by:currentSession.name,
+    reading:type==='electricity'?val:0,amount:type==='internet'?val:0,notes:note};
+  const log=DB.get('meterLog')||[];log.push(entry);DB.set('meterLog',log);
+  logAction('Locations','meter.log',{locCode,type,value:val});
+  toast('✅ Meter reading submitted','success');
+  renderDashboard();
+}
+// Also log meter to Sheets if connected
+async function logMeterToSheets(entry){
+  if(!gAccessToken||!sheetsId)return;
+  await sheetsEnsureTab('METER_LOG','Meter & Recharge');
+  await sheetsAppend('METER_LOG',[[entry.ts,entry.locCode,entry.type,entry.reading||entry.amount,entry.notes||'',entry.by]]);
+}
+
+// ── HOUSEKEEPING ──
+function submitHousekeeping(locCode){
+  const items=['Chairs sanitised','Equipment wiped','Floor cleaned','Dustbin emptied','AC/fan checked','Power strip safe','Signage visible','Uniform & grooming'];
+  const checks={};
+  items.forEach(i=>{const el=document.getElementById('hk_'+i.replace(/\W/g,'_'));checks[i]=el?el.checked:false;});
+  const notes=(document.getElementById('hkNotes')?.value||'').trim();
+  const allOk=Object.values(checks).every(v=>v);
+  const entry={id:'HK'+Date.now(),locCode,ts:new Date().toISOString(),by:currentSession.name,checks,notes,allOk};
+  const log=DB.get('housekeepingLog')||[];log.push(entry);DB.set('housekeepingLog',log);
+  logAction('Locations','housekeeping.submit',{locCode,allOk,pending:Object.entries(checks).filter(([,v])=>!v).map(([k])=>k).join(', ')||'none'});
+  if(!allOk){const pending=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);toast('⚠️ Report saved — '+pending.length+' items pending: '+pending.slice(0,2).join(', '),'info');}
+  else toast('✅ Housekeeping report submitted — all clear!','success');
+  renderDashboard();
+}
+
 function announcementsHtml(locCodes){
   const items=getAnnouncements(locCodes);
   if(!items.length)return '<div style="font-size:12px;color:var(--text3);padding:10px 0">No announcements. All clear! ✅</div>';
@@ -2577,7 +2751,7 @@ function renderSupervisorDashboard(){
   </div>
 
   <!-- Leave Approvals + Announcements -->
-  <div class="grid-2">
+  <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
       <div style="font-weight:700;font-size:14px;margin-bottom:12px">📝 Pending Leave Approvals</div>
       ${leaveReqs.length?leaveReqs.map(r=>`
@@ -2599,6 +2773,45 @@ function renderSupervisorDashboard(){
     <div class="card">
       <div style="font-weight:700;font-size:14px;margin-bottom:12px">📢 Announcements <span style="font-size:10px;color:var(--text3);font-weight:400">from management</span></div>
       ${announcementsHtml(myLocCodes)}
+    </div>
+  </div>
+
+  <!-- Meter Reading + Recharge -->
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">⚡ Meter Reading & Recharge Log</div>
+      ${(()=>{const ml=DB.get('meterLog')||[];const myMl=ml.filter(x=>myLocCodes.includes(x.locCode)).slice(-5).reverse();return myMl.length?myMl.map(m=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><div><span style="font-weight:600">${m.type==='electricity'?'⚡':'📶'} ${m.type==='electricity'?'Electricity':'Internet'}</span><div style="font-size:10px;color:var(--text3)">${new Date(m.ts).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} · by ${m.by}</div></div><div style="text-align:right"><div style="font-weight:700;color:var(--gold)">${m.type==='electricity'?m.reading+' units':'₹'+m.amount+' recharged'}</div><div style="font-size:10px;color:var(--text3)">${m.notes||''}</div></div></div>`).join(''):'<div style="color:var(--text3);font-size:12px;padding:10px 0">No entries today. Submit a reading below.</div>';}())}
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:var(--text2)">Submit New Reading / Recharge</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <select class="form-control" id="meterType" style="flex:1;min-width:110px;font-size:12px;padding:6px 8px">
+            <option value="electricity">⚡ Electricity</option>
+            <option value="internet">📶 Internet</option>
+          </select>
+          <input type="number" class="form-control" id="meterVal" placeholder="Reading / Amt ₹" style="flex:1;min-width:100px;font-size:12px;padding:6px 8px">
+          <input type="text" class="form-control" id="meterNote" placeholder="Notes (optional)" style="flex:2;min-width:120px;font-size:12px;padding:6px 8px">
+          <button class="btn btn-accent btn-sm" onclick="submitMeterLog('${myLocCodes[0]||''}')">Submit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Housekeeping Report -->
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">🧹 Housekeeping Checklist</div>
+      ${(()=>{const hk=DB.get('housekeepingLog')||[];const todayHK=hk.filter(x=>myLocCodes.includes(x.locCode)&&new Date(x.ts).toDateString()===todayStr);const lastHK=todayHK.slice(-1)[0];return lastHK?`<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px"><div style="font-weight:700;color:var(--green);margin-bottom:4px">✅ Submitted today at ${new Date(lastHK.ts).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div>${Object.entries(lastHK.checks||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">${k}</span><span>${v?'✅':'❌'}</span></div>`).join('')}</div>`:'<div class="alert alert-info" style="font-size:11px;margin-bottom:10px">No housekeeping report submitted today.</div>';}())}
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${['Chairs sanitised','Equipment wiped','Floor cleaned','Dustbin emptied','AC/fan checked','Power strip safe','Signage visible','Uniform & grooming'].map(item=>`<label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer"><input type="checkbox" id="hk_${item.replace(/\W/g,'_')}" style="accent-color:var(--accent3)"> ${item}</label>`).join('')}
+        <input type="text" class="form-control" id="hkNotes" placeholder="Additional notes…" style="font-size:12px;padding:6px 8px;margin-top:4px">
+        <button class="btn btn-accent btn-sm" style="margin-top:4px" onclick="submitHousekeeping('${myLocCodes[0]||''}')">Submit Report</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Score: Customer Count per Staff -->
+  <div class="card" style="margin-bottom:16px">
+    <div style="font-weight:700;font-size:14px;margin-bottom:12px">🏅 Personal Score — Customers Served Today</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px">
+      ${(()=>{const allU=[...myTeam,s];const uniq=[...new Map(allU.map(u=>[u.id,u])).values()];return uniq.map(u=>{const uTxns=allTxns.filter(t=>new Date(t.createdAt).toDateString()===todayStr&&(t.createdBy===u.name||t.staffId===u.id));const cnt=uTxns.length;const rev=uTxns.reduce((a,t)=>a+(t.total||t.amount||0),0);const isSelf=u.id===s.id;return `<div style="flex:1;min-width:130px;border:1px solid ${isSelf?'var(--accent3)':'var(--border)'};border-radius:10px;padding:12px;background:${isSelf?'rgba(201,150,10,.07)':'var(--bg2)'}"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px">${u.name.split(' ')[0]}${isSelf?' (You)':''}</div><div style="font-size:22px;font-weight:800;color:var(--gold)">${cnt}</div><div style="font-size:11px;color:var(--text3)">customers</div><div style="font-size:12px;font-weight:700;color:var(--green);margin-top:4px">₹${rev.toLocaleString('en-IN')}</div></div>`;}).join('');})()}
     </div>
   </div>`;
 }
@@ -2736,6 +2949,35 @@ function renderManagerDashboard(){
         <button class="btn btn-accent btn-sm" onclick="postAnnouncementModal()">+ Post</button>
       </div>
       ${announcementsHtml(myLocCodes)}
+    </div>
+  </div>
+
+  <!-- Location Health Scores -->
+  <div class="card" style="margin-top:16px">
+    <div style="font-weight:700;font-size:14px;margin-bottom:14px">🏥 Location Health Score</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+      ${myLocs.map(loc=>{
+        const locStaff=myStaff.filter(u=>(u.locations||[]).includes(loc.code));
+        const ins=new Set(attLog.filter(e=>new Date(e.time).toDateString()===todayStr&&e.type==='in'&&locStaff.some(u=>u.id===e.userId)).map(e=>e.userId));
+        const outs=new Set(attLog.filter(e=>new Date(e.time).toDateString()===todayStr&&e.type==='out'&&locStaff.some(u=>u.id===e.userId)).map(e=>e.userId));
+        const attPct=locStaff.length?Math.round([...ins].filter(id=>!outs.has(id)).length/locStaff.length*100):100;
+        const rem=(DB.get('locationRemarks')||{})[loc.code]||[];
+        const openRem=rem.filter(r=>!r.resolved).length;
+        const hk=DB.get('housekeepingLog')||[];
+        const hkDone=hk.some(h=>h.locCode===loc.code&&new Date(h.ts).toDateString()===todayStr&&h.allOk);
+        const score=Math.max(0,Math.round((attPct*0.5)+(openRem===0?35:openRem<3?20:5)+(hkDone?15:0)));
+        const col=score>=80?'var(--green)':score>=60?'var(--gold)':score>=40?'var(--orange)':'var(--red)';
+        return `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg2)">
+          <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text1)">${loc.name}</div>
+          <div style="font-size:28px;font-weight:800;color:${col};margin-bottom:4px">${score}%</div>
+          <div style="background:var(--border);border-radius:3px;height:5px;overflow:hidden;margin-bottom:8px"><div style="width:${score}%;height:100%;background:${col};border-radius:3px;transition:.4s"></div></div>
+          <div style="font-size:10px;color:var(--text3);display:flex;flex-direction:column;gap:2px">
+            <span>👥 Att: ${attPct}%</span>
+            <span>📍 Remarks: ${openRem} open</span>
+            <span>🧹 HK: ${hkDone?'Done':'Pending'}</span>
+          </div>
+        </div>`;
+      }).join('')||'<div style="color:var(--text3);font-size:12px">No locations assigned.</div>'}
     </div>
   </div>`;
 }
@@ -4863,6 +5105,142 @@ async function activateESP32(location,channel,durationSec,token){
 }
 
 // ═══════════════════════════════════════════════
+// KPI SYSTEM
+// ═══════════════════════════════════════════════
+const ALL_KPIS=[
+  {id:'rev_today',label:'Revenue Today',icon:'💰',roles:['staff','supervisor','manager'],compute:(s,txns,att,cfg)=>{const t=txns.filter(x=>new Date(x.createdAt).toDateString()===new Date().toDateString()&&(x.createdBy===s.name||x.staffId===s.id));const v=t.reduce((a,x)=>a+(x.total||x.amount||0),0);const tgt=(DB.get('staffTargets')||{})[s.id]?.shift||cfg.defaultStaffTargets?.shift||3000;return{value:'₹'+v.toLocaleString('en-IN'),raw:v,target:tgt,pct:Math.min(100,Math.round(v/tgt*100)),unit:'vs ₹'+tgt+' shift target'};}},
+  {id:'customers_today',label:'Customers Today',icon:'👤',roles:['staff','supervisor','manager'],compute:(s,txns)=>{const t=txns.filter(x=>new Date(x.createdAt).toDateString()===new Date().toDateString()&&(x.createdBy===s.name||x.staffId===s.id));return{value:t.length,raw:t.length,target:10,pct:Math.min(100,Math.round(t.length/10*100)),unit:'sessions'};}},
+  {id:'rev_month',label:'Revenue This Month',icon:'📊',roles:['staff','supervisor','manager'],compute:(s,txns,att,cfg)=>{const ms=new Date(new Date().getFullYear(),new Date().getMonth(),1);const t=txns.filter(x=>new Date(x.createdAt)>=ms&&(x.createdBy===s.name||x.staffId===s.id));const v=t.reduce((a,x)=>a+(x.total||x.amount||0),0);const tgt=(DB.get('staffTargets')||{})[s.id]?.month||cfg.defaultStaffTargets?.month||80000;return{value:'₹'+(v/1000).toFixed(1)+'K',raw:v,target:tgt,pct:Math.min(100,Math.round(v/tgt*100)),unit:'vs ₹'+(tgt/1000).toFixed(0)+'K target'};}},
+  {id:'shift_hours',label:'Shift Hours Today',icon:'⏱',roles:['staff','supervisor'],compute:(s,txns,att)=>{const todayStr=new Date().toDateString();const myLog=att.filter(e=>e.userId===s.id&&new Date(e.time).toDateString()===todayStr);const lastIn=myLog.slice().reverse().find(e=>e.type==='in');const lastOut=myLog.slice().reverse().find(e=>e.type==='out'&&(!lastIn||new Date(e.time)>new Date(lastIn.time)));if(!lastIn)return{value:'Not in',raw:0,target:8,pct:0,unit:'hours'};const end=lastOut?new Date(lastOut.time).getTime():Date.now();const h=((end-new Date(lastIn.time).getTime())/3600000);return{value:h.toFixed(1)+'h',raw:h,target:8,pct:Math.min(100,Math.round(h/8*100)),unit:'of 8h shift'};}},
+  {id:'attendance_rate',label:'Attendance Rate',icon:'📅',roles:['supervisor','manager'],compute:(s,txns,att)=>{const ms=new Date(new Date().getFullYear(),new Date().getMonth(),1);const days=new Date().getDate();const myDays=new Set(att.filter(e=>e.userId===s.id&&new Date(e.time)>=ms&&e.type==='in').map(e=>new Date(e.time).toDateString())).size;const pct=Math.min(100,Math.round(myDays/days*100));return{value:myDays+'/'+days+' days',raw:myDays,target:days,pct,unit:'this month'};}},
+  {id:'team_clocked_in',label:'Team Clocked In',icon:'🟢',roles:['supervisor','manager'],compute:(s,txns,att)=>{const users=DB.get('users')||[];const myLoc=s.locations||[];const team=users.filter(u=>u.role==='staff'&&u.active!==false&&(u.locations||[]).some(l=>myLoc.includes(l)));const todayStr=new Date().toDateString();const ins=new Set();const outs=new Set();att.filter(e=>new Date(e.time).toDateString()===todayStr).forEach(e=>{if(e.type==='in')ins.add(e.userId);else outs.add(e.userId);});const active=team.filter(u=>ins.has(u.id)&&!outs.has(u.id)).length;return{value:active+'/'+team.length,raw:active,target:team.length,pct:team.length?Math.min(100,Math.round(active/team.length*100)):100,unit:'staff present'};}},
+  {id:'pending_leaves',label:'Pending Leaves',icon:'🏖',roles:['supervisor','manager'],compute:(s)=>{const myLoc=s.locations||[];const users=DB.get('users')||[];const team=users.filter(u=>u.role==='staff'&&(u.locations||[]).some(l=>myLoc.includes(l)));const n=(DB.get('leaveRequests')||[]).filter(r=>r.status==='pending'&&team.some(u=>u.id===r.staffId)).length;return{value:n,raw:n,target:0,pct:n===0?100:0,unit:'awaiting approval',alert:n>0};}},
+  {id:'open_remarks',label:'Open Remarks',icon:'📍',roles:['supervisor','manager'],compute:(s)=>{const myLoc=s.locations||[];const rem=DB.get('locationRemarks')||{};const n=myLoc.reduce((a,c)=>a+((rem[c]||[]).filter(r=>!r.resolved).length),0);return{value:n,raw:n,target:0,pct:n===0?100:0,unit:'unresolved issues',alert:n>0};}},
+  {id:'housekeeping_done',label:'Housekeeping Done',icon:'🧹',roles:['supervisor'],compute:(s)=>{const myLoc=s.locations||[];const hk=DB.get('housekeepingLog')||[];const done=myLoc.some(c=>hk.some(h=>h.locCode===c&&new Date(h.ts).toDateString()===new Date().toDateString()));return{value:done?'✅ Done':'❌ Pending',raw:done?1:0,target:1,pct:done?100:0,unit:'today',alert:!done};}},
+  {id:'meter_logged',label:'Meter Reading',icon:'⚡',roles:['supervisor'],compute:(s)=>{const myLoc=s.locations||[];const ml=DB.get('meterLog')||[];const done=myLoc.some(c=>ml.some(m=>m.locCode===c&&new Date(m.ts).toDateString()===new Date().toDateString()));return{value:done?'✅ Logged':'⚠️ Pending',raw:done?1:0,target:1,pct:done?100:0,unit:'today',alert:!done};}},
+  {id:'loc_health',label:'Location Health',icon:'🏥',roles:['manager'],compute:(s,txns,att)=>{const myLoc=s.locations||[];const users=DB.get('users')||[];const team=users.filter(u=>u.role==='staff'&&(u.locations||[]).some(l=>myLoc.includes(l)));const todayStr=new Date().toDateString();const ins=new Set();const outs=new Set();att.filter(e=>new Date(e.time).toDateString()===todayStr).forEach(e=>{if(e.type==='in')ins.add(e.userId);else outs.add(e.userId);});const attPct=team.length?Math.round([...ins].filter(id=>!outs.has(id)).length/team.length*100):100;const rem=DB.get('locationRemarks')||{};const openRem=myLoc.reduce((a,c)=>a+((rem[c]||[]).filter(r=>!r.resolved).length),0);const score=Math.max(0,Math.round((attPct*0.5)+(openRem===0?50:openRem<3?30:10)));return{value:score+'%',raw:score,target:100,pct:score,unit:'health score'};}}
+];
+
+function getMyKPIs(userId){
+  const assignments=DB.get('kpiAssignments')||{};
+  const s=currentSession;
+  const roleDefaults=ALL_KPIS.filter(k=>k.roles.includes(s.role)).map(k=>k.id);
+  return assignments[userId]||assignments['role_'+s.role]||roleDefaults;
+}
+
+function renderMyKPIs(){
+  const s=currentSession;
+  if(!s){return;}
+  const txns=DB.get('transactions')||[];
+  const att=DB.get('attendanceLog')||[];
+  const cfg=DB.get('config')||{};
+  const myKpiIds=getMyKPIs(s.id);
+  const kpis=ALL_KPIS.filter(k=>myKpiIds.includes(k.id));
+  const today=new Date();
+  const todayStr=today.toDateString();
+  // Period stats
+  const myTxns=txns.filter(t=>t.createdBy===s.name||t.staffId===s.id);
+  const todayTxns=myTxns.filter(t=>new Date(t.createdAt).toDateString()===todayStr);
+  const weekStart=new Date(today);weekStart.setDate(today.getDate()-today.getDay());
+  const weekTxns=myTxns.filter(t=>new Date(t.createdAt)>=weekStart);
+  const monthStart=new Date(today.getFullYear(),today.getMonth(),1);
+  const monthTxns=myTxns.filter(t=>new Date(t.createdAt)>=monthStart);
+  document.getElementById('mykpisContent').innerHTML=`
+  <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap">
+    <div style="font-size:13px;color:var(--text2)">Your personalised KPI dashboard · <span style="color:var(--accent3);font-weight:700">${s.name}</span> · ${ROLE_LABELS[s.role]||s.role}</div>
+    <div style="margin-left:auto;font-size:11px;color:var(--text3)">${today.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</div>
+  </div>
+  <!-- KPI Cards -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">
+    ${kpis.map(k=>{
+      let res;try{res=k.compute(s,txns,att,cfg);}catch(e){res={value:'—',pct:0,unit:'',raw:0,target:0};}
+      const col=res.alert?'var(--orange)':res.pct>=80?'var(--green)':res.pct>=50?'var(--gold)':'var(--red)';
+      return `<div class="kpi-card" style="border-left:3px solid ${col}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div class="kpi-label">${k.label}</div>
+          <span style="font-size:18px">${k.icon}</span>
+        </div>
+        <div class="kpi-value" style="color:${col};font-size:22px">${res.value}</div>
+        <div class="kpi-sub">${res.unit||''}</div>
+        ${res.pct!==undefined&&res.pct!==null?`<div style="margin-top:8px;background:var(--border);border-radius:3px;height:4px;overflow:hidden"><div style="width:${res.pct}%;height:100%;background:${col};border-radius:3px;transition:width .4s"></div></div>`:''}
+      </div>`;
+    }).join('')}
+    ${kpis.length===0?'<div class="alert alert-info" style="grid-column:1/-1">No KPIs assigned. Ask your admin to assign KPIs via Admin Config → KPI Setup.</div>':''}
+  </div>
+  <!-- Quick trend: last 7 days revenue -->
+  <div class="card" style="margin-bottom:16px">
+    <div style="font-weight:700;font-size:14px;margin-bottom:12px">📅 My Activity — Last 7 Days</div>
+    <div class="table-wrap"><table><thead><tr><th>Day</th><th>Customers</th><th>Revenue</th><th>Avg Ticket</th></tr></thead><tbody>
+    ${Array.from({length:7},(_,i)=>{
+      const d=new Date(today);d.setDate(d.getDate()-i);
+      const ds=d.toDateString();
+      const dt=myTxns.filter(t=>new Date(t.createdAt).toDateString()===ds);
+      const rev=dt.reduce((a,t)=>a+(t.total||t.amount||0),0);
+      const avg=dt.length?Math.round(rev/dt.length):0;
+      const isToday=i===0;
+      return `<tr style="${isToday?'background:rgba(201,150,10,.05)':''}"><td style="font-weight:${isToday?700:400}">${isToday?'Today':d.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short'})}</td><td>${dt.length}</td><td style="font-weight:600;color:var(--green)">₹${rev.toLocaleString('en-IN')}</td><td style="color:var(--text2)">₹${avg.toLocaleString('en-IN')}</td></tr>`;
+    }).join('')}
+    </tbody></table></div>
+  </div>`;
+}
+
+// Admin: KPI Assignment UI (called from renderConfig)
+function renderKPIAdmin(){
+  const el=document.getElementById('kpiAdminContent');
+  if(!el)return;
+  const users=DB.get('users')||[];
+  const assignments=DB.get('kpiAssignments')||{};
+  el.innerHTML=`
+  <div style="margin-bottom:16px">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Select target group and KPIs to assign in bulk. Individual overrides can be set per user.</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Assign To</label>
+        <select class="form-control" id="kpiTarget">
+          <option value="role_staff">All Staff</option>
+          <option value="role_supervisor">All Supervisors</option>
+          <option value="role_manager">All Managers</option>
+          ${users.filter(u=>u.active!==false&&u.role!=='superadmin').map(u=>`<option value="${u.id}">${u.name} (${ROLE_LABELS[u.role]||u.role})</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div style="font-weight:600;font-size:13px;margin-bottom:8px">Select KPIs to assign:</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-bottom:12px">
+      ${ALL_KPIS.map(k=>{
+        const curTarget=document.getElementById('kpiTarget')?.value||'role_staff';
+        const cur=assignments[curTarget]||[];
+        return `<label style="display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--bg2)">
+          <input type="checkbox" id="kpi_${k.id}" ${(assignments['role_staff']||ALL_KPIS.filter(x=>x.roles.includes('staff')).map(x=>x.id)).includes(k.id)?'checked':''} style="accent-color:var(--accent3)">
+          <span style="font-size:14px">${k.icon}</span>
+          <div><div style="font-weight:600">${k.label}</div><div style="font-size:10px;color:var(--text3)">${k.roles.join(', ')}</div></div>
+        </label>`;
+      }).join('')}
+    </div>
+    <button class="btn btn-accent" onclick="saveKPIAssignment()">💾 Save KPI Assignment</button>
+    <button class="btn btn-outline" style="margin-left:8px" onclick="resetKPIAssignment()">Reset to Default</button>
+  </div>`;
+}
+function saveKPIAssignment(){
+  const target=document.getElementById('kpiTarget')?.value;
+  if(!target){toast('Select a target group','error');return;}
+  const selected=ALL_KPIS.map(k=>k.id).filter(id=>{const el=document.getElementById('kpi_'+id);return el&&el.checked;});
+  const assignments=DB.get('kpiAssignments')||{};
+  assignments[target]=selected;
+  DB.set('kpiAssignments',assignments);
+  logAction('Config','kpi.assign',{target,count:selected.length});
+  toast('✅ KPI assignment saved for '+target,'success');
+}
+function resetKPIAssignment(){
+  const target=document.getElementById('kpiTarget')?.value;
+  if(!target)return;
+  const assignments=DB.get('kpiAssignments')||{};
+  delete assignments[target];
+  DB.set('kpiAssignments',assignments);
+  toast('KPI assignment reset to role defaults','success');
+  renderKPIAdmin();
+}
+
+// ═══════════════════════════════════════════════
 // AUDIT TRAIL
 // ═══════════════════════════════════════════════
 const MODULE_ICONS={Auth:'🔐',POS:'🧾',Attendance:'⏱',Users:'👤',HRMS:'📋',Locations:'📍',default:'📝'};
@@ -4956,6 +5334,7 @@ function renderConfig(){
     <button class="tab-btn" onclick="cfgTab(this,'cfgSocial')">🔑 Social Login</button>
     <button class="tab-btn" onclick="cfgTab(this,'cfgWhatsApp')">WhatsApp API</button>
     <button class="tab-btn" onclick="cfgTab(this,'cfgDrive');updateDriveStatusLine()">☁️ Drive Sync</button>
+    <button class="tab-btn" onclick="cfgTab(this,'cfgKPI');renderKPIAdmin()">📈 KPI Setup</button>
     <button class="tab-btn" onclick="cfgTab(this,'cfgDanger')">⚠️ Danger Zone</button>
   </div>
 
@@ -5124,6 +5503,14 @@ function renderConfig(){
     </div>
   </div>
 
+  <div id="cfgKPI" style="display:none">
+    <div class="card">
+      <div class="cfg-section-title">📈 KPI Dashboard Setup</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Assign KPIs to roles or individual staff. They will see these on their <strong>My KPIs</strong> page.</div>
+      <div id="kpiAdminContent"></div>
+    </div>
+  </div>
+
   <div id="cfgDanger" style="display:none">
     <div class="card" style="border-color:var(--red)">
       <div style="font-weight:700;color:var(--red);margin-bottom:14px">⚠️ Danger Zone — Super Admin Only</div>
@@ -5191,7 +5578,7 @@ function updateDriveStatusLine(){
 }
 
 function cfgTab(btn,id){
-  ['cfgBrand','cfgServices','cfgSocial','cfgWhatsApp','cfgDanger','cfgDrive'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
+  ['cfgBrand','cfgServices','cfgSocial','cfgWhatsApp','cfgDanger','cfgDrive','cfgKPI'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
   document.getElementById(id).style.display='block';
   document.querySelectorAll('#configContent .tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
