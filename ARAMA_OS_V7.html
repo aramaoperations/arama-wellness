@@ -984,8 +984,19 @@ async function getSheetsId(){
     return sheetsId;
   }catch(e){console.warn('Sheets create error',e);return null;}
 }
+const _sheetsTabHeaders={
+  'ATTENDANCE':['Timestamp','Staff Name','Staff ID','Loc Code','Location','Type','Shift Hours','Method'],
+  'LEAVES':['Timestamp','Staff Name','Type','From','To','Reason','Status','Resolved By','Resolved At'],
+  'REMARKS':['Timestamp','Loc Code','Action','Remark Text','By'],
+  'HOUSEKEEPING':['Timestamp','Loc Code','By','Result','Pending Items','Notes'],
+  'USERS':['Timestamp','Action','User ID','Name','Role','Phone','Email','Locations','Done By'],
+  'LOGINS':['Timestamp','Name','Role','User ID','Method'],
+  'METER_LOG':['Timestamp','Loc Code','Type','Value','Notes','By'],
+};
+const _sheetsTabsCreated=new Set();
 async function sheetsEnsureTab(locCode,locName){
   if(!sheetsId||!gAccessToken)return;
+  if(_sheetsTabsCreated.has(locCode))return;
   try{
     const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetsId}`,
       {headers:{Authorization:'Bearer '+gAccessToken}});
@@ -995,10 +1006,11 @@ async function sheetsEnsureTab(locCode,locName){
       await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetsId}:batchUpdate`,
         {method:'POST',headers:{Authorization:'Bearer '+gAccessToken,'Content-Type':'application/json'},
          body:JSON.stringify({requests:[{addSheet:{properties:{title:locCode}}}]})});
-      // Header row
-      await sheetsAppend(locCode,[['Date','Time','Location','Location Name','Transaction ID',
-        'Services','Amount (₹)','Payment Mode','Staff','Customer Phone','Token(s)','Notes']]);
+      // Write header row — use custom headers for known tabs, default for location tabs
+      const headers=_sheetsTabHeaders[locCode]||['Date','Time','Location','Location Name','Transaction ID','Services','Amount (₹)','Payment Mode','Staff','Customer Phone','Token(s)','Notes'];
+      await sheetsAppend(locCode,[headers]);
     }
+    _sheetsTabsCreated.add(locCode);
   }catch(e){console.warn('Sheets tab error',e);}
 }
 async function sheetsAppend(tab,rows){
@@ -1013,11 +1025,53 @@ async function logAttendanceToSheets(entry){
   if(!gAccessToken)return;
   const sid=await getSheetsId();if(!sid)return;
   await sheetsEnsureTab('ATTENDANCE','Attendance Log');
-  // Ensure header if fresh tab
   await sheetsAppend('ATTENDANCE',[[
     entry.ts,entry.userName,entry.userId,entry.locCode,entry.locName,
     entry.type==='in'?'Clock In':'Clock Out',
     entry.shiftHrs||'',entry.autoClockOut?'Auto':'Manual'
+  ]]);
+}
+async function logLeaveToSheets(r){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('LEAVES','Leave Requests');
+  await sheetsAppend('LEAVES',[[
+    new Date().toISOString(),r.staffName||r.staffId,r.type,r.from,r.to,
+    r.reason||'',r.status,r.resolvedBy||'',r.resolvedAt||''
+  ]]);
+}
+async function logRemarkToSheets(code,text,action){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('REMARKS','Location Remarks');
+  await sheetsAppend('REMARKS',[[
+    new Date().toISOString(),code,action,text,currentSession?.name||''
+  ]]);
+}
+async function logHousekeepingToSheets(entry){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('HOUSEKEEPING','Housekeeping Log');
+  const pending=Object.entries(entry.checks||{}).filter(([,v])=>!v).map(([k])=>k).join(', ')||'All OK';
+  await sheetsAppend('HOUSEKEEPING',[[
+    entry.ts,entry.locCode,entry.by,entry.allOk?'All Clear':'Pending Items',pending,entry.notes||''
+  ]]);
+}
+async function logUserToSheets(u,action){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('USERS','User Management');
+  await sheetsAppend('USERS',[[
+    new Date().toISOString(),action,u.id||'',u.name||'',u.role||'',
+    u.phone||'',u.email||'',(u.locations||[]).join(', '),currentSession?.name||'system'
+  ]]);
+}
+async function logLoginToSheets(user,method){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('LOGINS','Login Log');
+  await sheetsAppend('LOGINS',[[
+    new Date().toISOString(),user.name||'',user.role||'',user.id||'',method||'password'
   ]]);
 }
 async function logTransactionToSheets(txn){
@@ -1462,6 +1516,7 @@ function loginUser(user){
   setupApp();
   navigate('dashboard');
   logAction('Auth','login',{method:'password',role:user.role});
+  logLoginToSheets(user,'password').catch(()=>{});
   toast('Welcome back, '+user.name+'! 👋','success');
   // Show compliance warning — never blocks access
   if(user._complianceWarning!==undefined){
@@ -1670,6 +1725,7 @@ function _handleStaffSocial(provider,{email,name}){
   }
   if(user.active===false){showLoginMsg('Account deactivated. Contact admin.','error');return;}
   if(!user.socialEmail){user.socialEmail=email;DB.set('users',users);}
+  logLoginToSheets(user,provider).catch(()=>{});
   loginUser(user);
   toast('Signed in with '+providerLabel+' — Welcome, '+(name||user.name).split(' ')[0]+'! 👋','success');
 }
@@ -1838,8 +1894,10 @@ function verifyStaffOTP(){
   closeOTPPopup();
   const users=DB.get('users')||[];
   const user=users.find(u=>u.id===parsed.userId);
-  if(user)loginUser(user);
-  else showLoginMsg('Account not found. Contact admin.','error');
+  if(user){
+    logLoginToSheets(user,'otp').catch(()=>{});
+    loginUser(user);
+  } else showLoginMsg('Account not found. Contact admin.','error');
 }
 
 // ═══════════════════════════════════════════════
@@ -2561,6 +2619,7 @@ function submitMeterLog(locCode){
     reading:type==='electricity'?val:0,amount:type==='internet'?val:0,notes:note};
   const log=DB.get('meterLog')||[];log.push(entry);DB.set('meterLog',log);
   logAction('Locations','meter.log',{locCode,type,value:val});
+  logMeterToSheets(entry).catch(()=>{});
   toast('✅ Meter reading submitted','success');
   renderDashboard();
 }
@@ -2581,6 +2640,7 @@ function submitHousekeeping(locCode){
   const entry={id:'HK'+Date.now(),locCode,ts:new Date().toISOString(),by:currentSession.name,checks,notes,allOk};
   const log=DB.get('housekeepingLog')||[];log.push(entry);DB.set('housekeepingLog',log);
   logAction('Locations','housekeeping.submit',{locCode,allOk,pending:Object.entries(checks).filter(([,v])=>!v).map(([k])=>k).join(', ')||'none'});
+  logHousekeepingToSheets(entry).catch(()=>{});
   if(!allOk){const pending=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);toast('⚠️ Report saved — '+pending.length+' items pending: '+pending.slice(0,2).join(', '),'info');}
   else toast('✅ Housekeeping report submitted — all clear!','success');
   renderDashboard();
@@ -3464,6 +3524,7 @@ function addRemark(code){
   remarks[code].push({text,by:currentSession.name,role:currentSession.role,timestamp:new Date().toISOString(),resolved:false,resolvedBy:''});
   DB.set('locationRemarks',remarks);
   logAction('Locations','remark.add',{locCode:code,text});
+  logRemarkToSheets(code,text,'Added').catch(()=>{});
   toast('Remark added','success');openLocationDetail(code);
 }
 function resolveRemark(code,idx){
@@ -3473,6 +3534,7 @@ function resolveRemark(code,idx){
     rmk.resolved=true;rmk.resolvedBy=currentSession.name;
     DB.set('locationRemarks',remarks);
     logAction('Locations','remark.resolve',{locCode:code,text:rmk.text});
+    logRemarkToSheets(code,rmk.text,'Resolved').catch(()=>{});
     toast('Remark resolved','success');openLocationDetail(code);
   }
 }
@@ -3623,6 +3685,7 @@ function updateLeave(id,status){
   r.resolvedAt=new Date().toISOString();
   DB.set('leaveRequests',reqs);
   logAction('HRMS','leave.'+status,{staffName:r.staffName,type:r.type,from:r.from,to:r.to});
+  logLeaveToSheets(r).catch(()=>{});
   toast('Leave request '+status,'success');
   renderLeaveRequests();
 }
@@ -4092,6 +4155,7 @@ function updateUser(id){
   const updated=users[idx];
   DB.set('users',users);
   logAction('Users','user.edit',{userId:id,name:updated.name,role:updated.role,passChanged:!!pass});
+  logUserToSheets(updated,'Updated').catch(()=>{});
   closeModal();renderUsers();toast('User updated','success');
 }
 function deactivateUser(id){
@@ -4149,6 +4213,7 @@ function approveStaff(idx){
   users.push(newUser);
   DB.set('users',users);
   logAction('Users','user.created',{userId:newUser.id,name:newUser.name,role:newUser.role,location:newUser.locations[0]||''});
+  logUserToSheets(newUser,'Created').catch(()=>{});
   pending.splice(idx,1);DB.set('pending-staff',pending);
   renderUsers();
   const daysLeft=7;
@@ -5622,8 +5687,541 @@ function previewDiscount(){
     const orig=d30?d30.price:0;
     return s.name+': ₹'+orig+' → ₹'+Math.round(orig*(1-pct/100));
   });
-  document.getElementById('discPreview').innerHTML='Preview: '+sample.join(' &nbsp;|&nbsp; ')+(cfg.services.filter(s=>s.active).length>3?' … and more':'');
+  document.getElementById('discPreview').innerHTML='Preview: '+sample.join(' &nbsp;|&nbsp; ')+(cfg.services.filter(s=>s.active).length>3?' …and more':'');
 }
+
+// ── SOCIAL LOGIN CONFIG SAVE ──
+function saveSocialConfig(){
+  const fApp=(document.getElementById('cfg_fbAppId')?.value||'').trim();
+  const xCid=(document.getElementById('cfg_xClientId')?.value||'').trim();
+  const liCid=(document.getElementById('cfg_liClientId')?.value||'').trim();
+  const sc={facebookAppId:fApp,xClientId:xCid,linkedinClientId:liCid,updatedAt:new Date().toISOString()};
+  DB.set('socialConfig',sc);
+  _loadSocialCredsFromDB();
+  toast('✅ Social login credentials saved.','success');
+}
+function cfgTab(btn,id){
+  ['cfgBrand','cfgServices','cfgSocial','cfgWhatsApp','cfgDanger','cfgDrive','cfgKPI'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none';});
+  document.getElementById(id).style.display='block';
+  document.querySelectorAll('#configContent .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function updateDriveStatusLine(){
+  const el=document.getElementById('driveSyncStatus');
+  if(!el)return;
+  if(gAccessToken){el.textContent='✅ Connected';el.style.color='var(--green)';}
+  else{el.textContent='⚫ Not connected';el.style.color='var(--text3)';}
+}
+
+// ═══════════════════════════════════════════════
+// SHEETS HELPERS — per-event sync
+// ═══════════════════════════════════════════════
+async function logLeaveToSheets(r){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('LEAVES','Leave Requests');
+  await sheetsAppend('LEAVES',[[new Date().toISOString(),r.staffName||r.staffId,r.type,r.from,r.to,r.reason||'',r.status,r.resolvedBy||'',r.resolvedAt||'']]);
+}
+async function logRemarkToSheets(code,text,action){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('REMARKS','Location Remarks');
+  await sheetsAppend('REMARKS',[[new Date().toISOString(),code,action,text,currentSession?.name||'']]);
+}
+async function logHousekeepingToSheets(entry){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('HOUSEKEEPING','Housekeeping Log');
+  const pending=Object.entries(entry.checks||{}).filter(([,v])=>!v).map(([k])=>k).join(', ')||'All OK';
+  await sheetsAppend('HOUSEKEEPING',[[entry.ts,entry.locCode,entry.by,entry.allOk?'All Clear':'Pending Items',pending,entry.notes||'']]);
+}
+async function logUserToSheets(u,action){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('USERS','User Management');
+  await sheetsAppend('USERS',[[new Date().toISOString(),action,u.id||'',u.name||'',u.role||'',u.phone||'',u.email||'',(u.locations||[]).join(', '),currentSession?.name||'system']]);
+}
+async function logLoginToSheets(user,method){
+  if(!gAccessToken)return;
+  const sid=await getSheetsId();if(!sid)return;
+  await sheetsEnsureTab('LOGINS','Login Log');
+  await sheetsAppend('LOGINS',[[new Date().toISOString(),user.name||'',user.role||'',user.id||'',method||'password']]);
+}
+
+// ═══════════════════════════════════════════════
+// KPI SYSTEM
+// ═══════════════════════════════════════════════
+const ALL_KPIS=[
+  {id:'rev_today',label:'Revenue Today',icon:'💰',roles:['staff','supervisor','manager'],compute:(s,txns,att,cfg)=>{const t=txns.filter(x=>new Date(x.createdAt).toDateString()===new Date().toDateString()&&(x.createdBy===s.name||x.staffId===s.id));const v=t.reduce((a,x)=>a+(x.total||x.amount||0),0);const tgt=(DB.get('staffTargets')||{})[s.id]?.shift||cfg.defaultStaffTargets?.shift||3000;return{value:'₹'+v.toLocaleString('en-IN'),raw:v,target:tgt,pct:Math.min(100,Math.round(v/tgt*100)),unit:'vs ₹'+tgt+' shift target'};}},
+  {id:'customers_today',label:'Customers Today',icon:'👤',roles:['staff','supervisor','manager'],compute:(s,txns)=>{const t=txns.filter(x=>new Date(x.createdAt).toDateString()===new Date().toDateString()&&(x.createdBy===s.name||x.staffId===s.id));return{value:t.length,raw:t.length,target:10,pct:Math.min(100,Math.round(t.length/10*100)),unit:'sessions'};}},
+  {id:'rev_month',label:'Revenue This Month',icon:'📊',roles:['staff','supervisor','manager'],compute:(s,txns,att,cfg)=>{const ms=new Date(new Date().getFullYear(),new Date().getMonth(),1);const t=txns.filter(x=>new Date(x.createdAt)>=ms&&(x.createdBy===s.name||x.staffId===s.id));const v=t.reduce((a,x)=>a+(x.total||x.amount||0),0);const tgt=(DB.get('staffTargets')||{})[s.id]?.month||cfg.defaultStaffTargets?.month||80000;return{value:'₹'+(v/1000).toFixed(1)+'K',raw:v,target:tgt,pct:Math.min(100,Math.round(v/tgt*100)),unit:'vs ₹'+(tgt/1000).toFixed(0)+'K target'};}},
+  {id:'shift_hours',label:'Shift Hours Today',icon:'⏱',roles:['staff','supervisor'],compute:(s,txns,att)=>{const todayStr=new Date().toDateString();const myLog=att.filter(e=>e.userId===s.id&&new Date(e.time).toDateString()===todayStr);const lastIn=myLog.slice().reverse().find(e=>e.type==='in');const lastOut=myLog.slice().reverse().find(e=>e.type==='out'&&(!lastIn||new Date(e.time)>new Date(lastIn.time)));if(!lastIn)return{value:'Not in',raw:0,target:8,pct:0,unit:'hours'};const end=lastOut?new Date(lastOut.time).getTime():Date.now();const h=((end-new Date(lastIn.time).getTime())/3600000);return{value:h.toFixed(1)+'h',raw:h,target:8,pct:Math.min(100,Math.round(h/8*100)),unit:'of 8h shift'};}},
+  {id:'attendance_rate',label:'Attendance Rate',icon:'📅',roles:['supervisor','manager'],compute:(s,txns,att)=>{const ms=new Date(new Date().getFullYear(),new Date().getMonth(),1);const days=new Date().getDate();const myDays=new Set(att.filter(e=>e.userId===s.id&&new Date(e.time)>=ms&&e.type==='in').map(e=>new Date(e.time).toDateString())).size;const pct=Math.min(100,Math.round(myDays/days*100));return{value:myDays+'/'+days+' days',raw:myDays,target:days,pct,unit:'this month'};}},
+  {id:'team_clocked_in',label:'Team Clocked In',icon:'🟢',roles:['supervisor','manager'],compute:(s,txns,att)=>{const users=DB.get('users')||[];const myLoc=s.locations||[];const team=users.filter(u=>u.role==='staff'&&u.active!==false&&(u.locations||[]).some(l=>myLoc.includes(l)));const todayStr=new Date().toDateString();const ins=new Set();const outs=new Set();att.filter(e=>new Date(e.time).toDateString()===todayStr).forEach(e=>{if(e.type==='in')ins.add(e.userId);else outs.add(e.userId);});const active=team.filter(u=>ins.has(u.id)&&!outs.has(u.id)).length;return{value:active+'/'+team.length,raw:active,target:team.length,pct:team.length?Math.min(100,Math.round(active/team.length*100)):100,unit:'staff present'};}},
+  {id:'pending_leaves',label:'Pending Leaves',icon:'🏖',roles:['supervisor','manager'],compute:(s)=>{const myLoc=s.locations||[];const users=DB.get('users')||[];const team=users.filter(u=>u.role==='staff'&&(u.locations||[]).some(l=>myLoc.includes(l)));const n=(DB.get('leaveRequests')||[]).filter(r=>r.status==='pending'&&team.some(u=>u.id===r.staffId)).length;return{value:n,raw:n,target:0,pct:n===0?100:0,unit:'awaiting approval',alert:n>0};}},
+  {id:'open_remarks',label:'Open Remarks',icon:'📍',roles:['supervisor','manager'],compute:(s)=>{const myLoc=s.locations||[];const rem=DB.get('locationRemarks')||{};const n=myLoc.reduce((a,c)=>a+((rem[c]||[]).filter(r=>!r.resolved).length),0);return{value:n,raw:n,target:0,pct:n===0?100:0,unit:'unresolved issues',alert:n>0};}},
+  {id:'housekeeping_done',label:'Housekeeping Done',icon:'🧹',roles:['supervisor'],compute:(s)=>{const myLoc=s.locations||[];const hk=DB.get('housekeepingLog')||[];const done=myLoc.some(c=>hk.some(h=>h.locCode===c&&new Date(h.ts).toDateString()===new Date().toDateString()));return{value:done?'✅ Done':'❌ Pending',raw:done?1:0,target:1,pct:done?100:0,unit:'today',alert:!done};}},
+  {id:'meter_logged',label:'Meter Reading',icon:'⚡',roles:['supervisor'],compute:(s)=>{const myLoc=s.locations||[];const ml=DB.get('meterLog')||[];const done=myLoc.some(c=>ml.some(m=>m.locCode===c&&new Date(m.ts).toDateString()===new Date().toDateString()));return{value:done?'✅ Logged':'⚠️ Pending',raw:done?1:0,target:1,pct:done?100:0,unit:'today',alert:!done};}},
+  {id:'loc_health',label:'Location Health',icon:'🏥',roles:['manager'],compute:(s,txns,att)=>{const myLoc=s.locations||[];const users=DB.get('users')||[];const team=users.filter(u=>u.role==='staff'&&(u.locations||[]).some(l=>myLoc.includes(l)));const todayStr=new Date().toDateString();const ins=new Set();const outs=new Set();att.filter(e=>new Date(e.time).toDateString()===todayStr).forEach(e=>{if(e.type==='in')ins.add(e.userId);else outs.add(e.userId);});const attPct=team.length?Math.round([...ins].filter(id=>!outs.has(id)).length/team.length*100):100;const rem=DB.get('locationRemarks')||{};const openRem=myLoc.reduce((a,c)=>a+((rem[c]||[]).filter(r=>!r.resolved).length),0);const score=Math.max(0,Math.round((attPct*0.5)+(openRem===0?50:openRem<3?30:10)));return{value:score+'%',raw:score,target:100,pct:score,unit:'health score'};}}
+];
+function getMyKPIs(userId){
+  const assignments=DB.get('kpiAssignments')||{};
+  const s=currentSession;
+  const roleDefaults=ALL_KPIS.filter(k=>k.roles.includes(s.role)).map(k=>k.id);
+  return assignments[userId]||assignments['role_'+s.role]||roleDefaults;
+}
+function renderMyKPIs(){
+  const s=currentSession;if(!s)return;
+  const txns=DB.get('transactions')||[];
+  const att=DB.get('attendanceLog')||[];
+  const cfg=DB.get('config')||{};
+  const myKpiIds=getMyKPIs(s.id);
+  const kpis=ALL_KPIS.filter(k=>myKpiIds.includes(k.id));
+  const today=new Date();const todayStr=today.toDateString();
+  const myTxns=txns.filter(t=>t.createdBy===s.name||t.staffId===s.id);
+  document.getElementById('mykpisContent').innerHTML=`
+  <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap">
+    <div style="font-size:13px;color:var(--text2)">Your personalised KPI dashboard · <span style="color:var(--accent3);font-weight:700">${s.name}</span> · ${ROLE_LABELS[s.role]||s.role}</div>
+    <div style="margin-left:auto;font-size:11px;color:var(--text3)">${today.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">
+    ${kpis.map(k=>{
+      let res;try{res=k.compute(s,txns,att,cfg);}catch(e){res={value:'—',pct:0,unit:'',raw:0,target:0};}
+      const col=res.alert?'var(--orange)':res.pct>=80?'var(--green)':res.pct>=50?'var(--gold)':'var(--red)';
+      return '<div class="kpi-card" style="border-left:3px solid '+col+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div class="kpi-label">'+k.label+'</div><span style="font-size:18px">'+k.icon+'</span></div><div class="kpi-value" style="color:'+col+';font-size:22px">'+res.value+'</div><div class="kpi-sub">'+(res.unit||'')+'</div>'+(res.pct!==undefined?'<div style="margin-top:8px;background:var(--border);border-radius:3px;height:4px;overflow:hidden"><div style="width:'+res.pct+'%;height:100%;background:'+col+';border-radius:3px;transition:width .4s"></div></div>':'')+'</div>';
+    }).join('')}
+    ${kpis.length===0?'<div class="alert alert-info" style="grid-column:1/-1">No KPIs assigned. Ask your admin → Admin Config → KPI Setup.</div>':''}
+  </div>
+  <div class="card">
+    <div style="font-weight:700;font-size:14px;margin-bottom:12px">📅 My Activity — Last 7 Days</div>
+    <div class="table-wrap"><table><thead><tr><th>Day</th><th>Customers</th><th>Revenue</th><th>Avg Ticket</th></tr></thead><tbody>
+    ${Array.from({length:7},(_,i)=>{
+      const d=new Date(today);d.setDate(d.getDate()-i);
+      const ds=d.toDateString();
+      const dt=myTxns.filter(t=>new Date(t.createdAt).toDateString()===ds);
+      const rev=dt.reduce((a,t)=>a+(t.total||t.amount||0),0);
+      const avg=dt.length?Math.round(rev/dt.length):0;
+      const isToday=i===0;
+      return '<tr style="'+(isToday?'background:rgba(201,150,10,.05)':'')+'"><td style="font-weight:'+(isToday?700:400)+'">'+(isToday?'Today':d.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short'}))+'</td><td>'+dt.length+'</td><td style="font-weight:600;color:var(--green)">₹'+rev.toLocaleString('en-IN')+'</td><td style="color:var(--text2)">₹'+avg.toLocaleString('en-IN')+'</td></tr>';
+    }).join('')}
+    </tbody></table></div>
+  </div>`;
+}
+function renderKPIAdmin(){
+  const el=document.getElementById('kpiAdminContent');if(!el)return;
+  const users=DB.get('users')||[];
+  const assignments=DB.get('kpiAssignments')||{};
+  el.innerHTML=`
+  <div style="margin-bottom:16px">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Select target group and KPIs to assign in bulk.</div>
+    <div class="form-group"><label>Assign To</label>
+      <select class="form-control" id="kpiTarget">
+        <option value="role_staff">All Staff</option>
+        <option value="role_supervisor">All Supervisors</option>
+        <option value="role_manager">All Managers</option>
+        ${users.filter(u=>u.active!==false&&u.role!=='superadmin').map(u=>'<option value="'+u.id+'">'+u.name+' ('+( ROLE_LABELS[u.role]||u.role)+')</option>').join('')}
+      </select>
+    </div>
+    <div style="font-weight:600;font-size:13px;margin-bottom:8px">Select KPIs:</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-bottom:12px">
+      ${ALL_KPIS.map(k=>'<label style="display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--bg2)"><input type="checkbox" id="kpi_'+k.id+'" style="accent-color:var(--accent3)"> <span style="font-size:14px">'+k.icon+'</span><div><div style="font-weight:600">'+k.label+'</div><div style="font-size:10px;color:var(--text3)">'+k.roles.join(', ')+'</div></div></label>').join('')}
+    </div>
+    <button class="btn btn-accent" onclick="saveKPIAssignment()">💾 Save KPI Assignment</button>
+    <button class="btn btn-outline" style="margin-left:8px" onclick="resetKPIAssignment()">Reset to Default</button>
+  </div>`;
+}
+function saveKPIAssignment(){
+  const target=document.getElementById('kpiTarget')?.value;
+  if(!target){toast('Select a target group','error');return;}
+  const selected=ALL_KPIS.map(k=>k.id).filter(id=>{const el=document.getElementById('kpi_'+id);return el&&el.checked;});
+  const assignments=DB.get('kpiAssignments')||{};
+  assignments[target]=selected;
+  DB.set('kpiAssignments',assignments);
+  logAction('Config','kpi.assign',{target,count:selected.length});
+  toast('✅ KPI assignment saved for '+target,'success');
+}
+function resetKPIAssignment(){
+  const target=document.getElementById('kpiTarget')?.value;if(!target)return;
+  const assignments=DB.get('kpiAssignments')||{};
+  delete assignments[target];
+  DB.set('kpiAssignments',assignments);
+  toast('KPI assignment reset to role defaults','success');
+  renderKPIAdmin();
+}
+
+// ═══════════════════════════════════════════════
+// AUDIT TRAIL
+// ═══════════════════════════════════════════════
+const MODULE_ICONS={Auth:'🔐',POS:'🧾',Attendance:'⏱',Users:'👤',HRMS:'📋',Locations:'📍',Config:'⚙️',default:'📝'};
+const ACTION_COLORS={'login':'badge-green','logout':'badge-blue','sale':'badge-gold','clock.in':'badge-green','clock.out':'badge-blue','user.created':'badge-green','user.edit':'badge-orange','user.deactivate':'badge-red','user.reactivate':'badge-green','leave.approved':'badge-green','leave.rejected':'badge-red','remark.add':'badge-orange','remark.resolve':'badge-green','default':'badge-blue'};
+function renderAudit(){
+  if(!hasRole('superadmin','admin','manager')){document.getElementById('auditContent').innerHTML='<div class="alert alert-error">Access restricted to admin / manager</div>';return;}
+  let log=(DB.get('auditLog')||[]).slice().reverse();
+  const q=(document.getElementById('auditSearch')?.value||'').toLowerCase();
+  const mod=(document.getElementById('auditModFilter')?.value||'');
+  const df=document.getElementById('auditDateFrom')?.value;
+  const dt=document.getElementById('auditDateTo')?.value;
+  if(q)log=log.filter(e=>e.userName.toLowerCase().includes(q)||e.action.toLowerCase().includes(q)||e.module.toLowerCase().includes(q)||JSON.stringify(e.details).toLowerCase().includes(q));
+  if(mod)log=log.filter(e=>e.module===mod);
+  if(df)log=log.filter(e=>e.ts>=df);
+  if(dt)log=log.filter(e=>e.ts<=(dt+'T23:59:59'));
+  const total=log.length;const shown=log.slice(0,200);
+  document.getElementById('auditContent').innerHTML=`
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+    <div class="kpi-card" style="flex:1;min-width:120px"><div class="kpi-label">Total Entries</div><div class="kpi-value">${(DB.get('auditLog')||[]).length.toLocaleString()}</div></div>
+    <div class="kpi-card" style="flex:1;min-width:120px"><div class="kpi-label">Filtered</div><div class="kpi-value">${total.toLocaleString()}</div></div>
+    <div class="kpi-card" style="flex:1;min-width:120px"><div class="kpi-label">Showing</div><div class="kpi-value">${Math.min(total,200)}</div></div>
+  </div>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Time</th><th>Staff</th><th>Role</th><th>Module</th><th>Action</th><th>Details</th></tr></thead>
+    <tbody>
+    ${shown.length===0?'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">No entries match the current filter</td></tr>':''}
+    ${shown.map(e=>{
+      const dt2=new Date(e.ts);
+      const timeStr=dt2.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+dt2.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+      const icon=MODULE_ICONS[e.module]||MODULE_ICONS.default;
+      const color=ACTION_COLORS[e.action]||ACTION_COLORS.default;
+      const det=Object.entries(e.details||{}).map(([k,v])=>'<span style="font-size:10px;color:var(--text2)">'+k+':</span><span style="font-size:11px;font-weight:600;color:var(--text1)"> '+v+'</span>').join('  ');
+      return '<tr><td style="font-size:11px;white-space:nowrap;color:var(--text2)">'+timeStr+'</td><td style="font-weight:600;font-size:12px">'+e.userName+'</td><td><span class="badge badge-blue" style="font-size:10px">'+e.userRole+'</span></td><td>'+icon+' <span style="font-size:12px">'+e.module+'</span></td><td><span class="badge '+color+'" style="font-size:10px">'+e.action+'</span></td><td style="font-size:11px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(det||'—')+'</td></tr>';
+    }).join('')}
+    </tbody></table></div>
+    ${total>200?'<div style="text-align:center;color:var(--text3);font-size:12px;padding:10px">Showing latest 200 of '+total+' entries. Export CSV for full log.</div>':''}
+  </div>`;
+}
+function exportAuditCSV(){
+  let log=(DB.get('auditLog')||[]).slice().reverse();
+  const q=(document.getElementById('auditSearch')?.value||'').toLowerCase();
+  const mod=(document.getElementById('auditModFilter')?.value||'');
+  const df=document.getElementById('auditDateFrom')?.value;
+  const dt=document.getElementById('auditDateTo')?.value;
+  if(q)log=log.filter(e=>e.userName.toLowerCase().includes(q)||e.action.toLowerCase().includes(q)||e.module.toLowerCase().includes(q));
+  if(mod)log=log.filter(e=>e.module===mod);
+  if(df)log=log.filter(e=>e.ts>=df);
+  if(dt)log=log.filter(e=>e.ts<=(dt+'T23:59:59'));
+  const rows=[['Timestamp','UserId','UserName','Role','Module','Action','Details']];
+  log.forEach(e=>rows.push([e.ts,e.userId,e.userName,e.userRole,e.module,e.action,JSON.stringify(e.details||{})]));
+  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='audit_trail_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('Audit log exported as CSV','success');
+}
+
+// ═══════════════════════════════════════════════
+// TRAINING SOPs
+// ═══════════════════════════════════════════════
+function renderTraining(){
+  document.getElementById('trainingContent').innerHTML=`
+  <div class="grid-2">
+    ${[
+      {icon:'🦶',name:'Foot Reflexology',color:'var(--accent)',sops:[
+        {dur:'10 min',steps:['Start: Heel → Arch → Ball of foot','Zone 1 (Spine): Medial edge, thumb walk up','Zone 2 (Lung/Chest): Ball of foot, 4 fingers walk','Zone 3 (Digestive): Arch area, circular press','Zone 4 (Pelvic): Heel, thumb rotation','Finish: Complete foot hold, 30 seconds']},
+        {dur:'15 min',steps:['Repeat 10-min sequence','Add: Top of foot — lymph drainage','Add: Ankle rotation clockwise + anticlockwise','Add: Individual toe pull and rotation','Finish: Solar plexus point, deep breathing cue']}
+      ]},
+      {icon:'💆',name:'ārāma Acupressure',color:'var(--gold)',sops:[
+        {dur:'10 min',steps:['LI-4 (Hegu): Between thumb and index — general pain','ST-36 (Zusanli): Below kneecap — energy','SP-6 (Sanyinjiao): Above ankle — wellness','PC-6 (Neiguan): Inner wrist — stress','HT-7 (Shenmen): Inner wrist crease — anxiety','Finish: Full body energy sweep']},
+        {dur:'15 min',steps:['All 10-min points','Add: BL-10 (Tianzhu): Neck base — headache','Add: GB-20 (Fengchi): Skull base — tension','Add: GV-20 (Baihui): Crown of head — clarity','Add: KD-1 (Yongquan): Sole center — grounding','Finish: ārāma signature closing sequence']}
+      ]}
+    ].map(chart=>`
+    <div class="card">
+      <div style="font-size:28px;margin-bottom:8px">${chart.icon}</div>
+      <div style="font-weight:800;font-size:15px;color:${chart.color};margin-bottom:12px">${chart.name}</div>
+      ${chart.sops.map(sop=>`
+      <div style="margin-bottom:12px">
+        <div style="font-weight:700;font-size:12px;color:var(--gold);margin-bottom:6px">▶ ${sop.dur} Sequence</div>
+        ${sop.steps.map((s,i)=>`<div style="font-size:12px;color:var(--text2);margin-bottom:3px;padding-left:8px">${i+1}. ${s}</div>`).join('')}
+      </div>`).join('')}
+      <button class="btn btn-outline btn-sm" onclick="toast('Print SOP — use Ctrl+P','info')">🖨️ Print SOP</button>
+    </div>`).join('')}
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div style="font-weight:700;margin-bottom:12px">📝 Staff Quiz — Gun Massager Unlock</div>
+    <div class="alert alert-warn">Staff must score 80%+ to unlock Gun Massager in POS</div>
+    <div id="quizArea">
+      ${[{q:'Which body zones can staff administer gun massager?',opts:['Front body only','Back, neck, shoulders, arms, legs','Any area customer requests','Head and face'],ans:1},
+         {q:'What is the minimum pass score for gun massager unlock?',opts:['60%','70%','80%','100%'],ans:2},
+         {q:'Who administers gun massager on front body?',opts:['Senior staff only','Any staff','Customer self-administered only','Manager approval required'],ans:2}
+      ].map((q,i)=>`<div style="margin-bottom:14px;padding:12px;background:var(--bg3);border-radius:8px">
+        <div style="font-weight:600;margin-bottom:8px;font-size:13px">${i+1}. ${q.q}</div>
+        ${q.opts.map((o,j)=>`<div style="margin-bottom:4px"><label style="display:flex;gap:8px;cursor:pointer;font-size:12px"><input type="radio" name="quiz_${i}" value="${j}"> ${o}</label></div>`).join('')}
+      </div>`).join('')}
+      <button class="btn btn-accent" onclick="submitQuiz()">Submit Quiz</button>
+    </div>
+  </div>`;
+}
+function submitQuiz(){
+  const answers=[1,2,2];let score=0;
+  answers.forEach((a,i)=>{const sel=document.querySelector('input[name="quiz_'+i+'"]:checked');if(sel&&parseInt(sel.value)===a)score++;});
+  const pct=Math.round(score/answers.length*100);
+  if(pct>=80)toast('✅ Passed! '+pct+'% — Gun Massager unlocked in POS','success');
+  else toast('❌ '+pct+'% — Need 80% to pass. Please retake.','error');
+}
+
+// ═══════════════════════════════════════════════
+// FESTIVAL CALENDAR
+// ═══════════════════════════════════════════════
+function renderCalendar(){
+  const festivals=[
+    {date:'2026-01-14',name:'Makar Sankranti',region:'PAN India',days:3},
+    {date:'2026-01-26',name:'Republic Day',region:'PAN India',days:1},
+    {date:'2026-02-26',name:'Maha Shivaratri',region:'PAN India',days:1},
+    {date:'2026-03-06',name:'Holi',region:'North India',days:2},
+    {date:'2026-03-29',name:'Ugadi / Gudi Padwa',region:'Maharashtra / South',days:1},
+    {date:'2026-04-14',name:'Baisakhi / Tamil New Year',region:'North / South',days:2},
+    {date:'2026-04-30',name:'Eid ul-Fitr',region:'PAN India',days:1},
+    {date:'2026-08-15',name:'Independence Day',region:'PAN India',days:1},
+    {date:'2026-09-17',name:'Ganesh Chaturthi',region:'Maharashtra',days:10},
+    {date:'2026-10-07',name:'Navratri',region:'Gujarat / North',days:9},
+    {date:'2026-10-20',name:'Dussehra',region:'PAN India',days:1},
+    {date:'2026-10-30',name:'Diwali',region:'PAN India',days:5},
+    {date:'2026-12-25',name:'Christmas',region:'PAN India',days:1},
+    {date:'2026-06-21',name:'International Yoga Day',region:'PAN India',days:1},
+    {date:'2026-10-10',name:'World Mental Health Day',region:'Global',days:1}
+  ].sort((a,b)=>a.date.localeCompare(b.date));
+  const today=new Date();
+  const upcoming=festivals.filter(f=>new Date(f.date)>=today).slice(0,6);
+  document.getElementById('calendarContent').innerHTML=`
+  <div class="kpi-grid" style="margin-bottom:16px">
+    <div class="kpi-card"><div class="kpi-label">Upcoming Events</div><div class="kpi-value">${upcoming.length}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Next Festival</div><div class="kpi-value" style="font-size:16px;color:var(--gold)">${upcoming[0]?.name||'—'}</div><div class="kpi-sub">${upcoming[0]?new Date(upcoming[0].date).toLocaleDateString('en-IN',{day:'numeric',month:'short'}):''}</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div style="font-weight:700;margin-bottom:14px">🎊 Upcoming — Plan Now</div>
+      ${upcoming.map(f=>{const d=new Date(f.date);const daysLeft=Math.ceil((d-today)/(86400000));const remind=daysLeft<=7;return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:10px;background:var(--bg3);border-radius:8px;border-left:3px solid '+(remind?'var(--orange)':'var(--border)')+'"><div style="text-align:center;min-width:40px"><div style="font-size:16px;font-weight:800;color:var(--gold)">'+d.getDate()+'</div><div style="font-size:9px;color:var(--text3)">'+d.toLocaleString('en',{month:'short'})+'</div></div><div style="flex:1"><div style="font-weight:700;font-size:13px">'+f.name+'</div><div style="font-size:10px;color:var(--text3)">'+f.region+' · '+f.days+' day'+(f.days>1?'s':'')+'</div></div><div style="text-align:right"><div style="font-size:12px;font-weight:700;color:'+(daysLeft<=7?'var(--orange)':'var(--text2)')+'">'+daysLeft+'d</div></div></div>';}).join('')}
+    </div>
+    <div class="card"><div style="font-weight:700;margin-bottom:14px">📅 Full Year</div>
+      <div class="table-wrap"><table><thead><tr><th>Date</th><th>Festival</th><th>Region</th></tr></thead>
+      <tbody>${festivals.map(f=>'<tr><td style="font-size:12px">'+new Date(f.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+'</td><td style="font-weight:600">'+f.name+'</td><td style="font-size:11px;color:var(--text3)">'+f.region+'</td></tr>').join('')}</tbody></table></div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// MY PROFILE
+// ═══════════════════════════════════════════════
+function renderProfile(){
+  const s=currentSession;if(!s)return;
+  const users=DB.get('users')||[];
+  const u=users.find(x=>x.id===s.id)||s;
+  const txns=DB.get('transactions')||[];
+  const myTxns=txns.filter(t=>t.createdBy===s.name);
+  document.getElementById('profileContent').innerHTML=`
+  <div class="grid-2">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800">${(u.name||'?')[0].toUpperCase()}</div>
+        <div><div style="font-size:20px;font-weight:800">${u.name}</div><div style="font-size:12px;color:var(--text2)">${ROLE_LABELS[u.role]||u.role}</div><span class="badge badge-purple" style="margin-top:4px">${u.username||u.phone||''}</span></div>
+      </div>
+      <div class="form-group"><label>Full Name</label><input class="form-control" id="pf_name" value="${u.name}"></div>
+      <div class="form-group"><label>Phone</label><input type="tel" class="form-control" id="pf_phone" value="${u.phone||''}"></div>
+      <div class="form-group"><label>Email</label><input type="email" class="form-control" id="pf_email" value="${u.email||''}"></div>
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;margin-bottom:14px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:10px">🔒 Change Password</div>
+        ${u.passwordChangedAt?'<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Last changed: '+new Date(u.passwordChangedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+'</div>':'<div style="font-size:11px;color:var(--orange);margin-bottom:8px">⚠️ Using default password — please change it now.</div>'}
+        <div style="position:relative"><input type="password" class="form-control" id="pf_pass" placeholder="New password (leave blank to keep)" style="padding-right:44px">
+        <button type="button" onclick="const el=document.getElementById('pf_pass');el.type=el.type==='password'?'text':'password'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px">👁</button></div>
+      </div>
+      <button class="btn btn-accent" onclick="saveProfile()">💾 Save Profile</button>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">📊 My Stats</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Total Sessions</div><div class="kpi-value" style="color:var(--accent3)">${myTxns.length}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value" style="color:var(--green)">₹${myTxns.reduce((a,t)=>a+(t.total||t.amount||0),0).toLocaleString('en-IN')}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Role</div><div class="kpi-value" style="font-size:16px">${ROLE_LABELS[u.role]||u.role}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Locations</div><div class="kpi-value" style="font-size:16px">${(u.locations||[]).length||'All'}</div></div>
+      </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-weight:700;font-size:13px;margin-bottom:10px">📋 Account Info</div>
+        <div style="font-size:12px;color:var(--text2);display:flex;flex-direction:column;gap:6px">
+          <div>👤 Username: <strong>${u.username||u.phone||'—'}</strong></div>
+          <div>📧 Email: <strong>${u.email||'—'}</strong></div>
+          <div>📱 Phone: <strong>${u.phone||'—'}</strong></div>
+          <div>🏢 Joined: <strong>${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'—'}</strong></div>
+          <div>🔐 Compliance: <strong>${u.compliancePending?'⚠️ Pending':'✅ Clear'}</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function saveProfile(){
+  const users=DB.get('users')||[];
+  const idx=users.findIndex(u=>u.id===currentSession.id);
+  if(idx<0){toast('User not found','error');return;}
+  const name=(document.getElementById('pf_name')?.value||'').trim();
+  const phone=(document.getElementById('pf_phone')?.value||'').trim();
+  const email=(document.getElementById('pf_email')?.value||'').trim();
+  const newPass=(document.getElementById('pf_pass')?.value||'').trim();
+  if(!name){toast('Name cannot be empty','error');return;}
+  users[idx].name=name;
+  users[idx].phone=phone;
+  users[idx].email=email;
+  if(newPass){
+    if(newPass.length<6){toast('Password must be at least 6 characters','error');return;}
+    users[idx].passwordChangedFrom=users[idx].password;
+    users[idx].passwordChangedAt=new Date().toISOString();
+    users[idx].password=newPass;
+  }
+  DB.set('users',users);
+  // Update session (no password)
+  const{password:_pw,...safeUser}=users[idx];
+  currentSession={...currentSession,...safeUser};
+  try{sessionStorage.setItem('arama_sess',JSON.stringify(currentSession));}catch(e){}
+  // Update header avatar
+  document.getElementById('headerAvatar').textContent=(name||'?')[0].toUpperCase();
+  if(document.getElementById('pf_pass'))document.getElementById('pf_pass').value='';
+  logAction('Users','profile.update',{name,passChanged:!!newPass});
+  toast('✅ Profile saved'+(newPass?' — password updated':''),'success');
+  renderProfile();
+}
+
+// ═══════════════════════════════════════════════
+// LEADS (Walk-in)
+// ═══════════════════════════════════════════════
+function renderLeads(){
+  const leads=DB.get('crmLeads')||[];
+  const walkIns=leads.filter(l=>l.source==='walkin');
+  document.getElementById('leadsContent').innerHTML=`
+  <div class="search-bar"><input type="text" class="search-input" placeholder="Search leads..."></div>
+  ${walkIns.length===0?'<div class="alert alert-info">No walk-in leads captured yet.</div>':''}
+  <div class="table-wrap card">
+    <table><thead><tr><th>Name</th><th>Phone</th><th>Interest</th><th>Location</th><th>Date</th><th>Stage</th></tr></thead>
+    <tbody>${walkIns.map(l=>'<tr><td style="font-weight:700">'+l.name+'</td><td>'+(l.phone||'-')+'</td><td>'+(l.notes||'-')+'</td><td>'+(l.locCode||activeLocation?.name||'-')+'</td><td style="font-size:11px">'+(l.createdAt?new Date(l.createdAt).toLocaleDateString('en-IN'):'-')+'</td><td><span class="badge badge-blue">'+(l.stage||'New Lead')+'</span></td></tr>').join('')}</tbody></table>
+  </div>
+  <button class="btn btn-accent" style="margin-top:12px" onclick="addLead()">+ Add Walk-in Lead</button>`;
+}
+function addLead(){
+  openModal('+ Add Walk-in Lead',`
+  <div class="form-row"><div class="form-group"><label>Name</label><input class="form-control" id="wl_name"></div>
+    <div class="form-group"><label>Phone</label><input type="tel" class="form-control" id="wl_phone"></div>
+  </div>
+  <div class="form-group"><label>Interest / Product</label><input class="form-control" id="wl_interest" placeholder="What are they interested in?"></div>`,
+  '<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-accent" onclick="saveWalkInLead()">Save Lead</button>');
+}
+function saveWalkInLead(){
+  const name=(document.getElementById('wl_name')?.value||'').trim();
+  if(!name){toast('Name required','error');return;}
+  const lead={id:'L'+Date.now(),name,phone:document.getElementById('wl_phone')?.value||'',notes:document.getElementById('wl_interest')?.value||'',source:'walkin',locCode:activeLocation?.code,stage:'New Lead',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),createdBy:currentSession.name};
+  DB.push('crmLeads',lead);closeModal();renderLeads();toast('Lead saved','success');
+}
+
+// ═══════════════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════════════
+function renderNotifications(){
+  const remarks=DB.get('locationRemarks')||{};
+  const pending=DB.get('pending-staff')||[];
+  const unresolved=Object.entries(remarks).flatMap(([loc,rs])=>rs.filter(r=>!r.resolved).map(r=>({...r,locCode:loc})));
+  document.getElementById('notificationsContent').innerHTML=`
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-weight:700;margin-bottom:12px">🔔 Unresolved Remarks (${unresolved.length})</div>
+    ${unresolved.length===0?'<div class="alert alert-success">All clear! No unresolved remarks.</div>':''}
+    ${unresolved.map(r=>'<div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--orange)"><div style="flex:1"><div style="font-weight:600;font-size:13px">'+r.text+'</div><div style="font-size:11px;color:var(--text3)">'+r.locCode+' · By '+r.by+' · '+new Date(r.timestamp).toLocaleString('en-IN')+'</div></div><button class="btn btn-green btn-sm" onclick="resolveRemark(\''+r.locCode+'\',0);renderNotifications()">Resolve</button></div>').join('')}
+  </div>
+  <div class="card">
+    <div style="font-weight:700;margin-bottom:12px">👤 Pending Staff Approvals (${pending.length})</div>
+    ${pending.length===0?'<div class="alert alert-success">No pending applications</div>':''}
+    ${pending.map((p,i)=>'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg3);border-radius:8px;margin-bottom:8px"><div><div style="font-weight:700">'+p.firstName+' '+p.lastName+'</div><div style="font-size:12px;color:var(--text2)">'+p.phone+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-green btn-sm" onclick="approveStaff('+i+');renderNotifications()">Approve</button><button class="btn btn-red btn-sm" onclick="rejectStaff('+i+');renderNotifications()">Reject</button></div></div>').join('')}
+  </div>`;
+  const total=unresolved.length+pending.length;
+  const dot=document.getElementById('notifDot');if(dot)dot.style.display=total>0?'block':'none';
+}
+function rejectStaff(idx){
+  const pending=DB.get('pending-staff')||[];
+  pending.splice(idx,1);
+  DB.set('pending-staff',pending);
+  renderNotifications();
+  toast('Application rejected','info');
+}
+
+// ═══════════════════════════════════════════════
+// UTILITY FUNCTIONS
+// ═══════════════════════════════════════════════
+function compressImage(file,cb){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      const MAX=800,scale=Math.min(1,MAX/Math.max(img.width,img.height));
+      canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
+      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+      cb(canvas.toDataURL('image/jpeg',0.82));
+    };img.src=e.target.result;
+  };reader.readAsDataURL(file);
+}
+function toast(msg,type='info',duration=3500){
+  const c=document.getElementById('toast');if(!c)return;
+  const t=document.createElement('div');
+  t.className='toast-item '+(type||'info');
+  t.innerHTML='<span>'+msg+'</span>';
+  c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(110%)';setTimeout(()=>t.remove(),350);},duration);
+}
+function openModal(title,body,footer=''){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('modalFooter').innerHTML=footer||'<button class="btn btn-outline" onclick="closeModal()">Close</button>';
+  document.getElementById('modalOverlay').style.display='flex';
+}
+function closeModal(){document.getElementById('modalOverlay').style.display='none';}
+function formatDate(iso){if(!iso)return'—';return new Date(iso).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+function formatDateTime(iso){if(!iso)return'—';return new Date(iso).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}
+function formatCurrency(n){return'₹'+(Number(n)||0).toLocaleString('en-IN');}
+function generateId(prefix='ID'){return prefix+Date.now().toString(36).toUpperCase()+Math.random().toString(36).substr(2,3).toUpperCase();}
+function generateToken(locCode,eqCode){const ts=Date.now().toString(36).toUpperCase();const rand=Math.random().toString(36).substr(2,4).toUpperCase();return locCode+'-'+eqCode+'-'+ts+'-'+rand;}
+function debounce(fn,ms=300){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};}
+function hasRole(...roles){return currentSession&&roles.includes(currentSession.role);}
+function canAccess(minRole){const order=['customer','vendor','staff','supervisor','manager','admin','superadmin'];return order.indexOf(currentSession?.role||'customer')>=order.indexOf(minRole);}
+function exportToCSV(data,filename){
+  if(!data||!data.length){toast('No data to export','error');return;}
+  const keys=Object.keys(data[0]);
+  const csv=[keys.join(','),...data.map(r=>keys.map(k=>{let v=r[k]===null||r[k]===undefined?'':String(r[k]);if(v.includes(','))v='"'+v.replace(/"/g,'""')+'"';return v;}).join(','))].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename||'export.csv';a.click();
+}
+
+(async function initOAuth(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('code')||params.get('error')){await _handleStaffOAuthCallback();}
+})();
+
+// ═══════════════════════════════════════════════
+// APP INITIALIZATION
+// ═══════════════════════════════════════════════
+function checkSession(){
+  try{
+    const raw=sessionStorage.getItem('arama_sess');
+    if(raw){
+      const sess=JSON.parse(raw);
+      if(sess&&sess.expiresAt&&Date.now()<sess.expiresAt){
+        currentSession=sess;
+        refreshActivity();
+        document.getElementById('loginScreen').style.display='none';
+        document.getElementById('app').classList.add('visible');
+        setupApp();navigate('dashboard');startActivityMonitor();
+        return true;
+      } else {sessionStorage.removeItem('arama_sess');DB.remove('session');}
+    }
+  }catch(e){console.warn('Session restore error',e);}
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('app').classList.remove('visible');
+  return false;
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  seedIfEmpty();
+  _loadSocialCredsFromDB();
+  const restored=checkSession();
+  initGAuth();
+  document.getElementById('modalOverlay').addEventListener('click',(e)=>{
+    if(e.target===document.getElementById('modalOverlay'))closeModal();
+  });
+  document.addEventListener('keydown',(e)=>{
+    if(e.key==='Escape'){closeModal();closeOTPPopup();}
+  });
+  if(!restored){window._loginTabContext='staff';switchLoginTab('staff');}
+});
 function previewExcelFile(){
   const file=document.getElementById('excelFile').files[0];
   if(!file)return;
