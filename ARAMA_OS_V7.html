@@ -1007,7 +1007,7 @@ async function sheetsEnsureTab(locCode,locName){
         {method:'POST',headers:{Authorization:'Bearer '+gAccessToken,'Content-Type':'application/json'},
          body:JSON.stringify({requests:[{addSheet:{properties:{title:locCode}}}]})});
       // Write header row — use custom headers for known tabs, default for location tabs
-      const headers=_sheetsTabHeaders[locCode]||['Date','Time','Location','Location Name','Transaction ID','Services','Amount (₹)','Payment Mode','Staff','Customer Phone','Token(s)','Notes'];
+      const headers=_sheetsTabHeaders[locCode]||['Date','Time','Location','Location Name','Transaction ID','Services','Amount (₹)','Payment Mode','Staff','Customer Phone','Token(s)','Verified By','Payment Proof','Notes'];
       await sheetsAppend(locCode,[headers]);
     }
     _sheetsTabsCreated.add(locCode);
@@ -1094,6 +1094,8 @@ async function logTransactionToSheets(txn){
     txn.createdBy||currentSession?.name||'-',
     txn.customerPhone||'-',
     (txn.tokens||[]).join(', ')||'-',
+    txn.paymentVerifiedBy||'-',
+    JSON.stringify(txn.paymentProof||{}),
     txn.notes||''
   ]]);
 }
@@ -3128,7 +3130,7 @@ function renderPOS(){
   posCart=[];
   renderCart();
 }
-let selectedPayMode='cash';
+let selectedPayMode='';
 function filterPOSTab(btn,type){
   document.querySelectorAll('.service-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -3199,7 +3201,97 @@ function lookupCustomer(){
 /* generateToken defined below */
 function processPayment(){
   if(posCart.length===0){toast('Cart is empty','error');return;}
-  if(!selectedPayMode){toast('Select payment mode','error');return;}
+  if(!selectedPayMode){
+    toast('⚠️ Select a payment method first','error');
+    document.querySelectorAll('.pay-btn').forEach(b=>{b.style.border='2px solid var(--orange)';setTimeout(()=>b.style.border='',1500);});
+    return;
+  }
+  // Step 1: Show payment proof/confirmation modal before generating token
+  const total=posCart.reduce((s,i)=>s+i.price*i.qty,0);
+  const loc=activeLocation;
+  const modeLabels={cash:'💵 Cash',upi:'📱 UPI / PhonePe',card:'💳 Card / Debit',pass:'🎫 Pass Redemption'};
+  const modeLabel=modeLabels[selectedPayMode]||selectedPayMode;
+
+  // Build proof fields based on payment mode
+  let proofFields='';
+  if(selectedPayMode==='cash'){
+    proofFields=`
+      <div class="form-group">
+        <label style="font-weight:600">Cash Received (₹)</label>
+        <input type="number" class="form-control" id="pmProof" placeholder="Enter amount received" min="${total}" style="font-size:18px;font-weight:700;text-align:center" oninput="
+          const received=parseFloat(this.value)||0;
+          const change=received-${total};
+          document.getElementById('pmChange').textContent=change>=0?'Change: ₹'+change.toFixed(0):(change<0?'⚠️ Short by ₹'+Math.abs(change).toFixed(0):'');
+          document.getElementById('pmChange').style.color=change>=0?'var(--green)':'var(--orange)';
+        ">
+        <div id="pmChange" style="margin-top:6px;font-size:14px;font-weight:700;text-align:center;min-height:20px"></div>
+      </div>`;
+  } else if(selectedPayMode==='upi'){
+    const ppQR=loc?.phonepeQr;
+    proofFields=`
+      ${ppQR?`<div style="text-align:center;margin-bottom:14px"><img src="${ppQR}" style="max-width:180px;border-radius:10px;border:2px solid var(--border)"><div style="font-size:11px;color:var(--text3);margin-top:4px">Show QR to customer</div></div>`:'<div class="alert alert-info" style="font-size:12px">No QR uploaded for this location. Go to Locations → Edit to add PhonePe QR.</div>'}
+      <div class="form-group">
+        <label style="font-weight:600">UPI / Transaction Reference</label>
+        <input type="text" class="form-control" id="pmProof" placeholder="e.g. PhonePe ref No. or UTR" style="text-transform:uppercase">
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">Enter the reference/UTR number from PhonePe notification</div>
+      </div>`;
+  } else if(selectedPayMode==='card'){
+    proofFields=`
+      <div class="form-group">
+        <label style="font-weight:600">Card Last 4 Digits</label>
+        <input type="text" class="form-control" id="pmProof" placeholder="e.g. 4521" maxlength="4" inputmode="numeric">
+      </div>
+      <div class="form-group">
+        <label style="font-weight:600">Approval Code (optional)</label>
+        <input type="text" class="form-control" id="pmProof2" placeholder="From card machine receipt">
+      </div>`;
+  } else if(selectedPayMode==='pass'){
+    const customers=DB.get('customers')||[];
+    proofFields=`
+      <div class="form-group">
+        <label style="font-weight:600">Customer Phone</label>
+        <input type="tel" class="form-control" id="pmProof" placeholder="Mobile number" maxlength="10" inputmode="tel">
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">Pass will be deducted from customer account</div>
+      </div>`;
+  } else {
+    proofFields=`<div class="form-group"><label>Reference / Note</label><input type="text" class="form-control" id="pmProof" placeholder="Payment reference or note"></div>`;
+  }
+
+  openModal('💳 Confirm Payment — ₹'+total.toLocaleString('en-IN'),`
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:32px;font-weight:900;color:var(--gold)">₹${total.toLocaleString('en-IN')}</div>
+      <div style="font-size:13px;color:var(--text2);margin-top:4px">${posCart.map(i=>i.name+(i.qty>1?' ×'+i.qty:'')).join(' + ')}</div>
+      <span class="badge badge-blue" style="margin-top:6px;font-size:13px">${modeLabel}</span>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px">
+      ${proofFields}
+    </div>
+    <div style="background:rgba(201,150,10,.08);border:1px solid rgba(201,150,10,.2);border-radius:8px;padding:10px;margin-top:10px;font-size:12px;color:var(--text2)">
+      ✅ Confirming will generate the session token and activate the equipment.
+    </div>`,
+    `<button class="btn btn-outline" onclick="closeModal()">← Back</button>
+     <button class="btn btn-accent" style="min-width:160px" onclick="confirmAndGenerateToken()">✅ Payment Received — Generate Token</button>`
+  );
+  return; // stop here — confirmAndGenerateToken() completes the transaction
+}
+
+function confirmAndGenerateToken(){
+  // Validate proof
+  const proof=(document.getElementById('pmProof')?.value||'').trim();
+  const proof2=(document.getElementById('pmProof2')?.value||'').trim();
+  if(selectedPayMode==='cash'){
+    const received=parseFloat(document.getElementById('pmProof')?.value)||0;
+    const total=posCart.reduce((s,i)=>s+i.price*i.qty,0);
+    if(!received){toast('Enter cash amount received','error');return;}
+    if(received<total){toast('⚠️ Cash received (₹'+received+') is less than total (₹'+total+'). Please collect full amount.','error');return;}
+  } else if(selectedPayMode==='upi'){
+    if(!proof){toast('Enter UPI transaction reference number','error');return;}
+  }
+  closeModal();
+  _finalizeTransaction(proof,proof2);
+}
+
+function _finalizeTransaction(proof,proof2){
   const loc=activeLocation;
   const total=posCart.reduce((s,i)=>s+i.price*i.qty,0);
   const tokens=posCart.filter(i=>i.id.startsWith('MC')||i.id==='MC'||i.duration>0).map(item=>{
@@ -3207,9 +3299,16 @@ function processPayment(){
     const eq=eqMap[item.id]||'1A';
     return generateToken(loc.code,eq);
   });
+  // Build payment proof record
+  const paymentProof={};
+  if(selectedPayMode==='cash'){paymentProof.cashReceived=parseFloat(proof)||total;paymentProof.change=(parseFloat(proof)||total)-total;}
+  else if(selectedPayMode==='upi'){paymentProof.utrRef=proof;paymentProof.approvalCode=proof2||'';}
+  else if(selectedPayMode==='card'){paymentProof.cardLast4=proof;paymentProof.approvalCode=proof2||'';}
+  else if(proof){paymentProof.reference=proof;}
   const txn={
     id:'TX'+Date.now(),locCode:loc.code,locName:loc.name,
     items:posCart.map(i=>({...i})),total,payMode:selectedPayMode,
+    paymentProof,paymentVerifiedBy:currentSession.name,
     tokens,createdAt:new Date().toISOString(),createdBy:currentSession.name,
     type:posCart.some(i=>i.duration>0)?'service':'product'
   };
@@ -3227,6 +3326,10 @@ function processPayment(){
       <div style="font-size:36px;margin-bottom:8px">✅</div>
       <div style="font-size:20px;font-weight:800;color:var(--green)">₹${total.toLocaleString('en-IN')} Received</div>
       <div style="font-size:13px;color:var(--text2);margin:4px 0">${selectedPayMode.toUpperCase()} · ${new Date().toLocaleTimeString('en-IN')}</div>
+      ${paymentProof.utrRef?`<div style="font-size:11px;color:var(--text3);margin-top:2px">UTR: ${paymentProof.utrRef}</div>`:''}
+      ${paymentProof.cashReceived?`<div style="font-size:11px;color:var(--text3);margin-top:2px">Cash: ₹${paymentProof.cashReceived} | Change: ₹${paymentProof.change||0}</div>`:''}
+      ${paymentProof.cardLast4?`<div style="font-size:11px;color:var(--text3);margin-top:2px">Card: ****${paymentProof.cardLast4}</div>`:''}
+      <div style="font-size:10px;color:var(--text3);margin-top:2px">Verified by: ${currentSession.name}</div>
       ${tokenHTML}
       <div style="text-align:left;margin-top:14px">
         ${posCart.map(i=>`<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
@@ -3237,7 +3340,7 @@ function processPayment(){
     </div>`,
     `<button class="btn btn-outline" onclick="closeModal()">Close</button>
      <button class="btn btn-accent" onclick="closeModal();printReceipt('${txn.id}')">Print Receipt</button>`);
-  posCart=[];renderCart();toast('Transaction saved! Token generated.','success');
+  posCart=[];selectedPayMode='';renderCart();toast('Transaction saved! Token generated.','success');
 }
 function holdCart(){toast('Cart held — resume later from queue','info');}
 function printReceipt(txnId){window.print();}
@@ -5748,22 +5851,7 @@ async function logLoginToSheets(user,method){
   await sheetsAppend('LOGINS',[[new Date().toISOString(),user.name||'',user.role||'',user.id||'',method||'password']]);
 }
 
-// ═══════════════════════════════════════════════
-// KPI SYSTEM
-// ═══════════════════════════════════════════════
-const ALL_KPIS=[
-  {id:'rev_today',label:'Revenue Today',icon:'💰',roles:['staff','supervisor','manager'],compute:(s,txns,att,cfg)=>{const t=txns.filter(x=>new Date(x.createdAt).toDateString()===new Date().toDateString()&&(x.createdBy===s.name||x.staffId===s.id));const v=t.reduce((a,x)=>a+(x.total||x.amount||0),0);const tgt=(DB.get('staffTargets')||{})[s.id]?.shift||cfg.defaultStaffTargets?.shift||3000;return{value:'₹'+v.toLocaleString('en-IN'),raw:v,target:tgt,pct:Math.min(100,Math.round(v/tgt*100)),unit:'vs ₹'+tgt+' shift target'};}},
-  {id:'customers_today',label:'Customers Today',icon:'👤',roles:['staff','supervisor','manager'],compute:(s,txns)=>{const t=txns.filter(x=>new Date(x.createdAt).toDateString()===new Date().toDateString()&&(x.createdBy===s.name||x.staffId===s.id));return{value:t.length,raw:t.length,target:10,pct:Math.min(100,Math.round(t.length/10*100)),unit:'sessions'};}},
-  {id:'rev_month',label:'Revenue This Month',icon:'📊',roles:['staff','supervisor','manager'],compute:(s,txns,att,cfg)=>{const ms=new Date(new Date().getFullYear(),new Date().getMonth(),1);const t=txns.filter(x=>new Date(x.createdAt)>=ms&&(x.createdBy===s.name||x.staffId===s.id));const v=t.reduce((a,x)=>a+(x.total||x.amount||0),0);const tgt=(DB.get('staffTargets')||{})[s.id]?.month||cfg.defaultStaffTargets?.month||80000;return{value:'₹'+(v/1000).toFixed(1)+'K',raw:v,target:tgt,pct:Math.min(100,Math.round(v/tgt*100)),unit:'vs ₹'+(tgt/1000).toFixed(0)+'K target'};}},
-  {id:'shift_hours',label:'Shift Hours Today',icon:'⏱',roles:['staff','supervisor'],compute:(s,txns,att)=>{const todayStr=new Date().toDateString();const myLog=att.filter(e=>e.userId===s.id&&new Date(e.time).toDateString()===todayStr);const lastIn=myLog.slice().reverse().find(e=>e.type==='in');const lastOut=myLog.slice().reverse().find(e=>e.type==='out'&&(!lastIn||new Date(e.time)>new Date(lastIn.time)));if(!lastIn)return{value:'Not in',raw:0,target:8,pct:0,unit:'hours'};const end=lastOut?new Date(lastOut.time).getTime():Date.now();const h=((end-new Date(lastIn.time).getTime())/3600000);return{value:h.toFixed(1)+'h',raw:h,target:8,pct:Math.min(100,Math.round(h/8*100)),unit:'of 8h shift'};}},
-  {id:'attendance_rate',label:'Attendance Rate',icon:'📅',roles:['supervisor','manager'],compute:(s,txns,att)=>{const ms=new Date(new Date().getFullYear(),new Date().getMonth(),1);const days=new Date().getDate();const myDays=new Set(att.filter(e=>e.userId===s.id&&new Date(e.time)>=ms&&e.type==='in').map(e=>new Date(e.time).toDateString())).size;const pct=Math.min(100,Math.round(myDays/days*100));return{value:myDays+'/'+days+' days',raw:myDays,target:days,pct,unit:'this month'};}},
-  {id:'team_clocked_in',label:'Team Clocked In',icon:'🟢',roles:['supervisor','manager'],compute:(s,txns,att)=>{const users=DB.get('users')||[];const myLoc=s.locations||[];const team=users.filter(u=>u.role==='staff'&&u.active!==false&&(u.locations||[]).some(l=>myLoc.includes(l)));const todayStr=new Date().toDateString();const ins=new Set();const outs=new Set();att.filter(e=>new Date(e.time).toDateString()===todayStr).forEach(e=>{if(e.type==='in')ins.add(e.userId);else outs.add(e.userId);});const active=team.filter(u=>ins.has(u.id)&&!outs.has(u.id)).length;return{value:active+'/'+team.length,raw:active,target:team.length,pct:team.length?Math.min(100,Math.round(active/team.length*100)):100,unit:'staff present'};}},
-  {id:'pending_leaves',label:'Pending Leaves',icon:'🏖',roles:['supervisor','manager'],compute:(s)=>{const myLoc=s.locations||[];const users=DB.get('users')||[];const team=users.filter(u=>u.role==='staff'&&(u.locations||[]).some(l=>myLoc.includes(l)));const n=(DB.get('leaveRequests')||[]).filter(r=>r.status==='pending'&&team.some(u=>u.id===r.staffId)).length;return{value:n,raw:n,target:0,pct:n===0?100:0,unit:'awaiting approval',alert:n>0};}},
-  {id:'open_remarks',label:'Open Remarks',icon:'📍',roles:['supervisor','manager'],compute:(s)=>{const myLoc=s.locations||[];const rem=DB.get('locationRemarks')||{};const n=myLoc.reduce((a,c)=>a+((rem[c]||[]).filter(r=>!r.resolved).length),0);return{value:n,raw:n,target:0,pct:n===0?100:0,unit:'unresolved issues',alert:n>0};}},
-  {id:'housekeeping_done',label:'Housekeeping Done',icon:'🧹',roles:['supervisor'],compute:(s)=>{const myLoc=s.locations||[];const hk=DB.get('housekeepingLog')||[];const done=myLoc.some(c=>hk.some(h=>h.locCode===c&&new Date(h.ts).toDateString()===new Date().toDateString()));return{value:done?'✅ Done':'❌ Pending',raw:done?1:0,target:1,pct:done?100:0,unit:'today',alert:!done};}},
-  {id:'meter_logged',label:'Meter Reading',icon:'⚡',roles:['supervisor'],compute:(s)=>{const myLoc=s.locations||[];const ml=DB.get('meterLog')||[];const done=myLoc.some(c=>ml.some(m=>m.locCode===c&&new Date(m.ts).toDateString()===new Date().toDateString()));return{value:done?'✅ Logged':'⚠️ Pending',raw:done?1:0,target:1,pct:done?100:0,unit:'today',alert:!done};}},
-  {id:'loc_health',label:'Location Health',icon:'🏥',roles:['manager'],compute:(s,txns,att)=>{const myLoc=s.locations||[];const users=DB.get('users')||[];const team=users.filter(u=>u.role==='staff'&&(u.locations||[]).some(l=>myLoc.includes(l)));const todayStr=new Date().toDateString();const ins=new Set();const outs=new Set();att.filter(e=>new Date(e.time).toDateString()===todayStr).forEach(e=>{if(e.type==='in')ins.add(e.userId);else outs.add(e.userId);});const attPct=team.length?Math.round([...ins].filter(id=>!outs.has(id)).length/team.length*100):100;const rem=DB.get('locationRemarks')||{};const openRem=myLoc.reduce((a,c)=>a+((rem[c]||[]).filter(r=>!r.resolved).length),0);const score=Math.max(0,Math.round((attPct*0.5)+(openRem===0?50:openRem<3?30:10)));return{value:score+'%',raw:score,target:100,pct:score,unit:'health score'};}}
-];
+// ── KPI SYSTEM duplicate declarations removed ──
 function getMyKPIs(userId){
   const assignments=DB.get('kpiAssignments')||{};
   const s=currentSession;
@@ -5849,11 +5937,7 @@ function resetKPIAssignment(){
   renderKPIAdmin();
 }
 
-// ═══════════════════════════════════════════════
-// AUDIT TRAIL
-// ═══════════════════════════════════════════════
-const MODULE_ICONS={Auth:'🔐',POS:'🧾',Attendance:'⏱',Users:'👤',HRMS:'📋',Locations:'📍',Config:'⚙️',default:'📝'};
-const ACTION_COLORS={'login':'badge-green','logout':'badge-blue','sale':'badge-gold','clock.in':'badge-green','clock.out':'badge-blue','user.created':'badge-green','user.edit':'badge-orange','user.deactivate':'badge-red','user.reactivate':'badge-green','leave.approved':'badge-green','leave.rejected':'badge-red','remark.add':'badge-orange','remark.resolve':'badge-green','default':'badge-blue'};
+// ── AUDIT TRAIL duplicate consts removed — functions redeclared below (JS uses last definition) ──
 function renderAudit(){
   if(!hasRole('superadmin','admin','manager')){document.getElementById('auditContent').innerHTML='<div class="alert alert-error">Access restricted to admin / manager</div>';return;}
   let log=(DB.get('auditLog')||[]).slice().reverse();
