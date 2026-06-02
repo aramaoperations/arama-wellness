@@ -323,9 +323,9 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       <div class="tagline">FROM LUXURY TO EVERYDAY WELLNESS</div>
       <div style="font-size:15px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:4px;letter-spacing:0.5px">पहले luxury था, अब ज़रूरी है</div>
     </div>
-    <div class="login-tabs">
-      <button class="login-tab active" onclick="switchLoginTab('staff')" id="ltab-staff">Staff</button>
-      <button class="login-tab" onclick="switchLoginTab('admin')" id="ltab-admin">Admin</button>
+    <div class="login-tabs" id="loginTabsRow">
+      <button class="login-tab active" onclick="switchLoginTab('staff')" id="ltab-staff">Staff / Operations</button>
+      <button class="login-tab" onclick="switchLoginTab('admin')" id="ltab-admin" style="display:none">🔐 Admin</button>
     </div>
     <div id="tabStaff" style="display:block">
       <div class="form-group">
@@ -339,20 +339,7 @@ select optgroup{background:#0f172a!important;color:#a78bfa!important;font-weight
       <button class="btn-primary" onclick="doLogin()">Sign In to Ops Portal →</button>
       <div id="loginMsg" class="login-msg error"></div>
       <div id="loginAdminHint" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:12px;color:#fde68a;text-align:center">🔐 Admin access restricted to authorised personnel only.</div>
-      <div id="loginFirstRunHint" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:12px;color:#fbbf24">
-        <div style="font-weight:700;margin-bottom:6px">🔐 First-time setup — click to reveal credentials</div>
-        <div style="display:flex;flex-direction:column;gap:4px">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="color:rgba(251,191,36,.7)">Super Admin</span>
-            <span id="saCredSpan" style="font-family:monospace;background:rgba(0,0,0,.35);padding:2px 8px;border-radius:4px;cursor:pointer;letter-spacing:2px;color:rgba(251,191,36,.4)" onclick="this.textContent='superadmin / Arama@2026!';this.style.color='#fbbf24';this.style.letterSpacing='0'">● ● ● ● ● ● ● ●</span>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="color:rgba(251,191,36,.7)">Admin</span>
-            <span id="adCredSpan" style="font-family:monospace;background:rgba(0,0,0,.35);padding:2px 8px;border-radius:4px;cursor:pointer;letter-spacing:2px;color:rgba(251,191,36,.4)" onclick="this.textContent='admin / Admin@123';this.style.color='#fbbf24';this.style.letterSpacing='0'">● ● ● ● ● ● ● ●</span>
-          </div>
-        </div>
-        <div style="margin-top:8px;color:rgba(251,191,36,.55);font-size:10px">⚠️ Change passwords immediately after first login — Admin Config → Users & Roles</div>
-      </div>
+      <div id="loginFirstRunHint" style="display:none"></div>
       <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--text3)">
         New staff? <a href="staff-register.html" target="_blank" style="color:var(--accent3);text-decoration:underline">Register here</a>
         &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -1439,22 +1426,9 @@ function switchLoginTab(tab){
   }
   // Store current tab context
   window._loginTabContext=tab;
-  // Show/hide hints
+  // Show/hide admin access hint
   const adminHint=document.getElementById('loginAdminHint');
   if(adminHint)adminHint.style.display=tab==='admin'?'block':'none';
-  // Show first-run hint only when superadmin password has never been changed
-  const firstRunHint=document.getElementById('loginFirstRunHint');
-  if(firstRunHint){
-    const users=DB.get('users')||[];
-    const sa=users.find(u=>u.role==='superadmin');
-    const isFirstRun=!sa?.passwordChangedAt;
-    firstRunHint.style.display=(tab==='admin'&&isFirstRun)?'block':'none';
-    // Reset masked spans each time hint is shown
-    const saS=document.getElementById('saCredSpan');
-    const adS=document.getElementById('adCredSpan');
-    if(saS){saS.textContent='● ● ● ● ● ● ● ●';saS.style.color='rgba(251,191,36,.4)';saS.style.letterSpacing='2px';}
-    if(adS){adS.textContent='● ● ● ● ● ● ● ●';adS.style.color='rgba(251,191,36,.4)';adS.style.letterSpacing='2px';}
-  }
   // Clear any previous error messages when switching tabs
   const msg=document.getElementById('loginMsg');
   if(msg)msg.style.display='none';
@@ -2168,7 +2142,33 @@ function renderAdminDashboard(){
   const lbls=months.map(m=>`<div class="chart-label">${m}</div>`).join('');
   const topLocs=[...locs].sort((a,b)=>b.phonepeTotal-a.phonepeTotal).slice(0,5);
   document.getElementById('dashSubtitle').textContent=`${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · ${activeLocs} active locations`;
-  document.getElementById('dashContent').innerHTML=`
+  // First-login setup notice (admin only, shown until superadmin changes password)
+  const sa=users.find(u=>u.role==='superadmin');
+  const isFirstRun=hasRole('superadmin','admin')&&sa&&!sa.passwordChangedAt;
+  const firstLoginBanner=isFirstRun?`
+  <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.4);border-radius:10px;padding:16px 18px;margin-bottom:16px;position:relative">
+    <div style="font-weight:800;font-size:14px;color:var(--gold);margin-bottom:8px">🔐 First-Time Setup — Default Credentials</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Change these immediately. Go to <strong>Users & Roles → Edit</strong> or <strong>My Profile → Change Password</strong>.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Super Admin</div>
+        <div style="font-family:monospace;font-size:13px;color:var(--accent3);font-weight:700">superadmin</div>
+        <div style="font-family:monospace;font-size:13px;color:var(--gold2);font-weight:700">Arama@2026!</div>
+      </div>
+      <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Admin</div>
+        <div style="font-family:monospace;font-size:13px;color:var(--accent3);font-weight:700">admin</div>
+        <div style="font-family:monospace;font-size:13px;color:var(--gold2);font-weight:700">Admin@123</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-accent btn-sm" onclick="navigate('profile')">🔒 Change My Password</button>
+      <button class="btn btn-outline btn-sm" onclick="navigate('users')">👥 Manage Users</button>
+    </div>
+    <div style="font-size:10px;color:var(--text3);margin-top:8px">This notice disappears automatically once the superadmin password is changed.</div>
+  </div>`:'';
+
+  document.getElementById('dashContent').innerHTML=firstLoginBanner+`
   <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-label">Total Revenue (All Time)</div><div class="kpi-value" style="color:var(--gold)">₹${(totalRevAll/10000000).toFixed(2)}Cr</div><div class="kpi-sub">PhonePe + Cash estimated</div></div>
     <div class="kpi-card"><div class="kpi-label">${isFiltered?"Period Revenue":"Today Revenue"}</div><div class="kpi-value" style="color:var(--green)">₹${totalRevToday.toLocaleString('en-IN')}</div><div class="kpi-sub">${displayTxns.length} transactions${isFiltered?' (filtered)':''}</div></div>
@@ -2612,6 +2612,52 @@ function getAnnouncements(locCodes){
   }).slice(0,8);
 }
 // ── METER LOG ──
+function _renderPersonalScoreHTML(myTeam,s,allTxns,todayStr){
+  const allU=[...myTeam,s];
+  const seen={};const uniq=[];
+  allU.forEach(function(u){if(!seen[u.id]){seen[u.id]=true;uniq.push(u);}});
+  return uniq.map(function(u){
+    const uTxns=allTxns.filter(function(t){return new Date(t.createdAt).toDateString()===todayStr&&(t.createdBy===u.name||t.staffId===u.id);});
+    const cnt=uTxns.length;
+    const rev=uTxns.reduce(function(a,t){return a+(t.total||t.amount||0);},0);
+    const isSelf=u.id===s.id;
+    const border=isSelf?'var(--accent3)':'var(--border)';
+    const bg=isSelf?'rgba(201,150,10,.07)':'var(--bg2)';
+    return '<div style="flex:1;min-width:130px;border:1px solid '+border+';border-radius:10px;padding:12px;background:'+bg+'">'
+      +'<div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px">'+u.name.split(' ')[0]+(isSelf?' (You)':'')+'</div>'
+      +'<div style="font-size:22px;font-weight:800;color:var(--gold)">'+cnt+'</div>'
+      +'<div style="font-size:11px;color:var(--text3)">customers</div>'
+      +'<div style="font-size:12px;font-weight:700;color:var(--green);margin-top:4px">₹'+rev.toLocaleString('en-IN')+'</div></div>';
+  }).join('');
+}
+function _renderMeterLogHTML(locCodes){
+  const ml=DB.get('meterLog')||[];
+  const myMl=ml.filter(function(x){return locCodes.includes(x.locCode);}).slice(-5).reverse();
+  if(!myMl.length) return '<div style="color:var(--text3);font-size:12px;padding:10px 0">No entries today. Submit a reading below.</div>';
+  return myMl.map(function(m){
+    const icon=m.type==='electricity'?'⚡':'📶';
+    const typeLabel=m.type==='electricity'?'Electricity':'Internet';
+    const val=m.type==='electricity'?(m.reading+' units'):('₹'+m.amount+' recharged');
+    const dateStr=new Date(m.ts).toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">'
+      +'<div><span style="font-weight:600">'+icon+' '+typeLabel+'</span>'
+      +'<div style="font-size:10px;color:var(--text3)">'+dateStr+' · by '+m.by+'</div></div>'
+      +'<div style="text-align:right"><div style="font-weight:700;color:var(--gold)">'+val+'</div>'
+      +'<div style="font-size:10px;color:var(--text3)">'+(m.notes||'')+'</div></div></div>';
+  }).join('');
+}
+function _renderHousekeepingStatusHTML(locCodes,todayStr){
+  const hk=DB.get('housekeepingLog')||[];
+  const todayHK=hk.filter(function(x){return locCodes.includes(x.locCode)&&new Date(x.ts).toDateString()===todayStr;});
+  const lastHK=todayHK.slice(-1)[0];
+  if(!lastHK) return '<div class="alert alert-info" style="font-size:11px;margin-bottom:10px">No housekeeping report submitted today.</div>';
+  const timeStr=new Date(lastHK.ts).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  const checks=Object.entries(lastHK.checks||{}).map(function(e){
+    return '<div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">'+e[0]+'</span><span>'+(e[1]?'✅':'❌')+'</span></div>';
+  }).join('');
+  return '<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px">'
+    +'<div style="font-weight:700;color:var(--green);margin-bottom:4px">✅ Submitted today at '+timeStr+'</div>'+checks+'</div>';
+}
 function submitMeterLog(locCode){
   const type=document.getElementById('meterType')?.value||'electricity';
   const val=parseFloat(document.getElementById('meterVal')?.value||'0');
@@ -2842,7 +2888,7 @@ function renderSupervisorDashboard(){
   <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
       <div style="font-weight:700;font-size:14px;margin-bottom:12px">⚡ Meter Reading & Recharge Log</div>
-      ${(()=>{const ml=DB.get('meterLog')||[];const myMl=ml.filter(x=>myLocCodes.includes(x.locCode)).slice(-5).reverse();return myMl.length?myMl.map(m=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><div><span style="font-weight:600">${m.type==='electricity'?'⚡':'📶'} ${m.type==='electricity'?'Electricity':'Internet'}</span><div style="font-size:10px;color:var(--text3)">${new Date(m.ts).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} · by ${m.by}</div></div><div style="text-align:right"><div style="font-weight:700;color:var(--gold)">${m.type==='electricity'?m.reading+' units':'₹'+m.amount+' recharged'}</div><div style="font-size:10px;color:var(--text3)">${m.notes||''}</div></div></div>`).join(''):'<div style="color:var(--text3);font-size:12px;padding:10px 0">No entries today. Submit a reading below.</div>';}())}
+      ${_renderMeterLogHTML(myLocCodes)}
       <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
         <div style="font-size:12px;font-weight:600;color:var(--text2)">Submit New Reading / Recharge</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -2860,7 +2906,7 @@ function renderSupervisorDashboard(){
     <!-- Housekeeping Report -->
     <div class="card">
       <div style="font-weight:700;font-size:14px;margin-bottom:12px">🧹 Housekeeping Checklist</div>
-      ${(()=>{const hk=DB.get('housekeepingLog')||[];const todayHK=hk.filter(x=>myLocCodes.includes(x.locCode)&&new Date(x.ts).toDateString()===todayStr);const lastHK=todayHK.slice(-1)[0];return lastHK?`<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px"><div style="font-weight:700;color:var(--green);margin-bottom:4px">✅ Submitted today at ${new Date(lastHK.ts).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div>${Object.entries(lastHK.checks||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">${k}</span><span>${v?'✅':'❌'}</span></div>`).join('')}</div>`:'<div class="alert alert-info" style="font-size:11px;margin-bottom:10px">No housekeeping report submitted today.</div>';}())}
+      ${_renderHousekeepingStatusHTML(myLocCodes,todayStr)}
       <div style="display:flex;flex-direction:column;gap:6px">
         ${['Chairs sanitised','Equipment wiped','Floor cleaned','Dustbin emptied','AC/fan checked','Power strip safe','Signage visible','Uniform & grooming'].map(item=>`<label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer"><input type="checkbox" id="hk_${item.replace(/\W/g,'_')}" style="accent-color:var(--accent3)"> ${item}</label>`).join('')}
         <input type="text" class="form-control" id="hkNotes" placeholder="Additional notes…" style="font-size:12px;padding:6px 8px;margin-top:4px">
@@ -2873,7 +2919,7 @@ function renderSupervisorDashboard(){
   <div class="card" style="margin-bottom:16px">
     <div style="font-weight:700;font-size:14px;margin-bottom:12px">🏅 Personal Score — Customers Served Today</div>
     <div style="display:flex;flex-wrap:wrap;gap:10px">
-      ${(()=>{const allU=[...myTeam,s];const uniq=[...new Map(allU.map(u=>[u.id,u])).values()];return uniq.map(u=>{const uTxns=allTxns.filter(t=>new Date(t.createdAt).toDateString()===todayStr&&(t.createdBy===u.name||t.staffId===u.id));const cnt=uTxns.length;const rev=uTxns.reduce((a,t)=>a+(t.total||t.amount||0),0);const isSelf=u.id===s.id;return `<div style="flex:1;min-width:130px;border:1px solid ${isSelf?'var(--accent3)':'var(--border)'};border-radius:10px;padding:12px;background:${isSelf?'rgba(201,150,10,.07)':'var(--bg2)'}"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px">${u.name.split(' ')[0]}${isSelf?' (You)':''}</div><div style="font-size:22px;font-weight:800;color:var(--gold)">${cnt}</div><div style="font-size:11px;color:var(--text3)">customers</div><div style="font-size:12px;font-weight:700;color:var(--green);margin-top:4px">₹${rev.toLocaleString('en-IN')}</div></div>`;}).join('');})()}
+      ${_renderPersonalScoreHTML(myTeam,s,allTxns,todayStr)}
     </div>
   </div>`;
 }
@@ -6826,10 +6872,22 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
   });
 
-  // 7. If not restored, set default tab context
+  // 7. URL-based admin unlock: ?admin=1 reveals admin tab
+  const urlParams=new URLSearchParams(window.location.search);
+  const isAdminURL=urlParams.get('admin')==='1'||urlParams.get('a')==='1';
+  const adminTabBtn=document.getElementById('ltab-admin');
+  if(isAdminURL&&adminTabBtn){
+    adminTabBtn.style.display='';
+  }
+
+  // 8. Set default tab context
   if(!restored){
     window._loginTabContext='staff';
-    switchLoginTab('staff');
+    if(isAdminURL){
+      switchLoginTab('admin');
+    } else {
+      switchLoginTab('staff');
+    }
   }
 });
 </script>
