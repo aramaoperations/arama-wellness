@@ -6271,41 +6271,7 @@ function exportToCSV(data,filename){
   if(params.get('code')||params.get('error')){await _handleStaffOAuthCallback();}
 })();
 
-// ═══════════════════════════════════════════════
-// APP INITIALIZATION
-// ═══════════════════════════════════════════════
-function checkSession(){
-  try{
-    const raw=sessionStorage.getItem('arama_sess');
-    if(raw){
-      const sess=JSON.parse(raw);
-      if(sess&&sess.expiresAt&&Date.now()<sess.expiresAt){
-        currentSession=sess;
-        refreshActivity();
-        document.getElementById('loginScreen').style.display='none';
-        document.getElementById('app').classList.add('visible');
-        setupApp();navigate('dashboard');startActivityMonitor();
-        return true;
-      } else {sessionStorage.removeItem('arama_sess');DB.remove('session');}
-    }
-  }catch(e){console.warn('Session restore error',e);}
-  document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('app').classList.remove('visible');
-  return false;
-}
-document.addEventListener('DOMContentLoaded',()=>{
-  seedIfEmpty();
-  _loadSocialCredsFromDB();
-  const restored=checkSession();
-  initGAuth();
-  document.getElementById('modalOverlay').addEventListener('click',(e)=>{
-    if(e.target===document.getElementById('modalOverlay'))closeModal();
-  });
-  document.addEventListener('keydown',(e)=>{
-    if(e.key==='Escape'){closeModal();closeOTPPopup();}
-  });
-  if(!restored){window._loginTabContext='staff';switchLoginTab('staff');}
-});
+// ── checkSession + DOMContentLoaded defined below (original) ──
 function previewExcelFile(){
   const file=document.getElementById('excelFile').files[0];
   if(!file)return;
